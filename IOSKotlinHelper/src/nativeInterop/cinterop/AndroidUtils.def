@@ -1,0 +1,3 @@
+# AndroidUtils.def
+language = Objective-C
+package = dev.topping.ios.androidutils
