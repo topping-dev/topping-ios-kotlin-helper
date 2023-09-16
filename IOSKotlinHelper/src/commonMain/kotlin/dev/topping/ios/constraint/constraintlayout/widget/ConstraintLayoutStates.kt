@@ -143,7 +143,7 @@ class ConstraintLayoutStates internal constructor(
             attrs.forEach { kvp ->
                 if (kvp.key == "android_id") {
                     mId = context.getResources().getResourceId(kvp.value, mId)
-                } else if (kvp.key == "app_constraints") {
+                } else if (kvp.key == "constraints") {
                     mConstraintID = context.getResources().getResourceId(kvp.value, mConstraintID)
                     val type = context.getResources().getResourceType(mConstraintID)
                     val name: String = context.getResources().getResourceName(mConstraintID)
@@ -187,7 +187,7 @@ class ConstraintLayoutStates internal constructor(
                 Log.v(TAG, "############### Variant")
             }
             attrs.forEach { kvp ->
-                if (kvp.key == "app_constraints") {
+                if (kvp.key == "constraints") {
                     mConstraintID = context.getResources().getResourceId(kvp.value, mConstraintID)
                     val type = context.getResources().getResourceType(mConstraintID)
                     val name: String = context.getResources().getResourceName(mConstraintID)
@@ -208,13 +208,13 @@ class ConstraintLayoutStates internal constructor(
                             )
                         }
                     }
-                } else if (kvp.key == "app_heightLessThan") {
+                } else if (kvp.key == "heightLessThan") {
                     mMaxHeight = context.getResources().getDimension(kvp.value, mMaxHeight)
-                } else if (kvp.key == "app_region_heightMoreThan") {
+                } else if (kvp.key == "region_heightMoreThan") {
                     mMinHeight = context.getResources().getDimension(kvp.value, mMinHeight)
-                } else if (kvp.key == "app_region_widthLessThan") {
+                } else if (kvp.key == "region_widthLessThan") {
                     mMaxWidth = context.getResources().getDimension(kvp.value, mMaxWidth)
-                } else if (kvp.key == "app_region_widthMoreThan") {
+                } else if (kvp.key == "region_widthMoreThan") {
                     mMinWidth = context.getResources().getDimension(kvp.value, mMinWidth)
                 } else {
                     Log.v(TAG, "Unknown tag")

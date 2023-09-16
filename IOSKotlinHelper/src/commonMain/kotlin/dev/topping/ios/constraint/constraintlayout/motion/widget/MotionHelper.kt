@@ -42,8 +42,8 @@ class MotionHelper(context: TContext, self: TView) : ConstraintHelper(context, s
     protected var views: Array<TView?>? = null
 
     init {
-        isUsedOnShow = self.getObjCProperty("app_onShow") as Boolean
-        isUseOnHide = self.getObjCProperty("app_onHide") as Boolean
+        isUsedOnShow = self.getObjCProperty("onShow") as Boolean
+        isUseOnHide = self.getObjCProperty("onHide") as Boolean
     }
 
     override var progress: Float

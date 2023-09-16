@@ -223,27 +223,27 @@ class KeyCycle : Key() {
         private val sAttrMap: MutableMap<String, Int> = mutableMapOf()
 
         init {
-            sAttrMap["app_motionTarget"] = TARGET_ID
-            sAttrMap["app_framePosition"] = FRAME_POSITION
-            sAttrMap["app_transitionEasing"] = TRANSITION_EASING
-            sAttrMap["app_curveFit"] = CURVE_FIT
-            sAttrMap["app_waveShape"] = WAVE_SHAPE
-            sAttrMap["app_wavePeriod"] = WAVE_PERIOD
-            sAttrMap["app_waveOffset"] = WAVE_OFFSET
-            sAttrMap["app_waveVariesBy"] = WAVE_VARIES_BY
+            sAttrMap["motionTarget"] = TARGET_ID
+            sAttrMap["framePosition"] = FRAME_POSITION
+            sAttrMap["transitionEasing"] = TRANSITION_EASING
+            sAttrMap["curveFit"] = CURVE_FIT
+            sAttrMap["waveShape"] = WAVE_SHAPE
+            sAttrMap["wavePeriod"] = WAVE_PERIOD
+            sAttrMap["waveOffset"] = WAVE_OFFSET
+            sAttrMap["waveVariesBy"] = WAVE_VARIES_BY
             sAttrMap["android_alpha"] = ANDROID_ALPHA
             sAttrMap["android_elevation"] = ANDROID_ELEVATION
             sAttrMap["android_rotation"] = ANDROID_ROTATION
             sAttrMap["android_rotationX"] = ANDROID_ROTATION_X
             sAttrMap["android_rotationY"] = ANDROID_ROTATION_Y
-            sAttrMap["app_transitionPathRotate"] = TRANSITION_PATH_ROTATE
+            sAttrMap["transitionPathRotate"] = TRANSITION_PATH_ROTATE
             sAttrMap["android_scaleX"] = ANDROID_SCALE_X
             sAttrMap["android_scaleY"] = ANDROID_SCALE_Y
             sAttrMap["android_translationX"] = ANDROID_TRANSLATION_X
             sAttrMap["android_translationY"] = ANDROID_TRANSLATION_Y
             sAttrMap["android_translationZ"] = ANDROID_TRANSLATION_Z
-            sAttrMap["app_motionProgress"] = PROGRESS
-            sAttrMap["app_wavePhase"] = WAVE_PHASE
+            sAttrMap["motionProgress"] = PROGRESS
+            sAttrMap["wavePhase"] = WAVE_PHASE
         }
 
         fun read(context: TContext, c: KeyCycle, a: AttributeSet) {
@@ -266,10 +266,13 @@ class KeyCycle : Key() {
                         }
                     }
                     FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
-                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(kvp.value)
+                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
                     CURVE_FIT -> c.mCurveFit = context.getResources().getInt(kvp.value, c.mCurveFit)
                     WAVE_SHAPE -> if (context.getResources().getType(kvp.value) == "string") {
-                        c.mCustomWaveShape = context.getResources().getString(kvp.value)
+                        c.mCustomWaveShape = context.getResources().getString(kvp.key, kvp.value)
                         c.mWaveShape = Oscillator.CUSTOM
                     } else {
                         c.mWaveShape = context.getResources().getInt(kvp.value, c.mWaveShape)

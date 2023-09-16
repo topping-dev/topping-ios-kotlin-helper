@@ -26,7 +26,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-/**
+        /**
  * A `ConstraintLayout` is a [android.view.ViewGroup] which allows you
  * to position and size widgets in a flexible way.
  *
@@ -569,7 +569,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
     private var mMaxWidth: Int = Int.MAX_VALUE
     private var mMaxHeight: Int = Int.MAX_VALUE
     protected var mDirtyHierarchy = true
-    private var mOptimizationLevel: Int = 0
+    private var mOptimizationLevel: Int = Optimizer.OPTIMIZATION_STANDARD;
     private var mConstraintSet: ConstraintSet? = null
     protected var mConstraintLayoutSpec: ConstraintLayoutStates? = null
     private var mConstraintSetId = ""
@@ -647,9 +647,18 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             var args = params as Array<Any>
             dispatchDraw(sup, params[0] as TCanvas)
         }
+        self.swizzleFunction("onMeasure") { sup, params ->
+            var args = params as Array<Any>
+            onMeasure(sup, params[0] as Int, params[1] as Int)
+        }
+
+        self.swizzleFunction("onLayout") { sup, params ->
+            var args = params as Array<Any>
+            onLayout(sup, params[0] as Boolean, params[1] as Int, params[2] as Int, params[3] as Int, params[4] as Int)
+        }
 
         mMeasurer = Measurer(this)
-        mLayoutWidget.companionWidget = this
+        mLayoutWidget.setCompanionWidget(this)
         mLayoutWidget.measurer = mMeasurer
         mChildrenByIds[self.getId()] = self
         mConstraintSet = null
@@ -664,9 +673,9 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 mMaxWidth = a.getDimensionPixelOffset(attr, mMaxWidth)
             } else if (kvp.key == "android_maxHeight") {
                 mMaxHeight = a.getDimensionPixelOffset(attr, mMaxHeight)
-            } else if (kvp.key == "app_layout_optimizationLevel") {
+            } else if (kvp.key == "layout_optimizationLevel") {
                 mOptimizationLevel = a.getInt(attr, mOptimizationLevel)
-            } else if (kvp.key == "app_layoutDescription") {
+            } else if (kvp.key == "layoutDescription") {
                 val id = a.getResourceId(attr, "-1")
                 if (id != "-1") {
                     try {
@@ -675,7 +684,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         mConstraintLayoutSpec = null
                     }
                 }
-            } else if (kvp.key == "app_constraintSet") {
+            } else if (kvp.key == "constraintSet") {
                 val id = a.getResourceId(attr, "")
                 try {
                     mConstraintSet = ConstraintSet()
@@ -732,13 +741,13 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             if (widget == null) {
                 return
             }
-            if (widget.visibility == TView.GONE && !widget.isInPlaceholder) {
+            if (widget.getVisibility() == TView.GONE && !widget.isInPlaceholder()) {
                 measure.measuredWidth = 0
                 measure.measuredHeight = 0
                 measure.measuredBaseline = 0
                 return
             }
-            if (widget.parent == null) {
+            if (widget.getParent() == null) {
                 return
             }
             var startMeasure: Long = 0
@@ -755,7 +764,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             var verticalSpec = 0
             val heightPadding = mPaddingTop + mPaddingBottom
             val widthPadding = mPaddingWidth
-            val child: TView = widget.companionWidget as TView
+            val child: TView = widget.getCompanionWidget() as TView
             when (horizontalBehavior) {
                 ConstraintWidget.DimensionBehaviour.FIXED -> {
                     horizontalSpec = MeasureSpec.makeMeasureSpec(
@@ -774,7 +783,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     // Horizontal spec must account for margin as well as padding here.
                     horizontalSpec = self.getChildMeasureSpec(
                         mLayoutWidthSpec,
-                        widthPadding + widget.horizontalMargin,
+                        widthPadding + widget.getHorizontalMargin(),
                         MATCH_PARENT
                     )
                 }
@@ -796,15 +805,15 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         // other side is stable (else we can't
                         // just assume the wrap value will be correct).
                         val otherDimensionStable = (child.getMeasuredHeight()
-                                == widget.height)
+                                == widget.getHeight())
                         val useCurrent = ((measure.measureStrategy
                                 == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS) || !shouldDoWrap
                                 || shouldDoWrap && otherDimensionStable
                                 || child.getParentType() is Placeholder
-                                || widget.isResolvedHorizontally)
+                                || widget.isResolvedHorizontally())
                         if (useCurrent) {
                             horizontalSpec = MeasureSpec.makeMeasureSpec(
-                                widget.width,
+                                widget.getWidth(),
                                 MeasureSpec.EXACTLY
                             )
                         }
@@ -830,7 +839,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     // Vertical spec must account for margin as well as padding here.
                     verticalSpec = self.getChildMeasureSpec(
                         mLayoutHeightSpec,
-                        heightPadding + widget.verticalMargin,
+                        heightPadding + widget.getVerticalMargin(),
                         MATCH_PARENT
                     )
                 }
@@ -852,15 +861,15 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         // the other side is stable (else we can't
                         // just assume the wrap value will be correct).
                         val otherDimensionStable = (child.getMeasuredWidth()
-                                == widget.width)
+                                == widget.getWidth())
                         val useCurrent = ((measure.measureStrategy
                                 == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS) || !shouldDoWrap
                                 || shouldDoWrap && otherDimensionStable
                                 || child.getParentType() is Placeholder
-                                || widget.isResolvedVertically)
+                                || widget.isResolvedVertically())
                         if (useCurrent) {
                             verticalSpec = MeasureSpec.makeMeasureSpec(
-                                widget.height,
+                                widget.getHeight(),
                                 MeasureSpec.EXACTLY
                             )
                         }
@@ -869,28 +878,28 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 else -> {}
             }
             val container: ConstraintWidgetContainer? =
-                widget.parent as ConstraintWidgetContainer?
+                widget.getParent() as ConstraintWidgetContainer?
             if (container != null && Optimizer.enabled(
                     mOptimizationLevel,
                     Optimizer.OPTIMIZATION_CACHE_MEASURES
                 )
             ) {
-                if (child.getMeasuredWidth() == widget.width // note: the container check replicates legacy behavior, but we might want
+                if (child.getMeasuredWidth() == widget.getWidth() // note: the container check replicates legacy behavior, but we might want
                     // to not enforce that in 3.0
-                    && child.getMeasuredWidth() < container.width && child.getMeasuredHeight() == widget.height && child.getMeasuredHeight() < container.height && child.getBaseline() == widget.baselineDistance && !widget.isMeasureRequested
+                    && child.getMeasuredWidth() < container.getWidth() && child.getMeasuredHeight() == widget.getHeight() && child.getMeasuredHeight() < container.getHeight() && child.getBaseline() == widget.getBaselineDistance() && !widget.isMeasureRequested()
                 ) {
                     val similar = (isSimilarSpec(
-                        widget.lastHorizontalMeasureSpec,
-                        horizontalSpec, widget.width
+                        widget.getLastHorizontalMeasureSpec(),
+                        horizontalSpec, widget.getWidth()
                     )
                             && isSimilarSpec(
-                        widget.lastVerticalMeasureSpec,
-                        verticalSpec, widget.height
+                        widget.getLastVerticalMeasureSpec(),
+                        verticalSpec, widget.getHeight()
                     ))
                     if (similar) {
-                        measure.measuredWidth = widget.width
-                        measure.measuredHeight = widget.height
-                        measure.measuredBaseline = widget.baselineDistance
+                        measure.measuredWidth = widget.getWidth()
+                        measure.measuredHeight = widget.getHeight()
+                        measure.measuredBaseline = widget.getBaselineDistance()
                         // if the dimensions of the solver widget are already the
                         // same as the real view, no need to remeasure.
                         if (I_DEBUG) {
@@ -925,10 +934,10 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         && widget.mMatchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_SPREAD && verticalMatchConstraints
                         && widget.mMatchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_SPREAD)
             ) {
-                if (child is VirtualLayout
-                    && widget is VirtualLayout
+                if (child.getParentType() is VirtualLayout
+                    && widget is dev.topping.ios.constraint.core.widgets.VirtualLayout
                 ) {
-                    (child as VirtualLayout).onMeasure(widget.self, horizontalSpec, verticalSpec)
+                    (child as VirtualLayout).onMeasure(widget, horizontalSpec, verticalSpec)
                 } else {
                     child.measure(horizontalSpec, verticalSpec)
                 }
@@ -944,7 +953,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                             + " => " + width + " x " + height)
                     println(
                         "    (M) measure "
-                                + " (" + widget.debugName + ") : " + measurement
+                                + " (" + widget.getDebugName() + ") : " + measurement
                     )
                 }
                 if (widget.mMatchConstraintMinWidth > 0) {
@@ -965,10 +974,10 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 )
                 if (!optimizeDirect) {
                     if (horizontalUseRatio && verticalDimensionKnown) {
-                        val ratio: Float = widget.dimensionRatio
+                        val ratio: Float = widget.getDimensionRatio()
                         width = (0.5f + height * ratio).toInt()
                     } else if (verticalUseRatio && horizontalDimensionKnown) {
-                        val ratio: Float = widget.dimensionRatio
+                        val ratio: Float = widget.getDimensionRatio()
                         height = (0.5f + width / ratio).toInt()
                     }
                 }
@@ -989,7 +998,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                                 + " x " + MeasureSpec.toString(verticalSpec)
                                 + " => " + width + " x " + height)
                         println(
-                            "measure (b) " + widget.debugName
+                            "measure (b) " + widget.getDebugName()
                                 .toString() + " : " + measurement2
                         )
                     }
@@ -1001,7 +1010,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             if (params.mNeedsBaseline) {
                 hasBaseline = true
             }
-            if (hasBaseline && baseline != -1 && widget.baselineDistance != baseline) {
+            if (hasBaseline && baseline != -1 && widget.getBaselineDistance() != baseline) {
                 measure.measuredNeedsSolverPass = true
             }
             measure.measuredWidth = width
@@ -1078,8 +1087,8 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 (layoutParams.mWidget as Guideline?)?.orientation = (layoutParams.orientation)
             }
         }
-        if (view is ConstraintHelper) {
-            val helper: ConstraintHelper? = view
+        if (view.getParentType() is ConstraintHelper) {
+            val helper: ConstraintHelper? = view.getParentType() as ConstraintHelper
             helper!!.validateParams()
             val layoutParams = view.getLayoutParams() as LayoutParams
             layoutParams.mIsHelper = true
@@ -1231,7 +1240,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 }
             }
         } else if (I_DEBUG) {
-            mLayoutWidget.debugName = ("root")
+            mLayoutWidget.setDebugName("root")
             for (i in 0 until count) {
                 val view: TView = self.getChildAt(i)
                 try {
@@ -1241,7 +1250,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     if (slashIndex != -1) {
                         IdAsString = IdAsString.substring(slashIndex + 1)
                     }
-                    getTargetWidget(view.getId())?.debugName = (IdAsString)
+                    getTargetWidget(view.getId())?.setDebugName(IdAsString)
                 } catch (e: NotFoundException) {
                     // nothing
                 }
@@ -1303,14 +1312,14 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
     ) {
         layoutParams.validate()
         layoutParams.helped = false
-        widget.visibility = child.getVisibility()
+        widget.setVisibility(child.getVisibility())
         if (layoutParams.mIsInPlaceholder) {
-            widget.isInPlaceholder = (true)
-            widget.visibility = (TView.GONE)
+            widget.setInPlaceholder(true)
+            widget.setVisibility(TView.GONE)
         }
-        widget.companionWidget = (child)
-        if (child is ConstraintHelper) {
-            child.resolveRtl(widget, mLayoutWidget.isRtl)
+        widget.setCompanionWidget(child)
+        if (child.getParentType() is ConstraintHelper) {
+            (child.getParentType() as ConstraintHelper).resolveRtl(widget, mLayoutWidget.isRtl)
         }
         if (layoutParams.mIsGuideline) {
             val guideline: Guideline = widget as Guideline
@@ -1446,10 +1455,10 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     )
                 }
                 if (resolvedHorizontalBias >= 0) {
-                    widget.horizontalBiasPercent = (resolvedHorizontalBias)
+                    widget.setHorizontalBiasPercent(resolvedHorizontalBias)
                 }
                 if (layoutParams.verticalBias >= 0) {
-                    widget.verticalBiasPercent = (layoutParams.verticalBias)
+                    widget.setVerticalBiasPercent(layoutParams.verticalBias)
                 }
             }
             if (isInEditMode && (layoutParams.editorAbsoluteX != LayoutParams.UNSET
@@ -1463,50 +1472,50 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             if (!layoutParams.mHorizontalDimensionFixed) {
                 if (layoutParams.width == MATCH_PARENT) {
                     if (layoutParams.constrainedWidth) {
-                        widget.horizontalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
+                        widget.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
                     } else {
-                        widget.horizontalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
+                        widget.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
                     }
                     widget.getAnchor(ConstraintAnchor.Type.LEFT).mMargin = layoutParams.leftMargin
                     widget.getAnchor(ConstraintAnchor.Type.RIGHT).mMargin = layoutParams.rightMargin
                 } else {
-                    widget.horizontalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                    widget.width = 0
+                    widget.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
+                    widget.setWidth(0)
                 }
             } else {
-                widget.horizontalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.FIXED)
-                widget.width = (layoutParams.width)
+                widget.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.FIXED)
+                widget.setWidth(layoutParams.width)
                 if (layoutParams.width == WRAP_CONTENT) {
-                    widget.horizontalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    widget.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
                 }
             }
             if (!layoutParams.mVerticalDimensionFixed) {
                 if (layoutParams.height == MATCH_PARENT) {
                     if (layoutParams.constrainedHeight) {
-                        widget.verticalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
+                        widget.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
                     } else {
-                        widget.verticalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
+                        widget.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
                     }
                     widget.getAnchor(ConstraintAnchor.Type.TOP).mMargin = layoutParams.topMargin
                     widget.getAnchor(ConstraintAnchor.Type.BOTTOM).mMargin =
                         layoutParams.bottomMargin
                 } else {
-                    widget.verticalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                    widget.height = (0)
+                    widget.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
+                    widget.setHeight(0)
                 }
             } else {
-                widget.verticalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.FIXED)
-                widget.height = (layoutParams.height)
+                widget.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.FIXED)
+                widget.setHeight(layoutParams.height)
                 if (layoutParams.height == WRAP_CONTENT) {
-                    widget.verticalDimensionBehaviour = (ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    widget.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
                 }
             }
             widget.setDimensionRatio(layoutParams.dimensionRatio)
             widget.setHorizontalWeight(layoutParams.horizontalWeight)
             widget.setVerticalWeight(layoutParams.verticalWeight)
-            widget.horizontalChainStyle = (layoutParams.horizontalChainStyle)
-            widget.verticalChainStyle = (layoutParams.verticalChainStyle)
-            widget.wrapBehaviorInParent = (layoutParams.wrapBehaviorInParent)
+            widget.setHorizontalChainStyle(layoutParams.horizontalChainStyle)
+            widget.setVerticalChainStyle(layoutParams.verticalChainStyle)
+            widget.setWrapBehaviorInParent(layoutParams.wrapBehaviorInParent)
             widget.setHorizontalMatchStyle(
                 layoutParams.matchConstraintDefaultWidth,
                 layoutParams.matchConstraintMinWidth, layoutParams.matchConstraintMaxWidth,
@@ -1534,7 +1543,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             if (type == ConstraintAnchor.Type.BASELINE) { // baseline to baseline
                 val targetParams = view.getLayoutParams() as LayoutParams
                 targetParams.mNeedsBaseline = true
-                targetParams.mWidget?.hasBaseline = (true)
+                targetParams.mWidget?.setHasBaseline(true)
             }
             val baseline: ConstraintAnchor = widget.getAnchor(ConstraintAnchor.Type.BASELINE)
             val targetAnchor: ConstraintAnchor = target.getAnchor(type)
@@ -1542,7 +1551,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 targetAnchor, layoutParams.baselineMargin,
                 layoutParams.goneBaselineMargin, true
             )
-            widget.hasBaseline = (true)
+            widget.setHasBaseline(true)
             widget.getAnchor(ConstraintAnchor.Type.TOP).reset()
             widget.getAnchor(ConstraintAnchor.Type.BOTTOM).reset()
         }
@@ -1694,7 +1703,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
     /**
      * {@inheritDoc}
      */
-    protected open fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    protected open fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var time: Long = 0
         if (mMetrics != null) {
             time = nanoTime()
@@ -1732,7 +1741,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             if (sameSpecsAsPreviousMeasure) {
                 resolveMeasuredDimension(
                     widthMeasureSpec, heightMeasureSpec,
-                    mLayoutWidget.width, mLayoutWidget.height,
+                    mLayoutWidget.getWidth(), mLayoutWidget.getHeight(),
                     mLayoutWidget.isWidthMeasuredTooSmall,
                     mLayoutWidget.isHeightMeasuredTooSmall
                 )
@@ -1752,17 +1761,17 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 if (I_DEBUG) {
                     println(
                         "### COMPATIBLE REQ " + newSize
-                                + " >= ? " + mLayoutWidget.height
+                                + " >= ? " + mLayoutWidget.getHeight()
                     )
                 }
-                if (newSize >= mLayoutWidget.height
+                if (newSize >= mLayoutWidget.getHeight()
                     && !mLayoutWidget.isHeightMeasuredTooSmall
                 ) {
                     mOnMeasureWidthMeasureSpec = widthMeasureSpec
                     mOnMeasureHeightMeasureSpec = heightMeasureSpec
                     resolveMeasuredDimension(
                         widthMeasureSpec, heightMeasureSpec,
-                        mLayoutWidget.width, mLayoutWidget.height,
+                        mLayoutWidget.getWidth(), mLayoutWidget.getHeight(),
                         mLayoutWidget.isWidthMeasuredTooSmall,
                         mLayoutWidget.isHeightMeasuredTooSmall
                     )
@@ -1778,7 +1787,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         if (I_DEBUG) {
             println(
                 "### ON MEASURE " + mDirtyHierarchy
-                        + " of " + mLayoutWidget.debugName
+                        + " of " + mLayoutWidget.getDebugName()
                         + " onMeasure width: " + MeasureSpec.toString(widthMeasureSpec)
                         + " height: " + MeasureSpec.toString(heightMeasureSpec) + this
             )
@@ -1794,7 +1803,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         resolveSystem(mLayoutWidget, mOptimizationLevel, widthMeasureSpec, heightMeasureSpec)
         resolveMeasuredDimension(
             widthMeasureSpec, heightMeasureSpec,
-            mLayoutWidget.width, mLayoutWidget.height,
+            mLayoutWidget.getWidth(), mLayoutWidget.getHeight(),
             mLayoutWidget.isWidthMeasuredTooSmall, mLayoutWidget.isHeightMeasuredTooSmall
         )
         if (mMetrics != null) {
@@ -1803,7 +1812,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         if (I_DEBUG) {
             time = nanoTime() - time
             println(
-                mLayoutWidget.debugName + " (" + self.getChildCount()
+                mLayoutWidget.getDebugName() + " (" + self.getChildCount()
                         + ") DONE onMeasure width: " + MeasureSpec.toString(widthMeasureSpec)
                         + " height: " + MeasureSpec.toString(heightMeasureSpec) + " => "
                         + mLastMeasureWidth + " x " + mLastMeasureHeight
@@ -1881,21 +1890,21 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 desiredHeight = min(mMaxHeight - heightPadding, heightSize)
             }
         }
-        if (desiredWidth != layout.width || desiredHeight != layout.height) {
+        if (desiredWidth != layout.getWidth() || desiredHeight != layout.getHeight()) {
             layout.invalidateMeasures()
         }
-        layout.x = (0)
-        layout.y = (0)
-        layout.maxWidth = (mMaxWidth - widthPadding)
-        layout.maxHeight = (mMaxHeight - heightPadding)
-        layout.minWidth = (0)
-        layout.minHeight = (0)
-        layout.horizontalDimensionBehaviour = (widthBehaviour)
-        layout.width = (desiredWidth)
-        layout.verticalDimensionBehaviour = (heightBehaviour)
-        layout.height = (desiredHeight)
-        layout.minWidth = (mMinWidth - widthPadding)
-        layout.minHeight = (mMinHeight - heightPadding)
+        layout.setX(0)
+        layout.setY(0)
+        layout.setMaxWidth(mMaxWidth - widthPadding)
+        layout.setMaxHeight(mMaxHeight - heightPadding)
+        layout.setMinWidth(0)
+        layout.setMinHeight(0)
+        layout.setHorizontalDimensionBehaviour(widthBehaviour)
+        layout.setWidth(desiredWidth)
+        layout.setVerticalDimensionBehaviour(heightBehaviour)
+        layout.setHeight(desiredHeight)
+        layout.setMinWidth(mMinWidth - widthPadding)
+        layout.setMinHeight(mMinHeight - heightPadding)
     }
 
     /**
@@ -1920,13 +1929,13 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
     /**
      * {@inheritDoc}
      */
-    protected open fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    protected open fun onLayout(sup: TView?, changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         if (mMetrics != null) {
             mMetrics!!.mNumberOfLayouts++
         }
         if (I_DEBUG) {
             println(
-                mLayoutWidget.debugName + " onLayout changed: "
+                mLayoutWidget.getDebugName() + " onLayout changed: "
                         + changed + " left: " + left + " top: " + top
                         + " right: " + right + " bottom: " + bottom
                         + " (" + (right - left) + " x " + (bottom - top) + ")"
@@ -1953,24 +1962,24 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             }
             if(widget == null)
                 continue
-            val l: Int = widget.x
-            val t: Int = widget.y
-            val r: Int = l + widget.width
-            val b: Int = t + widget.height
+            val l: Int = widget.getX()
+            val t: Int = widget.getY()
+            val r: Int = l + widget.getWidth()
+            val b: Int = t + widget.getHeight()
             if (I_DEBUG) {
                 if (widget != null && child.getVisibility() != TView.GONE
-                    && (child.getMeasuredWidth() != widget!!.width
-                            || child.getMeasuredHeight() != widget!!.height)
+                    && (child.getMeasuredWidth() != widget!!.getWidth()
+                            || child.getMeasuredHeight() != widget!!.getHeight())
                 ) {
-                    val deltaX: Int = abs(child.getMeasuredWidth() - widget!!.width)
-                    val deltaY: Int = abs(child.getMeasuredHeight() - widget!!.height)
+                    val deltaX: Int = abs(child.getMeasuredWidth() - widget!!.getWidth())
+                    val deltaY: Int = abs(child.getMeasuredHeight() - widget!!.getHeight())
                     if (deltaX > 1 || deltaY > 1) {
                         println(
                             "child " + child
                                     + " measuredWidth " + child.getMeasuredWidth()
-                                    + " vs " + widget!!.width
+                                    + " vs " + widget!!.getWidth()
                                     + " x measureHeight " + child.getMeasuredHeight()
-                                    + " vs " + widget!!.height
+                                    + " vs " + widget!!.getHeight()
                         )
                     }
                 }
@@ -2137,14 +2146,14 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 val widget: ConstraintWidget? = getViewWidget(child)
                 if (widget?.mTop?.isConnected == true) {
                     val target: ConstraintWidget = widget!!.mTop.target!!.mOwner
-                    val x1: Int = widget!!.x + widget!!.width / 2
-                    val y1: Int = widget!!.y
-                    val x2: Int = target!!.x + target!!.width / 2
+                    val x1: Int = widget!!.getX() + widget!!.getWidth() / 2
+                    val y1: Int = widget!!.getY()
+                    val x2: Int = target!!.getX() + target!!.getWidth() / 2
                     var y2 = 0
                     y2 = if (widget!!.mTop.target!!.type == ConstraintAnchor.Type.TOP) {
-                        target.y
+                        target.getY()
                     } else {
-                        target.y + target.height
+                        target.getY() + target.getHeight()
                     }
                     val paint = context.createPaint()
                     paint.setColor(TColor.argb(255f, 255f, 0f, 0f))
@@ -2153,14 +2162,14 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 }
                 if (widget?.mBottom?.isConnected == true) {
                     val target: ConstraintWidget = widget!!.mBottom.target!!.mOwner
-                    val x1: Int = widget!!.x + widget!!.width / 2
-                    val y1: Int = widget!!.y + widget!!.height
-                    val x2: Int = target.x + target.width / 2
+                    val x1: Int = widget!!.getX() + widget!!.getWidth() / 2
+                    val y1: Int = widget!!.getY() + widget!!.getHeight()
+                    val x2: Int = target.getX() + target.getWidth() / 2
                     var y2 = 0
                     y2 = if (widget!!.mBottom.target!!.type == ConstraintAnchor.Type.TOP) {
-                        target.y
+                        target.getY()
                     } else {
-                        target.y + target.height
+                        target.getY() + target.getHeight()
                     }
                     val paint = context.createPaint()
                     paint.setStrokeWidth(4)
@@ -2634,8 +2643,8 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         /**
          * @param text
          */
-        fun setWidgetDebugName(text: String?) {
-            mWidget?.debugName = text
+        fun setWidgetDebugName(text: String) {
+            mWidget?.setDebugName(text)
         }
 
         /**
@@ -2853,239 +2862,239 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 // LAYOUT_MARGIN_END);
                 //////////////////////////////////////////////////////////////////////////////////
                 sMap.put(
-                    "app_layout_constraintWidth",
+                    "layout_constraintWidth",
                     LAYOUT_CONSTRAINT_WIDTH
                 )
                 sMap.put(
-                    "app_layout_constraintHeight",
+                    "layout_constraintHeight",
                     LAYOUT_CONSTRAINT_HEIGHT
                 )
                 sMap.put(
-                    "app_layout_constraintLeft_toLeftOf",
+                    "layout_constraintLeft_toLeftOf",
                     LAYOUT_CONSTRAINT_LEFT_TO_LEFT_OF
                 )
                 sMap.put(
-                    "app_layout_constraintLeft_toRightOf",
+                    "layout_constraintLeft_toRightOf",
                     LAYOUT_CONSTRAINT_LEFT_TO_RIGHT_OF
                 )
                 sMap.put(
-                    "app_layout_constraintRight_toLeftOf",
+                    "layout_constraintRight_toLeftOf",
                     LAYOUT_CONSTRAINT_RIGHT_TO_LEFT_OF
                 )
                 sMap.put(
-                    "app_layout_constraintRight_toRightOf",
+                    "layout_constraintRight_toRightOf",
                     LAYOUT_CONSTRAINT_RIGHT_TO_RIGHT_OF
                 )
                 sMap.put(
-                    "app_layout_constraintTop_toTopOf",
+                    "layout_constraintTop_toTopOf",
                     LAYOUT_CONSTRAINT_TOP_TO_TOP_OF
                 )
                 sMap.put(
-                    "app_layout_constraintTop_toBottomOf",
+                    "layout_constraintTop_toBottomOf",
                     LAYOUT_CONSTRAINT_TOP_TO_BOTTOM_OF
                 )
                 sMap.put(
-                    "app_layout_constraintBottom_toTopOf",
+                    "layout_constraintBottom_toTopOf",
                     LAYOUT_CONSTRAINT_BOTTOM_TO_TOP_OF
                 )
                 sMap.put(
-                    "app_layout_constraintBottom_toBottomOf",
+                    "layout_constraintBottom_toBottomOf",
                     LAYOUT_CONSTRAINT_BOTTOM_TO_BOTTOM_OF
                 )
                 sMap.put(
-                    "app_layout_constraintBaseline_toBaselineOf",
+                    "layout_constraintBaseline_toBaselineOf",
                     LAYOUT_CONSTRAINT_BASELINE_TO_BASELINE_OF
                 )
                 sMap.put(
-                    "app_layout_constraintBaseline_toTopOf",
+                    "layout_constraintBaseline_toTopOf",
                     LAYOUT_CONSTRAINT_BASELINE_TO_TOP_OF
                 )
                 sMap.put(
-                    "app_layout_constraintBaseline_toBottomOf",
+                    "layout_constraintBaseline_toBottomOf",
                     LAYOUT_CONSTRAINT_BASELINE_TO_BOTTOM_OF
                 )
                 sMap.put(
-                    "app_layout_constraintCircle",
+                    "layout_constraintCircle",
                     LAYOUT_CONSTRAINT_CIRCLE
                 )
                 sMap.put(
-                    "app_layout_constraintCircleRadius",
+                    "layout_constraintCircleRadius",
                     LAYOUT_CONSTRAINT_CIRCLE_RADIUS
                 )
                 sMap.put(
-                    "app_layout_constraintCircleAngle",
+                    "layout_constraintCircleAngle",
                     LAYOUT_CONSTRAINT_CIRCLE_ANGLE
                 )
                 sMap.put(
-                    "app_layout_editor_absoluteX",
+                    "layout_editor_absoluteX",
                     LAYOUT_EDITOR_ABSOLUTEX
                 )
                 sMap.put(
-                    "app_layout_editor_absoluteY",
+                    "layout_editor_absoluteY",
                     LAYOUT_EDITOR_ABSOLUTEY
                 )
                 sMap.put(
-                    "app_layout_constraintGuide_begin",
+                    "layout_constraintGuide_begin",
                     LAYOUT_CONSTRAINT_GUIDE_BEGIN
                 )
                 sMap.put(
-                    "app_layout_constraintGuide_end",
+                    "layout_constraintGuide_end",
                     LAYOUT_CONSTRAINT_GUIDE_END
                 )
                 sMap.put(
-                    "app_layout_constraintGuide_percent",
+                    "layout_constraintGuide_percent",
                     LAYOUT_CONSTRAINT_GUIDE_PERCENT
                 )
                 sMap.put(
-                    "app_guidelineUseRtl",
+                    "guidelineUseRtl",
                     GUIDELINE_USE_RTL
                 )
                 sMap.put(
-                    "app_android_orientation",
+                    "android_orientation",
                     ANDROID_ORIENTATION
                 )
                 sMap.put(
-                    "app_layout_constraintStart_toEndOf",
+                    "layout_constraintStart_toEndOf",
                     LAYOUT_CONSTRAINT_START_TO_END_OF
                 )
                 sMap.put(
-                    "app_layout_constraintStart_toStartOf",
+                    "layout_constraintStart_toStartOf",
                     LAYOUT_CONSTRAINT_START_TO_START_OF
                 )
                 sMap.put(
-                    "app_layout_constraintEnd_toStartOf",
+                    "layout_constraintEnd_toStartOf",
                     LAYOUT_CONSTRAINT_END_TO_START_OF
                 )
                 sMap.put(
-                    "app_layout_constraintEnd_toEndOf",
+                    "layout_constraintEnd_toEndOf",
                     LAYOUT_CONSTRAINT_END_TO_END_OF
                 )
                 sMap.put(
-                    "app_layout_goneMarginLeft",
+                    "layout_goneMarginLeft",
                     LAYOUT_GONE_MARGIN_LEFT
                 )
                 sMap.put(
-                    "app_layout_goneMarginTop",
+                    "layout_goneMarginTop",
                     LAYOUT_GONE_MARGIN_TOP
                 )
                 sMap.put(
-                    "app_layout_goneMarginRight",
+                    "layout_goneMarginRight",
                     LAYOUT_GONE_MARGIN_RIGHT
                 )
                 sMap.put(
-                    "app_layout_goneMarginBottom",
+                    "layout_goneMarginBottom",
                     LAYOUT_GONE_MARGIN_BOTTOM
                 )
                 sMap.put(
-                    "app_layout_goneMarginStart",
+                    "layout_goneMarginStart",
                     LAYOUT_GONE_MARGIN_START
                 )
                 sMap.put(
-                    "app_layout_goneMarginEnd",
+                    "layout_goneMarginEnd",
                     LAYOUT_GONE_MARGIN_END
                 )
                 sMap.put(
-                    "app_layout_goneMarginBaseline",
+                    "layout_goneMarginBaseline",
                     LAYOUT_GONE_MARGIN_BASELINE
                 )
                 sMap.put(
-                    "app_layout_marginBaseline",
+                    "layout_marginBaseline",
                     LAYOUT_MARGIN_BASELINE
                 )
                 sMap.put(
-                    "app_layout_constraintHorizontal_bias",
+                    "layout_constraintHorizontal_bias",
                     LAYOUT_CONSTRAINT_HORIZONTAL_BIAS
                 )
                 sMap.put(
-                    "app_layout_constraintVertical_bias",
+                    "layout_constraintVertical_bias",
                     LAYOUT_CONSTRAINT_VERTICAL_BIAS
                 )
                 sMap.put(
-                    "app_layout_constraintDimensionRatio",
+                    "layout_constraintDimensionRatio",
                     LAYOUT_CONSTRAINT_DIMENSION_RATIO
                 )
                 sMap.put(
-                    "app_layout_constraintHorizontal_weight",
+                    "layout_constraintHorizontal_weight",
                     LAYOUT_CONSTRAINT_HORIZONTAL_WEIGHT
                 )
                 sMap.put(
-                    "app_layout_constraintVertical_weight",
+                    "layout_constraintVertical_weight",
                     LAYOUT_CONSTRAINT_VERTICAL_WEIGHT
                 )
                 sMap.put(
-                    "app_layout_constraintHorizontal_chainStyle",
+                    "layout_constraintHorizontal_chainStyle",
                     LAYOUT_CONSTRAINT_HORIZONTAL_CHAINSTYLE
                 )
                 sMap.put(
-                    "app_layout_constraintVertical_chainStyle",
+                    "layout_constraintVertical_chainStyle",
                     LAYOUT_CONSTRAINT_VERTICAL_CHAINSTYLE
                 )
                 sMap.put(
-                    "app_layout_constrainedWidth",
+                    "layout_constrainedWidth",
                     LAYOUT_CONSTRAINED_WIDTH
                 )
                 sMap.put(
-                    "app_layout_constrainedHeight",
+                    "layout_constrainedHeight",
                     LAYOUT_CONSTRAINED_HEIGHT
                 )
                 sMap.put(
-                    "app_layout_constraintWidth_default",
+                    "layout_constraintWidth_default",
                     LAYOUT_CONSTRAINT_WIDTH_DEFAULT
                 )
                 sMap.put(
-                    "app_layout_constraintHeight_default",
+                    "layout_constraintHeight_default",
                     LAYOUT_CONSTRAINT_HEIGHT_DEFAULT
                 )
                 sMap.put(
-                    "app_layout_constraintWidth_min",
+                    "layout_constraintWidth_min",
                     LAYOUT_CONSTRAINT_WIDTH_MIN
                 )
                 sMap.put(
-                    "app_layout_constraintWidth_max",
+                    "layout_constraintWidth_max",
                     LAYOUT_CONSTRAINT_WIDTH_MAX
                 )
                 sMap.put(
-                    "app_layout_constraintWidth_percent",
+                    "layout_constraintWidth_percent",
                     LAYOUT_CONSTRAINT_WIDTH_PERCENT
                 )
                 sMap.put(
-                    "app_layout_constraintHeight_min",
+                    "layout_constraintHeight_min",
                     LAYOUT_CONSTRAINT_HEIGHT_MIN
                 )
                 sMap.put(
-                    "app_layout_constraintHeight_max",
+                    "layout_constraintHeight_max",
                     LAYOUT_CONSTRAINT_HEIGHT_MAX
                 )
                 sMap.put(
-                    "app_layout_constraintHeight_percent",
+                    "layout_constraintHeight_percent",
                     LAYOUT_CONSTRAINT_HEIGHT_PERCENT
                 )
                 sMap.put(
-                    "app_layout_constraintLeft_creator",
+                    "layout_constraintLeft_creator",
                     LAYOUT_CONSTRAINT_LEFT_CREATOR
                 )
                 sMap.put(
-                    "app_layout_constraintTop_creator",
+                    "layout_constraintTop_creator",
                     LAYOUT_CONSTRAINT_TOP_CREATOR
                 )
                 sMap.put(
-                    "app_layout_constraintRight_creator",
+                    "layout_constraintRight_creator",
                     LAYOUT_CONSTRAINT_RIGHT_CREATOR
                 )
                 sMap.put(
-                    "app_layout_constraintBottom_creator",
+                    "layout_constraintBottom_creator",
                     LAYOUT_CONSTRAINT_BOTTOM_CREATOR
                 )
                 sMap.put(
-                    "app_layout_constraintBaseline_creator",
+                    "layout_constraintBaseline_creator",
                     LAYOUT_CONSTRAINT_BASELINE_CREATOR
                 )
                 sMap.put(
-                    "app_layout_constraintTag",
+                    "layout_constraintTag",
                     LAYOUT_CONSTRAINT_TAG
                 )
                 sMap.put(
-                    "app_layout_wrapBehaviorInParent",
+                    "layout_wrapBehaviorInParent",
                     LAYOUT_WRAP_BEHAVIOR_IN_PARENT
                 )
             }
@@ -3116,7 +3125,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         }
         */
         ///////////////////////////////////////////////////////////////////////////////////////
-        constructor(c: TContext, attrs: AttributeSet) : super(TView.WRAP_CONTENT, TView.WRAP_CONTENT) {
+        constructor(c: TContext, attrs: AttributeSet) : super(c, attrs) {
             ///////////////////////////////////////////////////////////////////////////////////////
             // Layout margins handling TODO: re-activate in 3.0
             ///////////////////////////////////////////////////////////////////////////////////////
@@ -3160,11 +3169,11 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                 when (look) {
                     Table.UNUSED -> {}
                     Table.LAYOUT_CONSTRAINT_WIDTH -> {
-                        ConstraintSet.parseDimensionConstraints(this, a, attr, HORIZONTAL)
+                        ConstraintSet.parseDimensionConstraints(this, a, kvp.key, attr, HORIZONTAL)
                         mWidthSet = true
                     }
                     Table.LAYOUT_CONSTRAINT_HEIGHT -> {
-                        ConstraintSet.parseDimensionConstraints(this, a, attr, VERTICAL)
+                        ConstraintSet.parseDimensionConstraints(this, a, kvp.key, attr, VERTICAL)
                         mHeightSet = true
                     }
                     Table.LAYOUT_WRAP_BEHAVIOR_IN_PARENT -> {
@@ -3173,73 +3182,73 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     Table.LAYOUT_CONSTRAINT_LEFT_TO_LEFT_OF -> {
                         leftToLeft = c.getResources().getResourceId(kvp.value, leftToLeft)
                         if (leftToLeft == UNSET_ID) {
-                            leftToLeft = c.getResources().getString(kvp.value)
+                            leftToLeft = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_LEFT_TO_RIGHT_OF -> {
                         leftToRight = c.getResources().getResourceId(kvp.value, leftToRight)
                         if (leftToRight == UNSET_ID) {
-                            leftToRight = c.getResources().getString(kvp.value)
+                            leftToRight = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_RIGHT_TO_LEFT_OF -> {
                         rightToLeft = c.getResources().getResourceId(kvp.value, rightToLeft)
                         if (rightToLeft == UNSET_ID) {
-                            rightToLeft = c.getResources().getString(kvp.value)
+                            rightToLeft = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_RIGHT_TO_RIGHT_OF -> {
                         rightToRight = c.getResources().getResourceId(kvp.value, rightToRight)
                         if (rightToRight == UNSET_ID) {
-                            rightToRight = c.getResources().getString(kvp.value)
+                            rightToRight = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_TOP_TO_TOP_OF -> {
                         topToTop = c.getResources().getResourceId(kvp.value, topToTop)
                         if (topToTop == UNSET_ID) {
-                            topToTop = c.getResources().getString(kvp.value)
+                            topToTop = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_TOP_TO_BOTTOM_OF -> {
                         topToBottom = c.getResources().getResourceId(kvp.value, topToBottom)
                         if (topToBottom == UNSET_ID) {
-                            topToBottom = c.getResources().getString(kvp.value)
+                            topToBottom = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_BOTTOM_TO_TOP_OF -> {
                         bottomToTop = c.getResources().getResourceId(kvp.value, bottomToTop)
                         if (bottomToTop == UNSET_ID) {
-                            bottomToTop = c.getResources().getString(kvp.value)
+                            bottomToTop = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_BOTTOM_TO_BOTTOM_OF -> {
                         bottomToBottom = c.getResources().getResourceId(kvp.value, bottomToBottom)
                         if (bottomToBottom == UNSET_ID) {
-                            bottomToBottom = c.getResources().getString(kvp.value)
+                            bottomToBottom = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_BASELINE_TO_BASELINE_OF -> {
                         baselineToBaseline = c.getResources().getResourceId(kvp.value, baselineToBaseline)
                         if (baselineToBaseline == UNSET_ID) {
-                            baselineToBaseline = c.getResources().getString(kvp.value)
+                            baselineToBaseline = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_BASELINE_TO_TOP_OF -> {
                         baselineToTop = c.getResources().getResourceId(kvp.value, baselineToTop)
                         if (baselineToTop == UNSET_ID) {
-                            baselineToTop = c.getResources().getString(kvp.value)
+                            baselineToTop = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_BASELINE_TO_BOTTOM_OF -> {
                         baselineToBottom = c.getResources().getResourceId(kvp.value, baselineToBottom)
                         if (baselineToBottom == UNSET_ID) {
-                            baselineToBottom = c.getResources().getString(kvp.value)
+                            baselineToBottom = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_CIRCLE -> {
                         circleConstraint = c.getResources().getResourceId(kvp.value, circleConstraint)
                         if (circleConstraint == UNSET_ID) {
-                            circleConstraint = c.getResources().getString(kvp.value)
+                            circleConstraint = c.getResources().getString(kvp.key, kvp.value)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_CIRCLE_RADIUS -> {
@@ -3275,25 +3284,25 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     Table.LAYOUT_CONSTRAINT_START_TO_END_OF -> {
                         startToEnd = a.getResourceId(attr, startToEnd)
                         if (startToEnd == UNSET_ID) {
-                            startToEnd = a.getString(attr)
+                            startToEnd = a.getString(kvp.key, attr)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_START_TO_START_OF -> {
                         startToStart = a.getResourceId(attr, startToStart)
                         if (startToStart == UNSET_ID) {
-                            startToStart = a.getString(attr)
+                            startToStart = a.getString(kvp.key, attr)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_END_TO_START_OF -> {
                         endToStart = a.getResourceId(attr, endToStart)
                         if (endToStart == UNSET_ID) {
-                            endToStart = a.getString(attr)
+                            endToStart = a.getString(kvp.key, attr)
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_END_TO_END_OF -> {
                         endToEnd = a.getResourceId(attr, endToEnd)
                         if (endToEnd == UNSET_ID) {
-                            endToEnd = a.getString(attr)
+                            endToEnd = a.getString(kvp.key, attr)
                         }
                     }
                     Table.LAYOUT_GONE_MARGIN_LEFT -> {
@@ -3327,7 +3336,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         verticalBias = a.getFloat(attr, verticalBias)
                     }
                     Table.LAYOUT_CONSTRAINT_DIMENSION_RATIO -> {
-                        ConstraintSet.parseDimensionRatioString(this, a.getString(attr))
+                        ConstraintSet.parseDimensionRatioString(this, a.getString(kvp.key, attr))
                     }
                     Table.LAYOUT_CONSTRAINT_HORIZONTAL_WEIGHT -> {
                         horizontalWeight = a.getFloat(attr, horizontalWeight)
@@ -3435,7 +3444,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                         ).toFloat()
                         matchConstraintDefaultHeight = MATCH_CONSTRAINT_PERCENT
                     }
-                    Table.LAYOUT_CONSTRAINT_TAG -> constraintTag = a.getString(attr)
+                    Table.LAYOUT_CONSTRAINT_TAG -> constraintTag = a.getString(kvp.key, attr)
                     Table.LAYOUT_CONSTRAINT_LEFT_CREATOR -> {}
                     Table.LAYOUT_CONSTRAINT_TOP_CREATOR -> {}
                     Table.LAYOUT_CONSTRAINT_RIGHT_CREATOR -> {}
@@ -3566,7 +3575,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
             val originalLeftMargin: Int = leftMargin
             val originalRightMargin: Int = rightMargin
             var isRtl = false
-            resolveLayoutDirection(layoutDirection)
+            super.resolveLayoutDirection(layoutDirection)
             isRtl = TView.LAYOUT_DIRECTION_RTL == getLayoutDirection()
             ///////////////////////////////////////////////////////////////////////////////////////
             mResolvedRightToLeft = UNSET_ID
@@ -3682,7 +3691,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
             /**
              * References the id of the parent.
              */
-            const val PARENT_ID = ""
+            const val PARENT_ID = "0"
 
             /**
              * Defines an id that is not set.

@@ -15,6 +15,8 @@
  */
 package dev.topping.ios.constraint.core.widgets.analyzer
 
+import dev.topping.ios.constraint.core.widgets.debugName
+
 open class DependencyNode(run: WidgetRun) : Dependency {
     var updateDelegate: Dependency? = null
     var delegateToWidgetRun = false

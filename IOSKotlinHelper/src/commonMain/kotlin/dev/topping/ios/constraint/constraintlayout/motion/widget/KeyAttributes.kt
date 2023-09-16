@@ -281,16 +281,16 @@ class KeyAttributes : Key() {
             sAttrMap["android_transformPivotX"] = ANDROID_PIVOT_X
             sAttrMap["android_transformPivotY"] = ANDROID_PIVOT_Y
             sAttrMap["android_scaleX"] = ANDROID_SCALE_X
-            sAttrMap["app_transitionPathRotate"] = TRANSITION_PATH_ROTATE
-            sAttrMap["app_transitionEasing"] = TRANSITION_EASING
-            sAttrMap["app_motionTarget"] = TARGET_ID
-            sAttrMap["app_framePosition"] = FRAME_POSITION
-            sAttrMap["app_curveFit"] = CURVE_FIT
+            sAttrMap["transitionPathRotate"] = TRANSITION_PATH_ROTATE
+            sAttrMap["transitionEasing"] = TRANSITION_EASING
+            sAttrMap["motionTarget"] = TARGET_ID
+            sAttrMap["framePosition"] = FRAME_POSITION
+            sAttrMap["curveFit"] = CURVE_FIT
             sAttrMap["android_scaleY"] = ANDROID_SCALE_Y
             sAttrMap["android_translationX"] = ANDROID_TRANSLATION_X
             sAttrMap["android_translationY"] = ANDROID_TRANSLATION_Y
             sAttrMap["android_translationZ"] = ANDROID_TRANSLATION_Z
-            sAttrMap["app_motionProgress"] = PROGRESS
+            sAttrMap["motionProgress"] = PROGRESS
         }
 
         fun read(context: TContext, c: KeyAttributes, a: AttributeSet) {
@@ -323,7 +323,10 @@ class KeyAttributes : Key() {
                     ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(kvp.value, c.mRotationY)
                     ANDROID_PIVOT_X -> c.mPivotX = context.getResources().getDimension(kvp.value, c.mPivotX)
                     ANDROID_PIVOT_Y -> c.mPivotY = context.getResources().getDimension(kvp.value, c.mPivotY)
-                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(kvp.value)
+                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
                     TRANSITION_PATH_ROTATE -> c.mTransitionPathRotate =
                         context.getResources().getFloat(kvp.value, c.mTransitionPathRotate)
                     ANDROID_TRANSLATION_X -> c.mTranslationX = context.getResources().getDimension(kvp.value, c.mTranslationX)

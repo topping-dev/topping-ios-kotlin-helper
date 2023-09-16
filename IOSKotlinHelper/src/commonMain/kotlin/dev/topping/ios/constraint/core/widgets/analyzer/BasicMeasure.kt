@@ -296,7 +296,7 @@ class BasicMeasure(constraintWidgetContainer: ConstraintWidgetContainer) {
                     val measuredHeight: Int = widget.height
                     if (measuredWidth != preWidth) {
                         widget.width = measuredWidth
-                        if (containerWrapWidth && widget.right > minWidth) {
+                        if (containerWrapWidth && widget.getRight() > minWidth) {
                             val w: Int = (widget.right
                                     + widget.getAnchor(ConstraintAnchor.Type.RIGHT).margin)
                             minWidth = max(minWidth, w)

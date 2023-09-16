@@ -15,8 +15,7 @@
  */
 package dev.topping.ios.constraint.core.widgets.analyzer
 
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget
-import dev.topping.ios.constraint.core.widgets.Guideline
+import dev.topping.ios.constraint.core.widgets.*
 
 internal class GuidelineReference(widget: ConstraintWidget) : WidgetRun(widget) {
     init {

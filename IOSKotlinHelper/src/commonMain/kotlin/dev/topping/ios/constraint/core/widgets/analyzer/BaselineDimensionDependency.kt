@@ -18,7 +18,7 @@ package dev.topping.ios.constraint.core.widgets.analyzer
 internal class BaselineDimensionDependency(run: WidgetRun) : DimensionDependency(run) {
     fun update(node: DependencyNode?) {
         val verticalRun: VerticalWidgetRun = mRun as VerticalWidgetRun
-        verticalRun.baseline.mMargin = mRun.mWidget.baselineDistance
+        verticalRun.baseline.mMargin = mRun.mWidget.getBaselineDistance()
         resolved = true
     }
 }

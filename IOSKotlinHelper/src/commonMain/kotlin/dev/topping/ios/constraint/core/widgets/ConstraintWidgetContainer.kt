@@ -225,11 +225,16 @@ class ConstraintWidgetContainer : WidgetContainer {
     /**
      * Specify the xml type for the container
      */
-    override var type: String?
-        get() = "ConstraintLayout"
-        set(type) {
-            super.type = type
-        }
+    override fun getType(): String {
+        return "ConstraintLayout"
+    }
+
+    override fun setType(type: String) {
+        super.setType(type)
+    }
+    var type: String
+        get() = getType()
+        set(type) = setType(type)
 
     
     override fun reset() {
@@ -518,12 +523,12 @@ class ConstraintWidgetContainer : WidgetContainer {
             for (i in 0 until count) {
                 val child: ConstraintWidget = mChildren.get(i)
                 if (LinearSystem.Companion.FULL_DEBUG) {
-                    if (child.isInHorizontalChain) {
+                    if (child.isInHorizontalChain()) {
                         print("H")
                     } else {
                         print(" ")
                     }
-                    if (child.isInVerticalChain) {
+                    if (child.isInVerticalChain()) {
                         print("V")
                     } else {
                         print(" ")
@@ -539,11 +544,11 @@ class ConstraintWidgetContainer : WidgetContainer {
                                 + " V: " + child.isResolvedVertically
                     )
                 }
-                if (child.isMeasureRequested
+                if (child.isMeasureRequested()
                     && child !is Guideline
                     && child !is Barrier
                     && child !is VirtualLayout
-                    && !child.isInVirtualLayout
+                    && !child.isInVirtualLayout()
                 ) {
                     val widthBehavior: DimensionBehaviour? = child.getDimensionBehaviour(HORIZONTAL)
                     val heightBehavior: DimensionBehaviour? = child.getDimensionBehaviour(VERTICAL)
@@ -651,7 +656,7 @@ class ConstraintWidgetContainer : WidgetContainer {
                     for (i in 0 until count) {
                         val widget: ConstraintWidget = mChildren.get(i)
                         if (widget.debugName != null) {
-                            widget.setDebugSolverName(mSystem, widget.debugName)
+                            widget.setDebugSolverName(mSystem, widget.getDebugName().toString())
                         }
                     }
                 } else {
@@ -1069,7 +1074,7 @@ class ConstraintWidgetContainer : WidgetContainer {
                         measuredWidth = measure.measuredWidth
                     }
                     measure.verticalBehavior = FIXED
-                    if (widget.dimensionRatioSide == -1) {
+                    if (widget.getDimensionRatioSide() == -1) {
                         // regardless of which side we are using for the ratio,
                         //  getDimensionRatio() already
                         // made sure that it's expressed in WxH format,
@@ -1088,8 +1093,8 @@ class ConstraintWidgetContainer : WidgetContainer {
             measurer.measure(widget, measure)
             widget.width = measure.measuredWidth
             widget.height = measure.measuredHeight
-            widget.hasBaseline = measure.measuredHasBaseline
-            widget.baselineDistance = measure.measuredBaseline
+            widget.setHasBaseline(measure.measuredHasBaseline)
+            widget.setBaselineDistance(measure.measuredBaseline)
             measure.measureStrategy = BasicMeasure.Measure.SELF_DIMENSIONS
             if (DEBUG) {
                 println(

@@ -433,31 +433,31 @@ class ImageFilterView(val context: TContext, val attrs: AttributeSet, val self: 
             0
         }
         attrs.forEach { kvp ->
-            if(kvp.key == "app_altSrc") {
+            if(kvp.key == "altSrc") {
                 mAltDrawable = context.getResources().getDrawable(kvp.value)
-            } else if (kvp.key == "app_crossfade") {
+            } else if (kvp.key == "crossfade") {
                 mCrossfade = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_warmth") {
+            } else if (kvp.key == "warmth") {
                 warmth = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_saturation") {
+            } else if (kvp.key == "saturation") {
                 saturation = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_contrast") {
+            } else if (kvp.key == "contrast") {
                 contrast = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_brightness") {
+            } else if (kvp.key == "brightness") {
                 brightness = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_round") {
+            } else if (kvp.key == "round") {
                 round = context.getResources().getDimension(kvp.value, 0f)
-            } else if (kvp.key == "app_roundPercent") {
+            } else if (kvp.key == "roundPercent") {
                 roundPercent = context.getResources().getFloat(kvp.value, 0f)
-            } else if (kvp.key == "app_overlay") {
+            } else if (kvp.key == "overlay") {
                 setOverlay(context.getResources().getBoolean(kvp.value, mOverlay))
-            } else if (kvp.key == "app_imagePanX") {
+            } else if (kvp.key == "imagePanX") {
                 imagePanX = context.getResources().getFloat(kvp.value, mPanX)
-            } else if (kvp.key == "app_imagePanY") {
+            } else if (kvp.key == "imagePanY") {
                 imagePanY = context.getResources().getFloat(kvp.value, mPanY)
-            } else if (kvp.key == "app_imageRotate") {
+            } else if (kvp.key == "imageRotate") {
                 imageRotate = context.getResources().getFloat(kvp.value, mRotate)
-            } else if (kvp.key == "app_imageZoom") {
+            } else if (kvp.key == "imageZoom") {
                 imageZoom = context.getResources().getFloat(kvp.value, mZoom)
             }
         }

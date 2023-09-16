@@ -18,8 +18,7 @@ package dev.topping.ios.constraint.core.state
 import dev.topping.ios.constraint.core.motion.utils.TypedBundle
 import dev.topping.ios.constraint.core.motion.utils.TypedValues
 import dev.topping.ios.constraint.core.state.helpers.Facade
-import dev.topping.ios.constraint.core.widgets.ConstraintAnchor
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget
+import dev.topping.ios.constraint.core.widgets.*
 
 open class ConstraintReference(state: State) : Reference {
     private var mKey: Any? = null

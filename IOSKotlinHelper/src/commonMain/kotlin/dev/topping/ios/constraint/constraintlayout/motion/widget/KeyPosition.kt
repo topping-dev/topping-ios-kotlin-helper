@@ -352,18 +352,18 @@ class KeyPosition : KeyPositionBase() {
         private val sAttrMap: MutableMap<String, Int> = mutableMapOf()
 
         init {
-            sAttrMap["app_motionTarget"] = TARGET_ID
-            sAttrMap["app_framePosition"] = FRAME_POSITION
-            sAttrMap["app_transitionEasing"] = TRANSITION_EASING
-            sAttrMap["app_curveFit"] = CURVE_FIT
-            sAttrMap["app_drawPath"] = DRAW_PATH
-            sAttrMap["app_percentX"] = PERCENT_X
-            sAttrMap["app_percentY"] = PERCENT_Y
-            sAttrMap["app_keyPositionType"] = TYPE
-            sAttrMap["app_sizePercent"] = SIZE_PERCENT
-            sAttrMap["app_percentWidth"] = PERCENT_WIDTH
-            sAttrMap["app_percentHeight"] = PERCENT_HEIGHT
-            sAttrMap["app_pathMotionArc"] = PATH_MOTION_ARC
+            sAttrMap["motionTarget"] = TARGET_ID
+            sAttrMap["framePosition"] = FRAME_POSITION
+            sAttrMap["transitionEasing"] = TRANSITION_EASING
+            sAttrMap["curveFit"] = CURVE_FIT
+            sAttrMap["drawPath"] = DRAW_PATH
+            sAttrMap["percentX"] = PERCENT_X
+            sAttrMap["percentY"] = PERCENT_Y
+            sAttrMap["keyPositionType"] = TYPE
+            sAttrMap["sizePercent"] = SIZE_PERCENT
+            sAttrMap["percentWidth"] = PERCENT_WIDTH
+            sAttrMap["percentHeight"] = PERCENT_HEIGHT
+            sAttrMap["pathMotionArc"] = PATH_MOTION_ARC
         }
 
         fun read(context: TContext, c: KeyPosition, a: AttributeSet) {
@@ -387,7 +387,7 @@ class KeyPosition : KeyPositionBase() {
                     }
                     FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
                     TRANSITION_EASING -> if (context.getResources().getType(kvp.value) == "string") {
-                        c.mTransitionEasing = context.getResources().getString(kvp.value)
+                        c.mTransitionEasing = context.getResources().getString(kvp.key, kvp.value)
                     } else {
                         c.mTransitionEasing = Easing.NAMED_EASING.get(context.getResources().getInt(kvp.value, 0))
                     }

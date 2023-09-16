@@ -214,13 +214,13 @@ class TouchResponse {
 
     private fun fill(context: TContext, attrs: AttributeSet) {
         attrs.forEach { kvp ->
-            if (kvp.key == "app_touchAnchorId") {
+            if (kvp.key == "touchAnchorId") {
                 anchorId = context.getResources().getResourceId(kvp.value, anchorId)
-            } else if (kvp.key == "app_touchAnchorSide") {
+            } else if (kvp.key == "touchAnchorSide") {
                 mTouchAnchorSide = context.getResources().getInt(kvp.value, mTouchAnchorSide)
                 mTouchAnchorX = TOUCH_SIDES[mTouchAnchorSide][0]
                 mTouchAnchorY = TOUCH_SIDES[mTouchAnchorSide][1]
-            } else if (kvp.key == "app_dragDirection") {
+            } else if (kvp.key == "dragDirection") {
                 mTouchSide = context.getResources().getInt(kvp.value, mTouchSide)
                 if (mTouchSide < TOUCH_DIRECTION.size) {
                     mTouchDirectionX = TOUCH_DIRECTION[mTouchSide][0]
@@ -230,37 +230,37 @@ class TouchResponse {
                     mTouchDirectionX = mTouchDirectionY
                     mIsRotateMode = true
                 }
-            } else if (kvp.key == "app_maxVelocity") {
+            } else if (kvp.key == "maxVelocity") {
                 maxVelocity = context.getResources().getFloat(kvp.value, maxVelocity)
-            } else if (kvp.key == "app_maxAcceleration") {
+            } else if (kvp.key == "maxAcceleration") {
                 maxAcceleration = context.getResources().getFloat(kvp.value, maxAcceleration)
-            } else if (kvp.key == "app_moveWhenScrollAtTop") {
+            } else if (kvp.key == "moveWhenScrollAtTop") {
                 moveWhenScrollAtTop = context.getResources().getBoolean(kvp.value, moveWhenScrollAtTop)
-            } else if (kvp.key == "app_dragScale") {
+            } else if (kvp.key == "dragScale") {
                 mDragScale = context.getResources().getFloat(kvp.value, mDragScale)
-            } else if (kvp.key == "app_dragThreshold") {
+            } else if (kvp.key == "dragThreshold") {
                 mDragThreshold = context.getResources().getFloat(kvp.value, mDragThreshold)
-            } else if (kvp.key == "app_touchRegionId") {
+            } else if (kvp.key == "touchRegionId") {
                 touchRegionId = context.getResources().getResourceId(kvp.value, touchRegionId)
-            } else if (kvp.key == "app_onTouchUp") {
+            } else if (kvp.key == "onTouchUp") {
                 mOnTouchUp = context.getResources().getInt(kvp.value, mOnTouchUp)
-            } else if (kvp.key == "app_nestedScrollFlags") {
+            } else if (kvp.key == "nestedScrollFlags") {
                 flags = context.getResources().getInt(kvp.value, 0)
-            } else if (kvp.key == "app_limitBoundsTo") {
+            } else if (kvp.key == "limitBoundsTo") {
                 limitBoundsToId = context.getResources().getResourceId(kvp.value, "")
-            } else if (kvp.key == "app_rotationCenterId") {
+            } else if (kvp.key == "rotationCenterId") {
                 mRotationCenterId = context.getResources().getResourceId(kvp.value, mRotationCenterId)
-            } else if (kvp.key == "app_springDamping") {
+            } else if (kvp.key == "springDamping") {
                 springDamping = context.getResources().getFloat(kvp.value, springDamping)
-            } else if (kvp.key == "app_springMass") {
+            } else if (kvp.key == "springMass") {
                 springMass = context.getResources().getFloat(kvp.value, springMass)
-            } else if (kvp.key == "app_springStiffness") {
+            } else if (kvp.key == "springStiffness") {
                 springStiffness = context.getResources().getFloat(kvp.value, springStiffness)
-            } else if (kvp.key == "app_springStopThreshold") {
+            } else if (kvp.key == "springStopThreshold") {
                 springStopThreshold = context.getResources().getFloat(kvp.value, springStopThreshold)
-            } else if (kvp.key == "app_springBoundary") {
+            } else if (kvp.key == "springBoundary") {
                 springBoundary = context.getResources().getInt(kvp.value, springBoundary)
-            } else if (kvp.key == "app_autoCompleteMode") {
+            } else if (kvp.key == "autoCompleteMode") {
                 autoCompleteMode = context.getResources().getInt(kvp.value, autoCompleteMode)
             }
         }

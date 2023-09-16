@@ -51,17 +51,17 @@ class MockView(public val context: TContext, public val self: TView) {
 
     private fun init(context: TContext, attrs: AttributeSet) {
         attrs.forEach { kvp ->
-            if (kvp.key == "app_mock_label") {
-                mText = context.getResources().getString(kvp.value)
-            } else if (kvp.key == "app_mock_showDiagonals") {
+            if (kvp.key == "mock_label") {
+                mText = context.getResources().getString(kvp.key, kvp.value)
+            } else if (kvp.key == "mock_showDiagonals") {
                 mDrawDiagonals = context.getResources().getBoolean(kvp.value, mDrawDiagonals)
-            } else if (kvp.key == "app_mock_diagonalsColor") {
+            } else if (kvp.key == "mock_diagonalsColor") {
                 mDiagonalsColor = context.getResources().getColor(kvp.value, mDiagonalsColor)
-            } else if (kvp.key == "app_mock_labelBackgroundColor") {
+            } else if (kvp.key == "mock_labelBackgroundColor") {
                 mTextBackgroundColor = context.getResources().getColor(kvp.value, mTextBackgroundColor)
-            } else if (kvp.key == "app_mock_labelColor") {
+            } else if (kvp.key == "mock_labelColor") {
                 mTextColor = context.getResources().getColor(kvp.value, mTextColor)
-            } else if (kvp.key == "app_mock_showLabel") {
+            } else if (kvp.key == "mock_showLabel") {
                 mDrawLabel = context.getResources().getBoolean(kvp.value, mDrawLabel)
             }
         }

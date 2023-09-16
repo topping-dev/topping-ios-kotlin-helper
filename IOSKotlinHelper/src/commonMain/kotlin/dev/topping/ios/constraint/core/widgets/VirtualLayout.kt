@@ -124,7 +124,7 @@ open class VirtualLayout : HelperWidget() {
     fun captureWidgets() {
         for (i in 0 until mWidgetsCount) {
             val widget: ConstraintWidget? = mWidgets.get(i)
-            widget?.isInVirtualLayout = true
+            widget?.setInVirtualLayout(true)
         }
     }
 
@@ -136,8 +136,8 @@ open class VirtualLayout : HelperWidget() {
 
     protected fun measureChildren(): Boolean {
         var measurer: BasicMeasure.Measurer? = null
-        if (parent != null) {
-            measurer = (parent as ConstraintWidgetContainer).measurer
+        if (getParent() != null) {
+            measurer = (getParent() as ConstraintWidgetContainer).measurer
         }
         if (measurer == null) {
             return false
@@ -169,7 +169,7 @@ open class VirtualLayout : HelperWidget() {
             measurer.measure(widget, mMeasure)
             widget.width = mMeasure.measuredWidth
             widget.height = mMeasure.measuredHeight
-            widget.baselineDistance = mMeasure.measuredBaseline
+            widget.setBaselineDistance(mMeasure.measuredBaseline)
         }
         return true
     }
@@ -182,8 +182,8 @@ open class VirtualLayout : HelperWidget() {
         verticalBehavior: ConstraintWidget.DimensionBehaviour,
         verticalDimension: Int
     ) {
-        while (mMeasurer == null && parent != null) {
-            val parent: ConstraintWidgetContainer = parent as ConstraintWidgetContainer
+        while (mMeasurer == null && getParent() != null) {
+            val parent: ConstraintWidgetContainer = getParent() as ConstraintWidgetContainer
             mMeasurer = parent.measurer
         }
         mMeasure.horizontalBehavior = horizontalBehavior
@@ -193,8 +193,8 @@ open class VirtualLayout : HelperWidget() {
         mMeasurer?.measure(widget, mMeasure)
         widget.width = mMeasure.measuredWidth
         widget.height = mMeasure.measuredHeight
-        widget.hasBaseline = mMeasure.measuredHasBaseline
-        widget.baselineDistance = mMeasure.measuredBaseline
+        widget.setHasBaseline(mMeasure.measuredHasBaseline)
+        widget.setBaselineDistance(mMeasure.measuredBaseline)
     }
 
     // @TODO: add description

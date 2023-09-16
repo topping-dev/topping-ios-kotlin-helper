@@ -42,7 +42,19 @@ class Guideline : ConstraintWidget() {
      */
     var minimumPosition = 0
 
-    override var isResolvedVertically = false
+    var mResolved = false
+    override var isResolvedVertically: Boolean
+        get() = mResolved
+        set(value) { mResolved = value }
+
+    override fun isResolvedHorizontally(): Boolean {
+        return mResolved
+    }
+
+    override fun isResolvedVertically(): Boolean {
+        return mResolved
+
+    }
 
     init {
         mAnchors.clear()
@@ -88,10 +100,17 @@ class Guideline : ConstraintWidget() {
     /**
      * Specify the xml type for the container
      */
-    override var type: String?
+    override fun getType(): String {
+        return type
+    }
+
+    override fun setType(type: String) {
+        super.setType(type)
+    }
+    var type: String
         get() = "Guideline"
         set(type) {
-            super.type = type
+            setType(type)
         }
 
     /**
@@ -179,17 +198,17 @@ class Guideline : ConstraintWidget() {
             )
         }
         mAnchor.finalValue = position
-        isResolvedVertically = true
+        mResolved = true
     }
 
     
-    override fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    override fun addToSolver(system: LinearSystem, optimize: Boolean) {
         if (LinearSystem.FULL_DEBUG) {
             println("\n----------------------------------------------")
             println("-- adding " + debugName.toString() + " to the solver")
             println("----------------------------------------------\n")
         }
-        val parent: ConstraintWidgetContainer? = parent as ConstraintWidgetContainer?
+        val parent: ConstraintWidgetContainer? = getParent() as ConstraintWidgetContainer?
         var begin: ConstraintAnchor? = parent?.getAnchor(ConstraintAnchor.Type.LEFT)
         var end: ConstraintAnchor? = parent?.getAnchor(ConstraintAnchor.Type.RIGHT)
         var parentWrapContent =
@@ -200,7 +219,7 @@ class Guideline : ConstraintWidget() {
             parentWrapContent =
                 if (parent != null) parent.mListDimensionBehaviors[DIMENSION_VERTICAL] == WRAP_CONTENT else false
         }
-        if (isResolvedVertically && mAnchor.hasFinalValue()) {
+        if (mResolved && mAnchor.hasFinalValue()) {
             val guide: SolverVariable? = system?.createObjectVariable(mAnchor)
             if (LinearSystem.FULL_DEBUG) {
                 println(
@@ -226,7 +245,7 @@ class Guideline : ConstraintWidget() {
                     system?.addGreaterThan(parentRight, guide, 0, SolverVariable.STRENGTH_EQUALITY)
                 }
             }
-            isResolvedVertically = false
+            mResolved = false
             return
         }
         if (relativeBegin != -1) {
@@ -265,27 +284,27 @@ class Guideline : ConstraintWidget() {
 
     
     override fun updateFromSolver(system: LinearSystem, optimize: Boolean) {
-        if (parent == null) {
+        if (getParent() == null) {
             return
         }
         val value: Int = system.getObjectVariableValue(mAnchor)
         if (mOrientation == VERTICAL) {
             x = value
             y = 0
-            height = parent!!.height
+            height = getParent()!!.height
             width = 0
         } else {
             x = 0
             y = value
-            width = parent!!.width
+            width = getParent()!!.width
             height = 0
         }
     }
 
     fun inferRelativePercentPosition() {
-        var percent: Float = x.toFloat() / (parent?.width?.toFloat() ?: 1f)
+        var percent: Float = x.toFloat() / (getParent()?.width?.toFloat() ?: 1f)
         if (mOrientation == HORIZONTAL) {
-            percent = y.toFloat() / (parent?.height?.toFloat() ?: 1f)
+            percent = y.toFloat() / (getParent()?.height?.toFloat() ?: 1f)
         }
         setGuidePercent(percent)
     }
@@ -299,9 +318,9 @@ class Guideline : ConstraintWidget() {
     }
 
     fun inferRelativeEndPosition() {
-        var position: Int = (parent?.width ?: 0) - x
+        var position: Int = (getParent()?.width ?: 0) - x
         if (mOrientation == HORIZONTAL) {
-            position = (parent?.height ?: 0) - y
+            position = (getParent()?.height ?: 0) - y
         }
         setGuideEnd(position)
     }

@@ -32,10 +32,10 @@ class ReactiveGuide(val context: TContext?, val self: TView) : SharedValues.Shar
     init {
         self.setParentType(this)
         self.setVisibility(TView.GONE)
-        mAttributeId = self.getObjCProperty("app_reactiveGuide_valueId") as String
-        isAnimatingChange = self.getObjCProperty("app_reactiveGuide_animateChange") as Boolean
-        applyToConstraintSetId = self.getObjCProperty("app_reactiveGuide_applyToConstraintSet") as String
-        mApplyToAllConstraintSets = self.getObjCProperty("app_reactiveGuide_applyToAllConstraintSets") as Boolean
+        mAttributeId = self.getObjCProperty("reactiveGuide_valueId") as String
+        isAnimatingChange = self.getObjCProperty("reactiveGuide_animateChange") as Boolean
+        applyToConstraintSetId = self.getObjCProperty("reactiveGuide_applyToConstraintSet") as String
+        mApplyToAllConstraintSets = self.getObjCProperty("reactiveGuide_applyToAllConstraintSets") as Boolean
         if (mAttributeId != "") {
             val sharedValues: SharedValues = ConstraintLayout.sharedValues
             sharedValues.addListener(mAttributeId, this)

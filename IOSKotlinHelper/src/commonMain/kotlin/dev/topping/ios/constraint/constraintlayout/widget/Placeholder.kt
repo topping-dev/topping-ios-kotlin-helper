@@ -18,6 +18,9 @@ package dev.topping.ios.constraint.constraintlayout.widget
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
+import dev.topping.ios.constraint.core.widgets.height
+import dev.topping.ios.constraint.core.widgets.visibility
+import dev.topping.ios.constraint.core.widgets.width
 
 /**
  * **Added in 1.1**
@@ -54,8 +57,8 @@ class Placeholder(val context: TContext?, val self: TView) {
 
     init {
         self.setParentType(this)
-        mContentId = self.getObjCProperty("app_placeholder_content") as String? ?: ""
-        emptyVisibility = self.getObjCProperty("app_placeholder_content") as Int? ?: TView.INVISIBLE
+        mContentId = self.getObjCProperty("placeholder_content") as String? ?: ""
+        emptyVisibility = self.getObjCProperty("placeholder_content") as Int? ?: TView.INVISIBLE
         self.setVisibility(emptyVisibility)
     }
 
@@ -119,13 +122,13 @@ class Placeholder(val context: TContext?, val self: TView) {
         val layoutParamsContent: ConstraintLayout.LayoutParams = mContent!!
             .getLayoutParams() as ConstraintLayout.LayoutParams
         layoutParamsContent.mWidget?.visibility = TView.VISIBLE
-        if (layoutParams.mWidget?.horizontalDimensionBehaviour
+        if (layoutParams.mWidget?.getHorizontalDimensionBehaviour()
             != ConstraintWidget.DimensionBehaviour.FIXED
         ) {
             layoutParams.mWidget?.width = layoutParamsContent.mWidget!!.width
         }
-        if (layoutParams.mWidget?.verticalDimensionBehaviour
-            !== ConstraintWidget.DimensionBehaviour.FIXED
+        if (layoutParams.mWidget?.getVerticalDimensionBehaviour()
+            != ConstraintWidget.DimensionBehaviour.FIXED
         ) {
             layoutParams.mWidget?.height = layoutParamsContent.mWidget!!.height
         }

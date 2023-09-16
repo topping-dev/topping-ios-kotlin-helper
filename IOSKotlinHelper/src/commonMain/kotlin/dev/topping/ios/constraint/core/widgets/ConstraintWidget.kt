@@ -18,18 +18,219 @@ package dev.topping.ios.constraint.core.widgets
 import dev.topping.ios.constraint.Arrays
 import dev.topping.ios.constraint.core.Cache
 import dev.topping.ios.constraint.core.LinearSystem
+import dev.topping.ios.constraint.core.LinearSystem.Companion.FULL_DEBUG
 import dev.topping.ios.constraint.core.SolverVariable
 import dev.topping.ios.constraint.core.state.WidgetFrame
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
 import dev.topping.ios.constraint.core.widgets.analyzer.ChainRun
 import dev.topping.ios.constraint.core.widgets.analyzer.HorizontalWidgetRun
 import dev.topping.ios.constraint.core.widgets.analyzer.VerticalWidgetRun
 import dev.topping.ios.constraint.core.widgets.analyzer.WidgetRun
 import dev.topping.ios.constraint.isNaN
 import dev.topping.ios.constraint.toRadians
+import kotlin.*
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
-import kotlin.math.*
-
+var ConstraintWidget.companionWidget: Any?
+    get() {
+        return getCompanionWidget()
+    }
+    set(value) {
+        setCompanionWidget(value!!)
+    }
+var ConstraintWidget.debugName: String?
+    get() {
+        return getDebugName()
+    }
+    set(value) {
+        setDebugName(value!!)
+    }
+val ConstraintWidget.dimensionRatio: Float
+    get() {
+        return getDimensionRatio()
+    }
+var ConstraintWidget.x: Int
+    get() {
+        return getX()
+    }
+    set(value) {
+        setX(value)
+    }
+var ConstraintWidget.y: Int
+    get() {
+        return getY()
+    }
+    set(value) {
+        setY(value)
+    }
+var ConstraintWidget.height: Int
+    get() {
+        return getHeight()
+    }
+    set(value) {
+        setHeight(value)
+    }
+var ConstraintWidget.width: Int
+    get() {
+        return getWidth()
+    }
+    set(value) {
+        setWidth(value)
+    }
+var ConstraintWidget.minHeight: Int
+    get() {
+        return getMinHeight()
+    }
+    set(value) {
+        setMinHeight(value)
+    }
+var ConstraintWidget.maxHeight: Int
+    get() {
+        return getMaxHeight()
+    }
+    set(value) {
+        setMaxHeight(value)
+    }
+var ConstraintWidget.minWidth: Int
+    get() {
+        return getMinWidth()
+    }
+    set(value) {
+        setMinWidth(value)
+    }
+var ConstraintWidget.maxWidth: Int
+    get() {
+        return getMaxWidth()
+    }
+    set(value) {
+        setMaxWidth(value)
+    }
+val ConstraintWidget.left: Int
+    get() {
+        return getLeft()
+    }
+val ConstraintWidget.top: Int
+    get() {
+        return getTop()
+    }
+val ConstraintWidget.right: Int
+    get() {
+        return getRight()
+    }
+val ConstraintWidget.bottom: Int
+    get() {
+        return getBottom()
+    }
+var ConstraintWidget.baselineDistance: Int
+    get() {
+        return getBaselineDistance()
+    }
+    set(value) {
+        setBaselineDistance(value)
+    }
+var ConstraintWidget.hasBaseline: Boolean
+    get() {
+        return getHasBaseline()
+    }
+    set(value) {
+        setHasBaseline(value)
+    }
+var ConstraintWidget.visibility: Int
+    get() {
+        return getVisibility()
+    }
+    set(value) {
+        setVisibility(value)
+    }
+var ConstraintWidget.horizontalChainStyle: Int
+    get() {
+        return getHorizontalChainStyle()
+    }
+    set(value) {
+        setHorizontalChainStyle(value)
+    }
+var ConstraintWidget.verticalChainStyle: Int
+    get() {
+        return getVerticalChainStyle()
+    }
+    set(value) {
+        setVerticalChainStyle(value)
+    }
+var ConstraintWidget.horizontalBiasPercent: Float
+    get() {
+        return getHorizontalBiasPercent()
+    }
+    set(value) {
+        setHorizontalBiasPercent(value)
+    }
+var ConstraintWidget.verticalBiasPercent: Float
+    get() {
+        return getVerticalBiasPercent()
+    }
+    set(value) {
+        setVerticalBiasPercent(value)
+    }
+var ConstraintWidget.horizontalDimensionBehaviour: ConstraintWidget.DimensionBehaviour
+    get() {
+        return getHorizontalDimensionBehaviour()
+    }
+    set(value) {
+        setHorizontalDimensionBehaviour(value)
+    }
+var ConstraintWidget.verticalDimensionBehaviour: ConstraintWidget.DimensionBehaviour
+    get() {
+        return getVerticalDimensionBehaviour()
+    }
+    set(value) {
+        setVerticalDimensionBehaviour(value)
+    }
+val ConstraintWidget.isResolvedVertically: Boolean
+    get() {
+        return isResolvedHorizontally()
+    }
+val ConstraintWidget.isResolvedHorizontally: Boolean
+    get() {
+        return isResolvedHorizontally()
+    }
+var ConstraintWidget.parent: ConstraintWidget?
+    get() {
+        return getParent()
+    }
+    set(value) {
+        setParent(value)
+    }
+var ConstraintWidget.isInVirtualLayout: Boolean
+    get() {
+        return isInVirtualLayout()
+    }
+    set(value) {
+        setInVirtualLayout(value)
+    }
+val ConstraintWidget.dimensionRatioSide: Int
+    get() {
+        return getDimensionRatioSide()
+    }
+val ConstraintWidget.isInHorizontalChain: Boolean
+    get() {
+        return isInHorizontalChain()
+    }
+val ConstraintWidget.isInVerticalChain: Boolean
+    get() {
+        return isInVerticalChain()
+    }
+val ConstraintWidget.isMeasureRequested: Boolean
+    get() {
+        return isMeasureRequested()
+    }
+val ConstraintWidget.isHorizontalSolvingPassDone: Boolean
+    get() {
+        return isHorizontalSolvingPassDone()
+    }
+val ConstraintWidget.isVerticalSolvingPassDone: Boolean
+    get() {
+        return isVerticalSolvingPassDone()
+    }
 /**
  * Implements a constraint Widget model supporting constraints relations between other widgets.
  *
@@ -54,27 +255,36 @@ open class ConstraintWidget {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Graph measurements
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph measurements
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     var measured = false
-    var run: Array<WidgetRun?> = arrayOfNulls<WidgetRun>(2)
+    var run = arrayOfNulls<WidgetRun>(2)
     var horizontalChainRun: ChainRun? = null
     var verticalChainRun: ChainRun? = null
+
     var mHorizontalRun: HorizontalWidgetRun? = null
     var mVerticalRun: VerticalWidgetRun? = null
+
     var isTerminalWidget = booleanArrayOf(true, true)
     var mResolvedHasRatio = false
     private var mMeasureRequested = true
     private val mOptimizeWrapO = false
     private val mOptimizeWrapOnResolved = true
+
     private var mWidthOverride = -1
     private var mHeightOverride = -1
-    var frame: WidgetFrame = WidgetFrame(this)
+
+    var frame = WidgetFrame(this)
+
     var stringId: String = ""
 
     // @TODO: add description
     fun getRun(orientation: Int): WidgetRun? {
-        if (orientation == HORIZONTAL) {
+        if (orientation == ConstraintWidget.HORIZONTAL) {
             return mHorizontalRun
-        } else if (orientation == VERTICAL) {
+        } else if (orientation == ConstraintWidget.VERTICAL) {
             return mVerticalRun
         }
         return null
@@ -82,10 +292,9 @@ open class ConstraintWidget {
 
     private var mResolvedHorizontal = false
     private var mResolvedVertical = false
-    var isHorizontalSolvingPassDone = false
-        private set
-    var isVerticalSolvingPassDone = false
-        private set
+
+    private var mHorizontalSolvingPass = false
+    private var mVerticalSolvingPass = false
 
     // @TODO: add description
     fun setFinalFrame(
@@ -97,14 +306,14 @@ open class ConstraintWidget {
         orientation: Int
     ) {
         setFrame(left, top, right, bottom)
-        baselineDistance = baseline
-        if (orientation == HORIZONTAL) {
+        setBaselineDistance(baseline)
+        if (orientation == ConstraintWidget.HORIZONTAL) {
             mResolvedHorizontal = true
             mResolvedVertical = false
-        } else if (orientation == VERTICAL) {
+        } else if (orientation == ConstraintWidget.VERTICAL) {
             mResolvedHorizontal = false
             mResolvedVertical = true
-        } else if (orientation == BOTH) {
+        } else if (orientation == ConstraintWidget.BOTH) {
             mResolvedHorizontal = true
             mResolvedVertical = true
         } else {
@@ -115,30 +324,38 @@ open class ConstraintWidget {
 
     // @TODO: add description
     fun setFinalLeft(x1: Int) {
-        mLeft.finalValue = x1
+        mLeft.finalValue = (x1)
         mX = x1
     }
 
     // @TODO: add description
     fun setFinalTop(y1: Int) {
-        mTop.finalValue = y1
+        mTop.finalValue = (y1)
         mY = y1
     }
 
     // @TODO: add description
     fun resetSolvingPassFlag() {
-        isHorizontalSolvingPassDone = false
-        isVerticalSolvingPassDone = false
+        mHorizontalSolvingPass = false
+        mVerticalSolvingPass = false
+    }
+
+    fun isHorizontalSolvingPassDone(): Boolean {
+        return mHorizontalSolvingPass
+    }
+
+    fun isVerticalSolvingPassDone(): Boolean {
+        return mVerticalSolvingPass
     }
 
     // @TODO: add description
     fun markHorizontalSolvingPassDone() {
-        isHorizontalSolvingPassDone = true
+        mHorizontalSolvingPass = true
     }
 
     // @TODO: add description
     fun markVerticalSolvingPassDone() {
-        isVerticalSolvingPassDone = true
+        mVerticalSolvingPass = true
     }
 
     // @TODO: add description
@@ -146,14 +363,14 @@ open class ConstraintWidget {
         if (mResolvedHorizontal) {
             return
         }
-        mLeft.finalValue = x1
-        mRight.finalValue = x2
+        mLeft.setFinalValue(x1)
+        mRight.setFinalValue(x2)
         mX = x1
         mWidth = x2 - x1
         mResolvedHorizontal = true
         if (LinearSystem.FULL_DEBUG) {
             println(
-                "*** SET FINAL HORIZONTAL FOR " + debugName
+                "*** SET FINAL HORIZONTAL FOR " + getDebugName()
                         + " : " + x1 + " -> " + x2 + " (width: " + mWidth + ")"
             )
         }
@@ -164,52 +381,55 @@ open class ConstraintWidget {
         if (mResolvedVertical) {
             return
         }
-        mTop.finalValue = y1
-        mBottom.finalValue = y2
+        mTop.setFinalValue(y1)
+        mBottom.setFinalValue(y2)
         mY = y1
-        dimensionRatio = (y2 - y1).toFloat()
-        if (hasBaseline) {
-            mBaseline.finalValue = (y1 + mBaselineDistance)
+        mHeight = y2 - y1
+        if (mHasBaseline) {
+            mBaseline.setFinalValue(y1 + mBaselineDistance)
         }
         mResolvedVertical = true
         if (LinearSystem.FULL_DEBUG) {
             println(
-                "*** SET FINAL VERTICAL FOR " + debugName
-                        + " : " + y1 + " -> " + y2 + " (height: " + dimensionRatio + ")"
+                ("*** SET FINAL VERTICAL FOR " + getDebugName()
+                        + " : " + y1 + " -> " + y2 + " (height: " + mHeight + ")")
             )
         }
     }
 
     // @TODO: add description
     fun setFinalBaseline(baselineValue: Int) {
-        if (!hasBaseline) {
+        if (!mHasBaseline) {
             return
         }
-        val y1 = baselineValue - mBaselineDistance
-        val y2 = y1 + dimensionRatio
+        val y1: Int = baselineValue - mBaselineDistance
+        val y2: Int = y1 + mHeight
         mY = y1
-        mTop.finalValue = y1
-        mBottom.finalValue = y2.toInt()
-        mBaseline.finalValue = baselineValue
+        mTop.setFinalValue(y1)
+        mBottom.setFinalValue(y2)
+        mBaseline.setFinalValue(baselineValue)
         mResolvedVertical = true
     }
 
-    val isResolvedHorizontally: Boolean
-        get() = mResolvedHorizontal || mLeft.hasFinalValue() && mRight.hasFinalValue()
-    open val isResolvedVertically: Boolean
-        get() = mResolvedVertical || mTop.hasFinalValue() && mBottom.hasFinalValue()
+    open fun isResolvedHorizontally(): Boolean {
+        return mResolvedHorizontal || mLeft.hasFinalValue() && mRight.hasFinalValue()
+    }
+
+    open fun isResolvedVertically(): Boolean {
+        return mResolvedVertical || mTop.hasFinalValue() && mBottom.hasFinalValue()
+    }
 
     // @TODO: add description
     fun resetFinalResolution() {
         mResolvedHorizontal = false
         mResolvedVertical = false
-        isHorizontalSolvingPassDone = false
-        isVerticalSolvingPassDone = false
+        mHorizontalSolvingPass = false
+        mVerticalSolvingPass = false
         var i = 0
         val mAnchorsSize: Int = mAnchors.size
         while (i < mAnchorsSize) {
-            val anchor: ConstraintAnchor? = mAnchors[i]
-            anchor!!.resetFinalResolution()
+            val anchor: ConstraintAnchor = mAnchors.get(i)!!
+            anchor.resetFinalResolution()
             i++
         }
     }
@@ -224,8 +444,8 @@ open class ConstraintWidget {
         var i = 0
         val mAnchorsSize: Int = mAnchors.size
         while (i < mAnchorsSize) {
-            val anchor: ConstraintAnchor? = mAnchors[i]
-            if (anchor!!.hasDependents()) {
+            val anchor: ConstraintAnchor = mAnchors.get(i)!!
+            if (anchor.hasDependents()) {
                 return true
             }
             i++
@@ -235,125 +455,222 @@ open class ConstraintWidget {
 
     // @TODO: add description
     fun hasDanglingDimension(orientation: Int): Boolean {
-        return if (orientation == HORIZONTAL) {
+        return if (orientation == ConstraintWidget.HORIZONTAL) {
             val horizontalTargets =
-                (if (mLeft.target != null) 1 else 0) + if (mRight.target != null) 1 else 0
+                (if (mLeft.mTarget != null) 1 else 0) + if (mRight.mTarget != null) 1 else 0
             horizontalTargets < 2
         } else {
-            val verticalTargets = ((if (mTop.target != null) 1 else 0)
-                    + (if (mBottom.target != null) 1 else 0) + if (mBaseline.target != null) 1 else 0)
+            val verticalTargets = ((if (mTop.mTarget != null) 1 else 0)
+                    + (if (mBottom.mTarget != null) 1 else 0) + if (mBaseline.mTarget != null) 1 else 0)
             verticalTargets < 2
         }
     }
 
     // @TODO: add description
     fun hasResolvedTargets(orientation: Int, size: Int): Boolean {
-        if (orientation == HORIZONTAL) {
-            if (mLeft.target != null && mLeft.target!!.hasFinalValue() == true
-                && mRight.target != null && mRight.target!!.hasFinalValue() == true
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            if (mLeft.mTarget != null && mLeft.mTarget!!.hasFinalValue()
+                && mRight.mTarget != null && mRight.mTarget!!.hasFinalValue()
             ) {
-                return (mRight.target!!.finalValue - mRight.margin
-                        - (mLeft.target!!.finalValue + mLeft.margin)) >= size
+                return (mRight.mTarget!!.getFinalValue() - mRight.getMargin()
+                        - (mLeft.mTarget!!.getFinalValue() + mLeft.getMargin())) >= size
             }
         } else {
-            if (mTop.target != null && mTop.target!!.hasFinalValue() == true
-                && mBottom.target != null && mBottom.target!!.hasFinalValue() == true
+            if (mTop.mTarget != null && mTop.mTarget!!.hasFinalValue()
+                && mBottom.mTarget != null && mBottom.mTarget!!.hasFinalValue()
             ) {
-                return (mBottom.target!!.finalValue - mBottom.margin
-                        - (mTop.target!!.finalValue + mTop.margin)) >= size
+                return (mBottom.mTarget!!.getFinalValue() - mBottom.getMargin()
+                        - (mTop.mTarget!!.getFinalValue() + mTop.getMargin())) >= size
             }
         }
         return false
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    companion object {
+        private val AUTOTAG_CENTER = false
+        private val DO_NOT_USE = false
+        protected val SOLVER = 1
+        val DIRECT = 2
+
+        // apply an intrinsic size when wrap content for spread dimensions
+        private val USE_WRAP_DIMENSION_FOR_SPREAD = false
+
+        val MATCH_CONSTRAINT_SPREAD = 0
+        val MATCH_CONSTRAINT_WRAP = 1
+        val MATCH_CONSTRAINT_PERCENT = 2
+        val MATCH_CONSTRAINT_RATIO = 3
+        val MATCH_CONSTRAINT_RATIO_RESOLVED = 4
+
+        val UNKNOWN = -1
+        val HORIZONTAL = 0
+        val VERTICAL = 1
+        val BOTH = 2
+
+        val VISIBLE = 0
+        val INVISIBLE = 4
+        val GONE = 8
+
+        // Values of the chain styles
+        val CHAIN_SPREAD = 0
+        val CHAIN_SPREAD_INSIDE = 1
+        val CHAIN_PACKED = 2
+
+        // Values of the wrap behavior in parent
+        val WRAP_BEHAVIOR_INCLUDED = 0 // default
+
+        val WRAP_BEHAVIOR_HORIZONTAL_ONLY = 1
+        val WRAP_BEHAVIOR_VERTICAL_ONLY = 2
+        val WRAP_BEHAVIOR_SKIPPED = 3
+
+        private val WRAP = -2
+
+        val ANCHOR_LEFT = 0
+        val ANCHOR_RIGHT = 1
+        val ANCHOR_TOP = 2
+        val ANCHOR_BOTTOM = 3
+        val ANCHOR_BASELINE = 4
+        
+        val DIMENSION_HORIZONTAL = 0
+        val DIMENSION_VERTICAL = 1
+
+        var DEFAULT_BIAS = 0.5f
+    }
+
     // Support for direct resolution
     var mHorizontalResolution = UNKNOWN
     var mVerticalResolution = UNKNOWN
+
     private var mWrapBehaviorInParent = WRAP_BEHAVIOR_INCLUDED
+
     var mMatchConstraintDefaultWidth = MATCH_CONSTRAINT_SPREAD
     var mMatchConstraintDefaultHeight = MATCH_CONSTRAINT_SPREAD
     var mResolvedMatchConstraintDefault = IntArray(2)
+
     var mMatchConstraintMinWidth = 0
     var mMatchConstraintMaxWidth = 0
     var mMatchConstraintPercentWidth = 1f
     var mMatchConstraintMinHeight = 0
     var mMatchConstraintMaxHeight = 0
     var mMatchConstraintPercentHeight = 1f
-    /**
-     * Returns true if width is set to wrap_content
-     */
-    /**
-     * Keep track of wrap_content for width
-     */
-    var isWidthWrapContent = false
-    /**
-     * Returns true if height is set to wrap_content
-     */
-    /**
-     * Keep track of wrap_content for height
-     */
-    var isHeightWrapContent = false
+    var mIsWidthWrapContent = false
+    var mIsHeightWrapContent = false
+
     var mResolvedDimensionRatioSide = UNKNOWN
     var mResolvedDimensionRatio = 1.0f
+
     private var mMaxDimension = intArrayOf(Int.MAX_VALUE, Int.MAX_VALUE)
     var mCircleConstraintAngle = Float.NaN
-    var hasBaseline = false
-    var isInPlaceholder = false
-    var isInVirtualLayout = false
-    var maxHeight: Int
-        get() = mMaxDimension[VERTICAL]
-        set(maxHeight) {
-            mMaxDimension[VERTICAL] = maxHeight
-        }
-    var maxWidth: Int
-        get() = mMaxDimension[HORIZONTAL]
-        set(maxWidth) {
-            mMaxDimension[HORIZONTAL] = maxWidth
-        }
-    val isSpreadWidth: Boolean
-        get() = mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD && dimensionRatioSide == 0 && mMatchConstraintMinWidth == 0 && mMatchConstraintMaxWidth == 0 && mListDimensionBehaviors[HORIZONTAL] == MATCH_CONSTRAINT
-    val isSpreadHeight: Boolean
-        get() = mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD && dimensionRatioSide == 0 && mMatchConstraintMinHeight == 0 && mMatchConstraintMaxHeight == 0 && mListDimensionBehaviors[VERTICAL] == MATCH_CONSTRAINT
+    private var mHasBaseline = false
+    private var mInPlaceholder = false
+
+    private var mInVirtualLayout = false
+
+    fun isInVirtualLayout(): Boolean {
+        return mInVirtualLayout
+    }
+
+    fun setInVirtualLayout(inVirtualLayout: Boolean) {
+        mInVirtualLayout = inVirtualLayout
+    }
+
+    fun getMaxHeight(): Int {
+        return mMaxDimension[ConstraintWidget.VERTICAL]
+    }
+
+    fun getMaxWidth(): Int {
+        return mMaxDimension[ConstraintWidget.HORIZONTAL]
+    }
+
+    fun setMaxWidth(maxWidth: Int) {
+        mMaxDimension[ConstraintWidget.HORIZONTAL] = maxWidth
+    }
+
+    fun setMaxHeight(maxHeight: Int) {
+        mMaxDimension[ConstraintWidget.VERTICAL] = maxHeight
+    }
+
+    fun isSpreadWidth(): Boolean {
+        return mMatchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_SPREAD && mDimensionRatio == 0f && mMatchConstraintMinWidth == 0 && mMatchConstraintMaxWidth == 0 && mListDimensionBehaviors.get(
+            ConstraintWidget.HORIZONTAL
+        ) == DimensionBehaviour.MATCH_CONSTRAINT
+    }
+
+    fun isSpreadHeight(): Boolean {
+        return mMatchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_SPREAD && mDimensionRatio == 0f && mMatchConstraintMinHeight == 0 && mMatchConstraintMaxHeight == 0 && mListDimensionBehaviors.get(
+            ConstraintWidget.VERTICAL
+        ) == DimensionBehaviour.MATCH_CONSTRAINT
+    }
+
+    fun setHasBaseline(hasBaseline: Boolean) {
+        mHasBaseline = hasBaseline
+    }
+
+    fun getHasBaseline(): Boolean {
+        return mHasBaseline
+    }
+
+    fun isInPlaceholder(): Boolean {
+        return mInPlaceholder
+    }
+
+    fun setInPlaceholder(inPlaceholder: Boolean) {
+        mInPlaceholder = inPlaceholder
+    }
 
     fun setInBarrier(orientation: Int, value: Boolean) {
-        mIsInBarrier[orientation] = value
+        mIsInBarrier.set(orientation, value)
     }
 
     // @TODO: add description
     fun isInBarrier(orientation: Int): Boolean {
-        return mIsInBarrier[orientation]
+        return mIsInBarrier.get(orientation)
     }
 
-    var isMeasureRequested: Boolean
-        get() = mMeasureRequested && visibility != GONE
-        set(measureRequested) {
-            mMeasureRequested = measureRequested
-        }
+
+    fun setMeasureRequested(measureRequested: Boolean) {
+        mMeasureRequested = measureRequested
+    }
+
+    fun isMeasureRequested(): Boolean {
+        return mMeasureRequested && mVisibility != ConstraintWidget.GONE
+    }
 
     // @TODO: add description
-    var wrapBehaviorInParent: Int
-        get() = mWrapBehaviorInParent
-        set(behavior) {
-            if (behavior >= 0 && behavior <= WRAP_BEHAVIOR_SKIPPED) {
-                mWrapBehaviorInParent = behavior
-            }
+    fun setWrapBehaviorInParent(behavior: Int) {
+        if (behavior >= 0 && behavior <= ConstraintWidget.WRAP_BEHAVIOR_SKIPPED) {
+            mWrapBehaviorInParent = behavior
         }
+    }
+
+    fun getWrapBehaviorInParent(): Int {
+        return mWrapBehaviorInParent
+    }
 
     /**
      * Keep a cache of the last measure cache as we can bypass remeasures during the onMeasure...
-     * the TView's measure cache will only be reset in onLayout, so too late for us.
+     * the View's measure cache will only be reset in onLayout, so too late for us.
      */
-    var lastHorizontalMeasureSpec = 0
-        private set
-    var lastVerticalMeasureSpec = 0
-        private set
+    private var mLastHorizontalMeasureSpec = 0
+    private var mLastVerticalMeasureSpec = 0
+
+    fun getLastHorizontalMeasureSpec(): Int {
+        return mLastHorizontalMeasureSpec
+    }
+
+    fun getLastVerticalMeasureSpec(): Int {
+        return mLastVerticalMeasureSpec
+    }
 
     // @TODO: add description
     fun setLastMeasureSpec(horizontal: Int, vertical: Int) {
-        lastHorizontalMeasureSpec = horizontal
-        lastVerticalMeasureSpec = vertical
-        isMeasureRequested = false
+        mLastHorizontalMeasureSpec = horizontal
+        mLastVerticalMeasureSpec = vertical
+        setMeasureRequested(false)
     }
+
 
     /**
      * Define how the widget will resize
@@ -364,49 +681,31 @@ open class ConstraintWidget {
 
     // The anchors available on the widget
     // note: all anchors should be added to the mAnchors array (see addAnchors())
-    var mLeft: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.LEFT)
-    var mTop: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.TOP)
-    var mRight: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.RIGHT)
-    var mBottom: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.BOTTOM)
-    var mBaseline: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.BASELINE)
-    var mCenterX: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER_X)
-    var mCenterY: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER_Y)
-    var mCenter: ConstraintAnchor = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER)
-    var mListAnchors: Array<ConstraintAnchor> = arrayOf(mLeft, mRight, mTop, mBottom, mBaseline, mCenter)
-    protected var mAnchors: ArrayList<ConstraintAnchor?> = ArrayList()
+    var mLeft = ConstraintAnchor(this, ConstraintAnchor.Type.LEFT)
+    var mTop = ConstraintAnchor(this, ConstraintAnchor.Type.TOP)
+    var mRight = ConstraintAnchor(this, ConstraintAnchor.Type.RIGHT)
+    var mBottom = ConstraintAnchor(this, ConstraintAnchor.Type.BOTTOM)
+    var mBaseline = ConstraintAnchor(this, ConstraintAnchor.Type.BASELINE)
+    var mCenterX = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER_X)
+    var mCenterY = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER_Y)
+    var mCenter = ConstraintAnchor(this, ConstraintAnchor.Type.CENTER)
+
+    var mListAnchors = arrayOf(mLeft, mRight, mTop, mBottom, mBaseline, mCenter)
+    protected var mAnchors: ArrayList<ConstraintAnchor> = ArrayList()
+
     private val mIsInBarrier = BooleanArray(2)
+
+    // The horizontal and vertical behaviour for the widgets' dimensions
     var mListDimensionBehaviors = arrayOf(DimensionBehaviour.FIXED, DimensionBehaviour.FIXED)
-    /**
-     * Returns the parent of this widget if there is one
-     *
-     * @return parent
-     */
-    /**
-     * Set the parent of this widget
-     *
-     * @param widget parent
-     */
+
     // Parent of this widget
-    var parent: ConstraintWidget? = null
+    var mParent: ConstraintWidget? = null
 
     // Dimensions of the widget
     var mWidth = 0
-
-    /**
-     * Return the current ratio of this widget
-     *
-     * @return the dimension ratio (HORIZONTAL, VERTICAL, or UNKNOWN)
-     */
-    var dimensionRatio = 0f
-
-    /**
-     * Return the current side on which ratio will be applied
-     *
-     * @return HORIZONTAL, VERTICAL, or UNKNOWN
-     */
-    var dimensionRatioSide = 0
-        get() = mDimensionRatioSide
-    protected var mDimensionRatioSide = UNKNOWN
+    var mHeight = 0
+    var mDimensionRatio = 0f
+    protected var mDimensionRatioSide: Int = ConstraintWidget.UNKNOWN
 
     // Origin of the widget
     var mX = 0
@@ -423,40 +722,11 @@ open class ConstraintWidget {
 
     // Minimum sizes for the widget
     protected var mMinWidth = 0
-    /**
-     * Return the horizontal percentage bias that is used when two opposite connections
-     * exist of the same strength.
-     *
-     * @return horizontal percentage bias
-     */
-    /**
-     * Set the horizontal bias percent to apply when we have two opposite constraints of
-     * equal strength
-     *
-     * @param horizontalBiasPercent the percentage used
-     */
-    var horizontalBiasPercent
-        get() = verticalBiasPercent
-        set(horizontalBiasPercent) {
-            verticalBiasPercent = horizontalBiasPercent
-        }
-    /**
-     * Return the vertical percentage bias that is used when two opposite connections
-     * exist of the same strength.
-     *
-     * @return vertical percentage bias
-     */
-    /**
-     * Set the vertical bias percent to apply when we have two opposite constraints of
-     * equal strength
-     *
-     * @param verticalBiasPercent the percentage used
-     */
-    var verticalBiasPercent
-        get() = mVerticalBiasPercent
-        set(verticalBiasPercent) {
-            mVerticalBiasPercent = verticalBiasPercent
-        }
+    protected var mMinHeight = 0
+
+    // Percentages used for biasing one connection over another when dual connections
+    // of the same strength exist
+    var mHorizontalBiasPercent = DEFAULT_BIAS
     var mVerticalBiasPercent = DEFAULT_BIAS
 
     // The companion widget (typically, the real widget we represent)
@@ -466,50 +736,15 @@ open class ConstraintWidget {
     // a container like Table can use this to implement empty cells
     // (the item positioned after the empty cell will have a skip value of 1)
     private var mContainerItemSkip = 0
-    /**
-     * Returns the current visibility value for this widget
-     *
-     * @return the visibility (VISIBLE, INVISIBLE, or GONE)
-     */
-    /**
-     * Set the visibility for this widget
-     *
-     * @param visibility either VISIBLE, INVISIBLE, or GONE
-     */
+
     // Contains the visibility status of the widget (VISIBLE, INVISIBLE, or GONE)
-    var visibility = VISIBLE
-    /**
-     * Returns if this widget is animated. Currently only affects gone behaviour
-     *
-     * @return true if ConstraintWidget is used in Animation
-     */
-    /**
-     * Set if this widget is animated. Currently only affects gone behaviour
-     *
-     * @param animated if true the widget must be positioned correctly when not visible
-     */
+    private var mVisibility: Int = ConstraintWidget.VISIBLE
+
     // Contains if this widget is animated. Currently only affects gone behaviour
-    var isAnimated = false
-    /**
-     * Returns the name of this widget (used for debug purposes)
-     *
-     * @return the debug name
-     */
-    /**
-     * Set the debug name of this widget
-     */
-    var debugName: String? = null
-    /**
-     * Returns the type string if set
-     *
-     * @return type (null if not set)
-     */
-    /**
-     * Set the type of the widget (as a String)
-     *
-     * @param type type of the widget
-     */
-    open var type: String? = null
+    private var mAnimated = false
+    private var mDebugName: String? = null
+    private var mType: String? = null
+
     var mDistToTop = 0
     var mDistToLeft = 0
     var mDistToRight = 0
@@ -520,47 +755,24 @@ open class ConstraintWidget {
     var mBottomHasCentered = false
     var mHorizontalWrapVisited = false
     var mVerticalWrapVisited = false
-    /**
-     * get the chain starting from this widget to be packed.
-     * The horizontal bias will control how elements of the chain are positioned.
-     *
-     * @return Horizontal Chain Style
-     */
-    /**
-     * Set the chain starting from this widget to be packed.
-     * The horizontal bias will control how elements of the chain are positioned.
-     *
-     * @param horizontalChainStyle (CHAIN_SPREAD, CHAIN_SPREAD_INSIDE, CHAIN_PACKED)
-     */
-    var horizontalChainStyle
-        get() = verticalChainStyle
-        set(horizontalChainStyle) {
-            verticalChainStyle = horizontalChainStyle
-        }
-    /**
-     * Set the chain starting from this widget to be packed.
-     * The vertical bias will control how elements of the chain are positioned.
-     */
-    /**
-     * Set the chain starting from this widget to be packed.
-     * The vertical bias will control how elements of the chain are positioned.
-     *
-     * @param verticalChainStyle (CHAIN_SPREAD, CHAIN_SPREAD_INSIDE, CHAIN_PACKED)
-     */
+    var mGroupsToSolver = false
+
     // Chain support
-    var verticalChainStyle
-        get() = mVerticalChainStyle
-        set(verticalChainStyle) {
-            mVerticalChainStyle = verticalChainStyle
-        }
-    var mVerticalChainStyle = CHAIN_SPREAD
+    var mHorizontalChainStyle: Int = ConstraintWidget.CHAIN_SPREAD
+    var mVerticalChainStyle: Int = ConstraintWidget.CHAIN_SPREAD
     var mHorizontalChainFixedPosition = false
     var mVerticalChainFixedPosition = false
-    var mWeight = floatArrayOf(UNKNOWN.toFloat(), UNKNOWN.toFloat())
+
+    var mWeight =
+        floatArrayOf(ConstraintWidget.UNKNOWN.toFloat(), ConstraintWidget.UNKNOWN.toFloat())
+
     var mListNextMatchConstraintsWidget = arrayOf<ConstraintWidget?>(null, null)
     var mNextChainWidget = arrayOf<ConstraintWidget?>(null, null)
+
     var mHorizontalNextWidget: ConstraintWidget? = null
     var mVerticalNextWidget: ConstraintWidget? = null
+
+    // TODO: see if we can make this simpler
 
     // TODO: see if we can make this simpler
     // @TODO: add description
@@ -573,41 +785,41 @@ open class ConstraintWidget {
         mCenterX.reset()
         mCenterY.reset()
         mCenter.reset()
-        parent = null
+        mParent = null
         mCircleConstraintAngle = Float.NaN
         mWidth = 0
-        dimensionRatio = 0f
-        dimensionRatioSide = 0
-        mDimensionRatioSide = UNKNOWN
+        mHeight = 0
+        mDimensionRatio = 0f
+        mDimensionRatioSide = ConstraintWidget.UNKNOWN
         mX = 0
         mY = 0
         mOffsetX = 0
         mOffsetY = 0
         mBaselineDistance = 0
         mMinWidth = 0
-        horizontalBiasPercent = 0f
-        verticalBiasPercent = DEFAULT_BIAS
+        mMinHeight = 0
+        mHorizontalBiasPercent = DEFAULT_BIAS
         mVerticalBiasPercent = DEFAULT_BIAS
-        mListDimensionBehaviors[DIMENSION_HORIZONTAL] = DimensionBehaviour.FIXED
-        mListDimensionBehaviors[DIMENSION_VERTICAL] = DimensionBehaviour.FIXED
+        mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] = DimensionBehaviour.FIXED
+        mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] = DimensionBehaviour.FIXED
         mCompanionWidget = null
         mContainerItemSkip = 0
-        visibility = VISIBLE
-        type = null
+        mVisibility = ConstraintWidget.VISIBLE
+        mType = null
         mHorizontalWrapVisited = false
         mVerticalWrapVisited = false
-        verticalChainStyle = CHAIN_SPREAD
-        mVerticalChainStyle = CHAIN_SPREAD
+        mHorizontalChainStyle = ConstraintWidget.CHAIN_SPREAD
+        mVerticalChainStyle = ConstraintWidget.CHAIN_SPREAD
         mHorizontalChainFixedPosition = false
         mVerticalChainFixedPosition = false
-        mWeight[DIMENSION_HORIZONTAL] = UNKNOWN.toFloat()
-        mWeight[DIMENSION_VERTICAL] = UNKNOWN.toFloat()
-        mHorizontalResolution = UNKNOWN
-        mVerticalResolution = UNKNOWN
-        mMaxDimension[HORIZONTAL] = Int.MAX_VALUE
-        mMaxDimension[VERTICAL] = Int.MAX_VALUE
-        mMatchConstraintDefaultWidth = MATCH_CONSTRAINT_SPREAD
-        mMatchConstraintDefaultHeight = MATCH_CONSTRAINT_SPREAD
+        mWeight[ConstraintWidget.DIMENSION_HORIZONTAL] = ConstraintWidget.UNKNOWN.toFloat()
+        mWeight[ConstraintWidget.DIMENSION_VERTICAL] = ConstraintWidget.UNKNOWN.toFloat()
+        mHorizontalResolution = ConstraintWidget.UNKNOWN
+        mVerticalResolution = ConstraintWidget.UNKNOWN
+        mMaxDimension[ConstraintWidget.HORIZONTAL] = Int.MAX_VALUE
+        mMaxDimension[ConstraintWidget.VERTICAL] = Int.MAX_VALUE
+        mMatchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_SPREAD
+        mMatchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_SPREAD
         mMatchConstraintPercentWidth = 1f
         mMatchConstraintPercentHeight = 1f
         mMatchConstraintMaxWidth = Int.MAX_VALUE
@@ -615,29 +827,34 @@ open class ConstraintWidget {
         mMatchConstraintMinWidth = 0
         mMatchConstraintMinHeight = 0
         mResolvedHasRatio = false
-        mResolvedDimensionRatioSide = UNKNOWN
+        mResolvedDimensionRatioSide = ConstraintWidget.UNKNOWN
         mResolvedDimensionRatio = 1f
-        horizontalChainStyle = CHAIN_SPREAD
-        isTerminalWidget[HORIZONTAL] = true
-        isTerminalWidget[VERTICAL] = true
-        isInVirtualLayout = false
-        mIsInBarrier[HORIZONTAL] = false
-        mIsInBarrier[VERTICAL] = false
+        mGroupsToSolver = false
+        isTerminalWidget[ConstraintWidget.HORIZONTAL] = true
+        isTerminalWidget[ConstraintWidget.VERTICAL] = true
+        mInVirtualLayout = false
+        mIsInBarrier[ConstraintWidget.HORIZONTAL] = false
+        mIsInBarrier[ConstraintWidget.VERTICAL] = false
         mMeasureRequested = true
-        mResolvedMatchConstraintDefault[HORIZONTAL] = 0
-        mResolvedMatchConstraintDefault[VERTICAL] = 0
+        mResolvedMatchConstraintDefault[ConstraintWidget.HORIZONTAL] = 0
+        mResolvedMatchConstraintDefault[ConstraintWidget.VERTICAL] = 0
         mWidthOverride = -1
         mHeightOverride = -1
     }
 
     ///////////////////////////////////SERIALIZE///////////////////////////////////////////////
-    private fun serializeAnchor(ret: StringBuilder, side: String, a: ConstraintAnchor) {
-        if (a.target == null) {
+    ///////////////////////////////////SERIALIZE///////////////////////////////////////////////
+    open fun serializeAnchor(
+        ret: StringBuilder,
+        side: String,
+        a: ConstraintAnchor
+    ) {
+        if (a.mTarget == null) {
             return
         }
         ret.append(side)
         ret.append(" : [ '")
-        ret.append(a.target)
+        ret.append(a.mTarget)
         ret.append("',")
         ret.append(a.mMargin)
         ret.append(",")
@@ -647,11 +864,11 @@ open class ConstraintWidget {
     }
 
     private fun serializeCircle(ret: StringBuilder, a: ConstraintAnchor, angle: Float) {
-        if (a.target == null || Float.isNaN(angle)) {
+        if (a.mTarget == null || Float.isNaN(angle)) {
             return
         }
         ret.append("circle : [ '")
-        ret.append(a.target)
+        ret.append(a.mTarget)
         ret.append("',")
         ret.append(a.mMargin)
         ret.append(",")
@@ -660,7 +877,12 @@ open class ConstraintWidget {
         ret.append(" ] ,\n")
     }
 
-    private fun serializeAttribute(ret: StringBuilder, type: String, value: Float, def: Float) {
+    private fun serializeAttribute(
+        ret: StringBuilder,
+        type: String,
+        value: Float,
+        def: Float
+    ) {
         if (value == def) {
             return
         }
@@ -670,7 +892,12 @@ open class ConstraintWidget {
         ret.append(",\n")
     }
 
-    private fun serializeAttribute(ret: StringBuilder, type: String, value: Int, def: Int) {
+    private fun serializeAttribute(
+        ret: StringBuilder,
+        type: String,
+        value: Int,
+        def: Int
+    ) {
         if (value == def) {
             return
         }
@@ -680,8 +907,13 @@ open class ConstraintWidget {
         ret.append(",\n")
     }
 
-    private fun serializeAttribute(ret: StringBuilder, type: String, value: String, def: String) {
-        if (def.equals(value)) {
+    private fun serializeAttribute(
+        ret: StringBuilder,
+        type: String,
+        value: String,
+        def: String
+    ) {
+        if (def == value) {
             return
         }
         ret.append(type)
@@ -721,7 +953,12 @@ open class ConstraintWidget {
         serializeAttribute(ret, "min", min, 0)
         serializeAttribute(ret, "max", max, Int.MAX_VALUE)
         serializeAttribute(ret, "matchMin", matchConstraintMin, 0)
-        serializeAttribute(ret, "matchDef", matchConstraintDefault, MATCH_CONSTRAINT_SPREAD)
+        serializeAttribute(
+            ret,
+            "matchDef",
+            matchConstraintDefault,
+            ConstraintWidget.MATCH_CONSTRAINT_SPREAD
+        )
         serializeAttribute(ret, "matchPercent", matchConstraintDefault, 1)
         serializeAttribute(ret, "matchConstraintPercent", matchConstraintPercent, 1f)
         serializeAttribute(ret, "weight", weight, 1f)
@@ -734,7 +971,7 @@ open class ConstraintWidget {
      * @param ret StringBuilder to be populated
      * @return the same string builder to alow chaining
      */
-    fun serialize(ret: StringBuilder): StringBuilder {
+    fun serialize(ret: StringBuilder): StringBuilder? {
         ret.append("{\n")
         serializeAnchor(ret, "left", mLeft)
         serializeAnchor(ret, "top", mTop)
@@ -748,30 +985,36 @@ open class ConstraintWidget {
             ret, "width",
             mWidth,
             mMinWidth,
-            mMaxDimension[HORIZONTAL],
+            mMaxDimension[ConstraintWidget.HORIZONTAL],
             mWidthOverride,
             mMatchConstraintMinWidth,
             mMatchConstraintDefaultWidth,
             mMatchConstraintPercentWidth,
-            mWeight[DIMENSION_HORIZONTAL]
+            mWeight[ConstraintWidget.DIMENSION_HORIZONTAL]
         )
         serializeSize(
             ret, "height",
-            dimensionRatio.toInt(),
-            horizontalBiasPercent.toInt(),
-            mMaxDimension[VERTICAL],
+            mHeight,
+            mMinHeight,
+            mMaxDimension[ConstraintWidget.VERTICAL],
             mHeightOverride,
             mMatchConstraintMinHeight,
             mMatchConstraintDefaultHeight,
             mMatchConstraintPercentHeight,
-            mWeight[DIMENSION_VERTICAL]
+            mWeight[ConstraintWidget.DIMENSION_VERTICAL]
         )
-        serializeDimensionRatio(ret, "dimensionRatio", dimensionRatioSide.toFloat(), mDimensionRatioSide)
-        serializeAttribute(ret, "horizontalBias", verticalBiasPercent, DEFAULT_BIAS)
-        serializeAttribute(ret, "verticalBias", mVerticalBiasPercent, DEFAULT_BIAS)
+        serializeDimensionRatio(ret, "dimensionRatio", mDimensionRatio, mDimensionRatioSide)
+        serializeAttribute(
+            ret,
+            "horizontalBias",
+            mHorizontalBiasPercent,
+            ConstraintWidget.DEFAULT_BIAS
+        )
+        serializeAttribute(ret, "verticalBias", mVerticalBiasPercent, ConstraintWidget.DEFAULT_BIAS)
         ret.append("}\n")
         return ret
     }
+    ///////////////////////////////////END SERIALIZE///////////////////////////////////////////
 
     ///////////////////////////////////END SERIALIZE///////////////////////////////////////////
     var horizontalGroup = -1
@@ -779,24 +1022,30 @@ open class ConstraintWidget {
 
     // @TODO: add description
     fun oppositeDimensionDependsOn(orientation: Int): Boolean {
-        val oppositeOrientation = if (orientation == HORIZONTAL) VERTICAL else HORIZONTAL
+        val oppositeOrientation: Int =
+            if (orientation == ConstraintWidget.HORIZONTAL) ConstraintWidget.VERTICAL else ConstraintWidget.HORIZONTAL
         val dimensionBehaviour = mListDimensionBehaviors[orientation]
         val oppositeDimensionBehaviour = mListDimensionBehaviors[oppositeOrientation]
-        return (dimensionBehaviour == MATCH_CONSTRAINT
-                && oppositeDimensionBehaviour == MATCH_CONSTRAINT)
+        return (dimensionBehaviour == DimensionBehaviour.MATCH_CONSTRAINT
+                && oppositeDimensionBehaviour == DimensionBehaviour.MATCH_CONSTRAINT)
         //&& mDimensionRatio != 0;
     }
 
     // @TODO: add description
     fun oppositeDimensionsTied(): Boolean {
-        return  /* isInHorizontalChain() || isInVerticalChain() || */(mListDimensionBehaviors[HORIZONTAL] == MATCH_CONSTRAINT
-                && mListDimensionBehaviors[VERTICAL] == MATCH_CONSTRAINT)
+        return  /* isInHorizontalChain() || isInVerticalChain() || */(mListDimensionBehaviors[ConstraintWidget.HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                && mListDimensionBehaviors[ConstraintWidget.VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT)
     }
 
     // @TODO: add description
     fun hasDimensionOverride(): Boolean {
         return mWidthOverride != -1 || mHeightOverride != -1
     }
+
+    /*-----------------------------------------------------------------------*/
+    // Creation
+    /*-----------------------------------------------------------------------*/
+
     /*-----------------------------------------------------------------------*/ // Creation
     /*-----------------------------------------------------------------------*/
     /**
@@ -806,9 +1055,9 @@ open class ConstraintWidget {
         addAnchors()
     }
 
-    constructor(debugName: String?) {
+    constructor(debugName: String) {
         addAnchors()
-        this.debugName = debugName
+        setDebugName(debugName)
     }
 
     /**
@@ -823,17 +1072,12 @@ open class ConstraintWidget {
         mX = x
         mY = y
         mWidth = width
-        dimensionRatio = height.toFloat()
+        mHeight = height
         addAnchors()
     }
 
-    constructor(debugName: String?, x: Int, y: Int, width: Int, height: Int) : this(
-        x,
-        y,
-        width,
-        height
-    ) {
-        this.debugName = debugName
+    constructor(debugName: String, x: Int, y: Int, width: Int, height: Int) : this(x, y, width, height) {
+        setDebugName(debugName)
     }
 
     /**
@@ -842,7 +1086,9 @@ open class ConstraintWidget {
      * @param width  width of the layout
      * @param height height of the layout
      */
-    constructor(width: Int, height: Int) : this(0, 0, width, height) {}
+    constructor(width: Int, height: Int) : this(0, 0, width, height)
+    {
+    }
 
     // @TODO: add description
     fun ensureWidgetRuns() {
@@ -854,8 +1100,8 @@ open class ConstraintWidget {
         }
     }
 
-    constructor(debugName: String?, width: Int, height: Int) : this(width, height) {
-        this.debugName = debugName
+    constructor(debugName: String, width: Int, height: Int) : this(width, height) {
+        setDebugName(debugName)
     }
 
     /**
@@ -891,8 +1137,55 @@ open class ConstraintWidget {
      *
      * @return true if root widget, false otherwise
      */
-    val isRoot: Boolean
-        get() = parent == null
+    fun isRoot(): Boolean {
+        return mParent == null
+    }
+
+    /**
+     * Returns the parent of this widget if there is one
+     *
+     * @return parent
+     */
+    fun getParent(): ConstraintWidget? {
+        return mParent
+    }
+
+    /**
+     * Set the parent of this widget
+     *
+     * @param widget parent
+     */
+    fun setParent(widget: ConstraintWidget?) {
+        mParent = widget
+    }
+
+    /**
+     * Keep track of wrap_content for width
+     */
+    fun setWidthWrapContent(widthWrapContent: Boolean) {
+        mIsWidthWrapContent = widthWrapContent
+    }
+
+    /**
+     * Returns true if width is set to wrap_content
+     */
+    fun isWidthWrapContent(): Boolean {
+        return mIsWidthWrapContent
+    }
+
+    /**
+     * Keep track of wrap_content for height
+     */
+    fun setHeightWrapContent(heightWrapContent: Boolean) {
+        mIsHeightWrapContent = heightWrapContent
+    }
+
+    /**
+     * Returns true if height is set to wrap_content
+     */
+    fun isHeightWrapContent(): Boolean {
+        return mIsHeightWrapContent
+    }
 
     /**
      * Set a circular constraint
@@ -907,6 +1200,76 @@ open class ConstraintWidget {
             radius, 0
         )
         mCircleConstraintAngle = angle
+    }
+
+    /**
+     * Returns the type string if set
+     *
+     * @return type (null if not set)
+     */
+    open fun getType(): String? {
+        return mType
+    }
+
+    /**
+     * Set the type of the widget (as a String)
+     *
+     * @param type type of the widget
+     */
+    open fun setType(type: String) {
+        mType = type
+    }
+
+    /**
+     * Set the visibility for this widget
+     *
+     * @param visibility either VISIBLE, INVISIBLE, or GONE
+     */
+    fun setVisibility(visibility: Int) {
+        mVisibility = visibility
+    }
+
+    /**
+     * Returns the current visibility value for this widget
+     *
+     * @return the visibility (VISIBLE, INVISIBLE, or GONE)
+     */
+    fun getVisibility(): Int {
+        return mVisibility
+    }
+
+    /**
+     * Set if this widget is animated. Currently only affects gone behaviour
+     *
+     * @param animated if true the widget must be positioned correctly when not visible
+     */
+    fun setAnimated(animated: Boolean) {
+        mAnimated = animated
+    }
+
+    /**
+     * Returns if this widget is animated. Currently only affects gone behaviour
+     *
+     * @return true if ConstraintWidget is used in Animation
+     */
+    fun isAnimated(): Boolean {
+        return mAnimated
+    }
+
+    /**
+     * Returns the name of this widget (used for debug purposes)
+     *
+     * @return the debug name
+     */
+    fun getDebugName(): String? {
+        return mDebugName
+    }
+
+    /**
+     * Set the debug name of this widget
+     */
+    fun setDebugName(name: String) {
+        mDebugName = name
     }
 
     /**
@@ -926,18 +1289,18 @@ open class ConstraintWidget {
      * @param system solver used
      * @param name   name of the widget
      */
-    fun setDebugSolverName(system: LinearSystem, name: String?) {
-        debugName = name
+    fun setDebugSolverName(system: LinearSystem, name: String) {
+        mDebugName = name
         val left: SolverVariable? = system.createObjectVariable(mLeft)
         val top: SolverVariable? = system.createObjectVariable(mTop)
         val right: SolverVariable? = system.createObjectVariable(mRight)
         val bottom: SolverVariable? = system.createObjectVariable(mBottom)
-        left?.name = name.toString() + ".left"
-        top?.name = name.toString() + ".top"
-        right?.name = name.toString() + ".right"
-        bottom?.name = name.toString() + ".bottom"
+        left!!.name = ("$name.left")
+        top!!.name = ("$name.top")
+        right!!.name = ("$name.right")
+        bottom!!.name = ("$name.bottom")
         val baseline: SolverVariable? = system.createObjectVariable(mBaseline)
-        baseline?.name = name.toString() + ".baseline"
+        baseline!!.name = ("$name.baseline")
     }
 
     /**
@@ -960,12 +1323,22 @@ open class ConstraintWidget {
      *
      * @return string representation of the widget
      */
-    
     override fun toString(): String {
-        return ((if (type != null) "type: " + type + " " else "")
-                + (if (debugName != null) "id: " + debugName + " " else "")
-                + "(" + mX + ", " + mY + ") - (" + mWidth + " x " + dimensionRatio + ")")
+        return ((if (mType != null) "type: $mType " else "")
+                + (if (mDebugName != null) "id: $mDebugName " else "")
+                + "(" + mX + ", " + mY + ") - (" + mWidth + " x " + mHeight + ")")
     }
+
+    /*-----------------------------------------------------------------------*/
+    // Position
+    /*-----------------------------------------------------------------------*/
+    // The widget position is expressed in two ways:
+    // - relative to its direct parent container (getX(), getY())
+    // - relative to the root container (getDrawX(), getDrawY())
+    // Additionally, getDrawX()/getDrawY() are used when animating the
+    // widget position on screen
+    /*-----------------------------------------------------------------------*/
+
     /*-----------------------------------------------------------------------*/ // Position
     /*-----------------------------------------------------------------------*/ // The widget position is expressed in two ways:
     // - relative to its direct parent container (getX(), getY())
@@ -978,115 +1351,82 @@ open class ConstraintWidget {
      *
      * @return x position
      */
-    /**
-     * Set the x position of the widget, relative to its container
-     *
-     * @param x x position
-     */
-    var x: Int
-        get() = if (parent != null && parent is ConstraintWidgetContainer) {
-            (parent as ConstraintWidgetContainer).mPaddingLeft + mX
+    fun getX(): Int {
+        return if (mParent != null && mParent is ConstraintWidgetContainer) {
+            (mParent as ConstraintWidgetContainer).mPaddingLeft + mX
         } else mX
-        set(x) {
-            mX = x
-        }
+    }
+
     /**
      * Return the y position of the widget, relative to its container
      *
      * @return y position
      */
-    /**
-     * Set the y position of the widget, relative to its container
-     *
-     * @param y y position
-     */
-    var y: Int
-        get() = if (parent != null && parent is ConstraintWidgetContainer) {
-            (parent as ConstraintWidgetContainer).mPaddingTop + mY
+    fun getY(): Int {
+        return if (mParent != null && mParent is ConstraintWidgetContainer) {
+            (mParent as ConstraintWidgetContainer).mPaddingTop + mY
         } else mY
-        set(y) {
-            mY = y
-        }
+    }
+
     /**
      * Return the width of the widget
      *
      * @return width width
      */
-    /**
-     * Set the width of the widget
-     *
-     * @param w width
-     */
-    var width: Int
-        get() = if (visibility == GONE) {
+    fun getWidth(): Int {
+        return if (mVisibility == ConstraintWidget.GONE) {
             0
         } else mWidth
-        set(w) {
-            mWidth = w
-            if (mWidth < mMinWidth) {
-                mWidth = mMinWidth
-            }
-        }
+    }
 
     // @TODO: add description
-    val optimizerWrapWidth: Int
-        get() {
-            var w = mWidth
-            if (mListDimensionBehaviors[DIMENSION_HORIZONTAL] == MATCH_CONSTRAINT) {
-                if (mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_WRAP) {
-                    w = max(mMatchConstraintMinWidth, w)
-                } else if (mMatchConstraintMinWidth > 0) {
-                    w = mMatchConstraintMinWidth
-                    mWidth = w
-                } else {
-                    w = 0
-                }
-                if (mMatchConstraintMaxWidth > 0 && mMatchConstraintMaxWidth < w) {
-                    w = mMatchConstraintMaxWidth
-                }
+    fun getOptimizerWrapWidth(): Int {
+        var w = mWidth
+        if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT) {
+            if (mMatchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_WRAP) {
+                w = max(mMatchConstraintMinWidth, w)
+            } else if (mMatchConstraintMinWidth > 0) {
+                w = mMatchConstraintMinWidth
+                mWidth = w
+            } else {
+                w = 0
             }
-            return w
+            if (mMatchConstraintMaxWidth > 0 && mMatchConstraintMaxWidth < w) {
+                w = mMatchConstraintMaxWidth
+            }
         }
+        return w
+    }
 
     // @TODO: add description
-    val optimizerWrapHeight: Int
-        get() {
-            var h = dimensionRatio
-            if (mListDimensionBehaviors[DIMENSION_VERTICAL] == MATCH_CONSTRAINT) {
-                if (mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_WRAP) {
-                    h = max(mMatchConstraintMinHeight.toFloat(), h)
-                } else if (mMatchConstraintMinHeight > 0) {
-                    h = mMatchConstraintMinHeight.toFloat()
-                    dimensionRatio = h
-                } else {
-                    h = 0f
-                }
-                if (mMatchConstraintMaxHeight > 0 && mMatchConstraintMaxHeight < h) {
-                    h = mMatchConstraintMaxHeight.toFloat()
-                }
+    fun getOptimizerWrapHeight(): Int {
+        var h = mHeight
+        if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT) {
+            if (mMatchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_WRAP) {
+                h = max(mMatchConstraintMinHeight, h)
+            } else if (mMatchConstraintMinHeight > 0) {
+                h = mMatchConstraintMinHeight
+                mHeight = h
+            } else {
+                h = 0
             }
-            return h.toInt()
+            if (mMatchConstraintMaxHeight > 0 && mMatchConstraintMaxHeight < h) {
+                h = mMatchConstraintMaxHeight
+            }
         }
+        return h
+    }
+
     /**
      * Return the height of the widget
      *
      * @return height height
      */
-    /**
-     * Set the height of the widget
-     *
-     * @param h height
-     */
-    var height: Int
-        get() = if (visibility == GONE) {
+    fun getHeight(): Int {
+        return if (mVisibility == ConstraintWidget.GONE) {
             0
-        } else dimensionRatio.toInt()
-        set(h) {
-            dimensionRatio = h.toFloat()
-            if (dimensionRatio < horizontalBiasPercent) {
-                dimensionRatio = horizontalBiasPercent
-            }
-        }
+        } else mHeight
+    }
 
     /**
      * Get a dimension of the widget in a particular orientation.
@@ -1094,10 +1434,10 @@ open class ConstraintWidget {
      * @return The dimension of the specified orientation.
      */
     fun getLength(orientation: Int): Int {
-        return if (orientation == HORIZONTAL) {
-            width
-        } else if (orientation == VERTICAL) {
-            height
+        return if (orientation == ConstraintWidget.HORIZONTAL) {
+            getWidth()
+        } else if (orientation == ConstraintWidget.VERTICAL) {
+            getHeight()
         } else {
             0
         }
@@ -1109,115 +1449,119 @@ open class ConstraintWidget {
      *
      * @return x position
      */
-    protected val rootX: Int
-        protected get() = mX + mOffsetX
+    protected fun getRootX(): Int {
+        return mX + mOffsetX
+    }
 
     /**
      * Return the y position of the widget, relative to the root
      * (without animation)
      */
-    protected val rootY: Int
-        protected get() = mY + mOffsetY
+    protected fun getRootY(): Int {
+        return mY + mOffsetY
+    }
+
     /**
      * Return the minimum width of the widget
      *
      * @return minimum width
      */
-    /**
-     * Set the minimum width of the widget
-     *
-     * @param w minimum width
-     */
-    var minWidth: Int
-        get() = mMinWidth
-        set(w) {
-            mMinWidth = if (w < 0) {
-                0
-            } else {
-                w
-            }
-        }
+    fun getMinWidth(): Int {
+        return mMinWidth
+    }
+
     /**
      * Return the minimum height of the widget
      *
      * @return minimum height
      */
-    /**
-     * Set the minimum height of the widget
-     *
-     * @param h minimum height
-     */
-    var minHeight: Int
-        get() = horizontalBiasPercent.toInt()
-        set(h) {
-            if (h < 0) {
-                horizontalBiasPercent = 0f
-            } else {
-                horizontalBiasPercent = h.toFloat()
-            }
-        }
+    fun getMinHeight(): Int {
+        return mMinHeight
+    }
 
     /**
      * Return the left position of the widget (similar to [.getX])
      *
      * @return left position of the widget
      */
-    val left: Int
-        get() = x
+    fun getLeft(): Int {
+        return getX()
+    }
 
     /**
      * Return the top position of the widget (similar to [.getY])
      *
      * @return top position of the widget
      */
-    val top: Int
-        get() = y
+    fun getTop(): Int {
+        return getY()
+    }
 
     /**
      * Return the right position of the widget
      *
      * @return right position of the widget
      */
-    val right: Int
-        get() = x + mWidth
+    fun getRight(): Int {
+        return getX() + mWidth
+    }
 
     /**
      * Return the bottom position of the widget
      *
      * @return bottom position of the widget
      */
-    val bottom: Int
-        get() = (y + dimensionRatio).toInt()
+    fun getBottom(): Int {
+        return getY() + mHeight
+    }
 
     /**
      * Returns all the horizontal margin of the widget.
      */
-    val horizontalMargin: Int
-        get() {
-            var margin = 0
-            if (mLeft != null) {
-                margin += mLeft.mMargin
-            }
-            if (mRight != null) {
-                margin += mRight.mMargin
-            }
-            return margin
+    fun getHorizontalMargin(): Int {
+        var margin = 0
+        if (mLeft != null) {
+            margin += mLeft.mMargin
         }
+        if (mRight != null) {
+            margin += mRight.mMargin
+        }
+        return margin
+    }
 
     /**
      * Returns all the vertical margin of the widget
      */
-    val verticalMargin: Int
-        get() {
-            var margin = 0
-            if (mLeft != null) {
-                margin += mTop.mMargin
-            }
-            if (mRight != null) {
-                margin += mBottom.mMargin
-            }
-            return margin
+    fun getVerticalMargin(): Int {
+        var margin = 0
+        if (mLeft != null) {
+            margin += mTop.mMargin
         }
+        if (mRight != null) {
+            margin += mBottom.mMargin
+        }
+        return margin
+    }
+
+    /**
+     * Return the horizontal percentage bias that is used when two opposite connections
+     * exist of the same strength.
+     *
+     * @return horizontal percentage bias
+     */
+    fun getHorizontalBiasPercent(): Float {
+        return mHorizontalBiasPercent
+    }
+
+    /**
+     * Return the vertical percentage bias that is used when two opposite connections
+     * exist of the same strength.
+     *
+     * @return vertical percentage bias
+     */
+    fun getVerticalBiasPercent(): Float {
+        return mVerticalBiasPercent
+    }
 
     /**
      * Return the percentage bias that is used when two opposite connections exist of the same
@@ -1227,12 +1571,12 @@ open class ConstraintWidget {
      * @return Respective percentage bias.
      */
     fun getBiasPercent(orientation: Int): Float {
-        return if (orientation == HORIZONTAL) {
-            verticalBiasPercent
-        } else if (orientation == VERTICAL) {
+        return if (orientation == ConstraintWidget.HORIZONTAL) {
+            mHorizontalBiasPercent
+        } else if (orientation == ConstraintWidget.VERTICAL) {
             mVerticalBiasPercent
         } else {
-            UNKNOWN.toFloat()
+            ConstraintWidget.UNKNOWN.toFloat()
         }
     }
 
@@ -1242,47 +1586,54 @@ open class ConstraintWidget {
      * @return true if the widget has a baseline, false otherwise
      */
     fun hasBaseline(): Boolean {
-        return hasBaseline
+        return mHasBaseline
     }
+
     /**
      * Return the baseline distance relative to the top of the widget
      *
      * @return baseline
      */
-    /**
-     * Set the baseline distance relative to the top of the widget
-     *
-     * @param baseline the distance of the baseline relative to the widget's top
-     */
-    var baselineDistance: Int
-        get() = mBaselineDistance
-        set(baseline) {
-            mBaselineDistance = baseline
-            hasBaseline = baseline > 0
-        }
+    fun getBaselineDistance(): Int {
+        return mBaselineDistance
+    }
+
     /**
      * Return the companion widget. Typically, this would be the real
      * widget we represent with this instance of ConstraintWidget.
      *
      * @return the companion widget, if set.
      */
-    /**
-     * Set the companion widget. Typically, this would be the real widget we
-     * represent with this instance of ConstraintWidget.
-     */
-    var companionWidget: Any?
-        get() = mCompanionWidget
-        set(companion) {
-            mCompanionWidget = companion
-        }
+    fun getCompanionWidget(): Any? {
+        return mCompanionWidget
+    }
 
     /**
      * Return the array of anchors of this widget
      *
      * @return array of anchors
      */
-    val anchors: ArrayList<dev.topping.ios.constraint.core.widgets.ConstraintAnchor?>
-        get() = mAnchors
+    fun getAnchors(): ArrayList<ConstraintAnchor> {
+        return mAnchors
+    }
+
+    /**
+     * Set the x position of the widget, relative to its container
+     *
+     * @param x x position
+     */
+    fun setX(x: Int) {
+        mX = x
+    }
+
+    /**
+     * Set the y position of the widget, relative to its container
+     *
+     * @param y y position
+     */
+    fun setY(y: Int) {
+        mY = y
+    }
 
     /**
      * Set both the origin in (x, y) of the widget, relative to its container
@@ -1312,7 +1663,7 @@ open class ConstraintWidget {
      * @param type       the anchor to set the margin on
      * @param goneMargin the margin value to use
      */
-    fun setGoneMargin(type: ConstraintAnchor.Type?, goneMargin: Int) {
+    fun setGoneMargin(type: ConstraintAnchor.Type, goneMargin: Int) {
         when (type) {
             ConstraintAnchor.Type.LEFT -> {
                 mLeft.mGoneMargin = goneMargin
@@ -1329,8 +1680,34 @@ open class ConstraintWidget {
             ConstraintAnchor.Type.BASELINE -> {
                 mBaseline.mGoneMargin = goneMargin
             }
-            ConstraintAnchor.Type.CENTER, ConstraintAnchor.Type.CENTER_X, ConstraintAnchor.Type.CENTER_Y, ConstraintAnchor.Type.NONE -> {}
-            else -> {}
+            ConstraintAnchor.Type.CENTER,
+            ConstraintAnchor.Type.CENTER_X,
+            ConstraintAnchor.Type.CENTER_Y,
+            ConstraintAnchor.Type.NONE -> {}
+        }
+    }
+
+    /**
+     * Set the width of the widget
+     *
+     * @param w width
+     */
+    fun setWidth(w: Int) {
+        mWidth = w
+        if (mWidth < mMinWidth) {
+            mWidth = mMinWidth
+        }
+    }
+
+    /**
+     * Set the height of the widget
+     *
+     * @param h height
+     */
+    fun setHeight(h: Int) {
+        mHeight = h
+        if (mHeight < mMinHeight) {
+            mHeight = mMinHeight
         }
     }
 
@@ -1341,10 +1718,10 @@ open class ConstraintWidget {
      * @param orientation HORIZONTAL or VERTICAL
      */
     fun setLength(length: Int, orientation: Int) {
-        if (orientation == HORIZONTAL) {
-            width = length
-        } else if (orientation == VERTICAL) {
-            height = length
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            setWidth(length)
+        } else if (orientation == ConstraintWidget.VERTICAL) {
+            setHeight(length)
         }
     }
 
@@ -1361,8 +1738,8 @@ open class ConstraintWidget {
         mMatchConstraintMinWidth = min
         mMatchConstraintMaxWidth = if (max == Int.MAX_VALUE) 0 else max
         mMatchConstraintPercentWidth = percent
-        if (percent > 0 && percent < 1 && mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD) {
-            mMatchConstraintDefaultWidth = MATCH_CONSTRAINT_PERCENT
+        if (percent > 0 && percent < 1 && mMatchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_SPREAD) {
+            mMatchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_PERCENT
         }
     }
 
@@ -1379,8 +1756,8 @@ open class ConstraintWidget {
         mMatchConstraintMinHeight = min
         mMatchConstraintMaxHeight = if (max == Int.MAX_VALUE) 0 else max
         mMatchConstraintPercentHeight = percent
-        if (percent > 0 && percent < 1 && mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD) {
-            mMatchConstraintDefaultHeight = MATCH_CONSTRAINT_PERCENT
+        if (percent > 0 && percent < 1 && mMatchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_SPREAD) {
+            mMatchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_PERCENT
         }
     }
 
@@ -1391,19 +1768,19 @@ open class ConstraintWidget {
      */
     fun setDimensionRatio(ratio: String?) {
         if (ratio == null || ratio.length == 0) {
-            dimensionRatioSide = 0
+            mDimensionRatio = 0f
             return
         }
-        var dimensionRatioSide = UNKNOWN
+        var dimensionRatioSide: Int = ConstraintWidget.UNKNOWN
         var dimensionRatio = 0f
-        val len: Int = ratio.length
+        val len = ratio.length
         var commaIndex = ratio.indexOf(',')
         if (commaIndex > 0 && commaIndex < len - 1) {
             val dimension = ratio.substring(0, commaIndex)
-            if (dimension.equals("W", true)) {
-                dimensionRatioSide = HORIZONTAL
-            } else if (dimension.equals("H", true)) {
-                dimensionRatioSide = VERTICAL
+            if (dimension.equals("W", ignoreCase = true)) {
+                dimensionRatioSide = ConstraintWidget.HORIZONTAL
+            } else if (dimension.equals("H", ignoreCase = true)) {
+                dimensionRatioSide = ConstraintWidget.VERTICAL
             }
             commaIndex++
         } else {
@@ -1415,10 +1792,10 @@ open class ConstraintWidget {
             val denominator = ratio.substring(colonIndex + 1)
             if (nominator.length > 0 && denominator.length > 0) {
                 try {
-                    val nominatorValue: Float = nominator.toFloat()
-                    val denominatorValue: Float = denominator.toFloat()
+                    val nominatorValue = nominator.toFloat()
+                    val denominatorValue = denominator.toFloat()
                     if (nominatorValue > 0 && denominatorValue > 0) {
-                        dimensionRatio = if (dimensionRatioSide == VERTICAL) {
+                        dimensionRatio = if (dimensionRatioSide == ConstraintWidget.VERTICAL) {
                             abs(denominatorValue / nominatorValue)
                         } else {
                             abs(nominatorValue / denominatorValue)
@@ -1439,7 +1816,7 @@ open class ConstraintWidget {
             }
         }
         if (dimensionRatio > 0) {
-            this.dimensionRatioSide = dimensionRatio.toInt()
+            mDimensionRatio = dimensionRatio
             mDimensionRatioSide = dimensionRatioSide
         }
     }
@@ -1457,8 +1834,72 @@ open class ConstraintWidget {
      * HORIZONTAL, VERTICAL, or UNKNOWN
      */
     fun setDimensionRatio(ratio: Float, dimensionRatioSide: Int) {
-        this.dimensionRatioSide = ratio.toInt()
+        mDimensionRatio = ratio
         mDimensionRatioSide = dimensionRatioSide
+    }
+
+    /**
+     * Return the current ratio of this widget
+     *
+     * @return the dimension ratio (HORIZONTAL, VERTICAL, or UNKNOWN)
+     */
+    fun getDimensionRatio(): Float {
+        return mDimensionRatio
+    }
+
+    /**
+     * Return the current side on which ratio will be applied
+     *
+     * @return HORIZONTAL, VERTICAL, or UNKNOWN
+     */
+    fun getDimensionRatioSide(): Int {
+        return mDimensionRatioSide
+    }
+
+    /**
+     * Set the horizontal bias percent to apply when we have two opposite constraints of
+     * equal strength
+     *
+     * @param horizontalBiasPercent the percentage used
+     */
+    fun setHorizontalBiasPercent(horizontalBiasPercent: Float) {
+        mHorizontalBiasPercent = horizontalBiasPercent
+    }
+
+    /**
+     * Set the vertical bias percent to apply when we have two opposite constraints of
+     * equal strength
+     *
+     * @param verticalBiasPercent the percentage used
+     */
+    fun setVerticalBiasPercent(verticalBiasPercent: Float) {
+        mVerticalBiasPercent = verticalBiasPercent
+    }
+
+    /**
+     * Set the minimum width of the widget
+     *
+     * @param w minimum width
+     */
+    fun setMinWidth(w: Int) {
+        if (w < 0) {
+            mMinWidth = 0
+        } else {
+            mMinWidth = w
+        }
+    }
+
+    /**
+     * Set the minimum height of the widget
+     *
+     * @param h minimum height
+     */
+    fun setMinHeight(h: Int) {
+        if (h < 0) {
+            mMinHeight = 0
+        } else {
+            mMinHeight = h
+        }
     }
 
     /**
@@ -1472,9 +1913,9 @@ open class ConstraintWidget {
         if (mWidth < mMinWidth) {
             mWidth = mMinWidth
         }
-        dimensionRatio = h.toFloat()
-        if (dimensionRatio < horizontalBiasPercent) {
-            dimensionRatio = horizontalBiasPercent
+        mHeight = h
+        if (mHeight < mMinHeight) {
+            mHeight = mMinHeight
         }
     }
 
@@ -1491,51 +1932,51 @@ open class ConstraintWidget {
         var h = bottom - top
         mX = left
         mY = top
-        if (visibility == GONE) {
+        if (mVisibility == ConstraintWidget.GONE) {
             mWidth = 0
-            dimensionRatio = 0f
+            mHeight = 0
             return
         }
 
         // correct dimensional instability caused by rounding errors
-        if (mListDimensionBehaviors[DIMENSION_HORIZONTAL]
+        if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL]
             == DimensionBehaviour.FIXED && w < mWidth
         ) {
             w = mWidth
         }
-        if (mListDimensionBehaviors[DIMENSION_VERTICAL]
-            == DimensionBehaviour.FIXED && h < dimensionRatio
+        if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL]
+            == DimensionBehaviour.FIXED && h < mHeight
         ) {
-            h = dimensionRatio.toInt()
+            h = mHeight
         }
         mWidth = w
-        dimensionRatio = h.toFloat()
-        if (dimensionRatio < horizontalBiasPercent) {
-            dimensionRatio = horizontalBiasPercent
+        mHeight = h
+        if (mHeight < mMinHeight) {
+            mHeight = mMinHeight
         }
         if (mWidth < mMinWidth) {
             mWidth = mMinWidth
         }
         if (mMatchConstraintMaxWidth > 0
-            && mListDimensionBehaviors[HORIZONTAL] == MATCH_CONSTRAINT
+            && mListDimensionBehaviors[ConstraintWidget.HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT
         ) {
             mWidth = min(mWidth, mMatchConstraintMaxWidth)
         }
         if (mMatchConstraintMaxHeight > 0
-            && mListDimensionBehaviors[VERTICAL] == MATCH_CONSTRAINT
+            && mListDimensionBehaviors[ConstraintWidget.VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT
         ) {
-            dimensionRatio = min(dimensionRatio, mMatchConstraintMaxHeight.toFloat())
+            mHeight = min(mHeight, mMatchConstraintMaxHeight)
         }
         if (w != mWidth) {
             mWidthOverride = mWidth
         }
-        if (h.toFloat() != dimensionRatio) {
-            mHeightOverride = dimensionRatio.toInt()
+        if (h != mHeight) {
+            mHeightOverride = mHeight
         }
         if (LinearSystem.FULL_DEBUG) {
             println(
-                "update from solver " + debugName
-                        + " " + mX + ":" + mY + " - " + mWidth + " x " + dimensionRatio
+                "update from solver " + mDebugName
+                        + " " + mX + ":" + mY + " - " + mWidth + " x " + mHeight
             )
         }
     }
@@ -1548,9 +1989,9 @@ open class ConstraintWidget {
      * @param orientation Orientation being set (HORIZONTAL/VERTICAL).
      */
     fun setFrame(start: Int, end: Int, orientation: Int) {
-        if (orientation == HORIZONTAL) {
+        if (orientation == ConstraintWidget.HORIZONTAL) {
             setHorizontalDimension(start, end)
-        } else if (orientation == VERTICAL) {
+        } else if (orientation == ConstraintWidget.VERTICAL) {
             setVerticalDimension(start, end)
         }
     }
@@ -1577,9 +2018,9 @@ open class ConstraintWidget {
      */
     fun setVerticalDimension(top: Int, bottom: Int) {
         mY = top
-        dimensionRatio = (bottom - top).toFloat()
-        if (dimensionRatio < horizontalBiasPercent) {
-            dimensionRatio = horizontalBiasPercent
+        mHeight = bottom - top
+        if (mHeight < mMinHeight) {
+            mHeight = mMinHeight
         }
     }
 
@@ -1591,9 +2032,9 @@ open class ConstraintWidget {
      * @return The relative position of the widget.
      */
     fun getRelativePositioning(orientation: Int): Int {
-        return if (orientation == HORIZONTAL) {
-            mRelX
-        } else if (orientation == VERTICAL) {
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            return mRelX
+        } else return if (orientation == ConstraintWidget.VERTICAL) {
             mRelY
         } else {
             0
@@ -1608,32 +2049,53 @@ open class ConstraintWidget {
      * @param orientation Orientation of the offset being set.
      */
     fun setRelativePositioning(offset: Int, orientation: Int) {
-        if (orientation == HORIZONTAL) {
+        if (orientation == ConstraintWidget.HORIZONTAL) {
             mRelX = offset
-        } else if (orientation == VERTICAL) {
+        } else if (orientation == ConstraintWidget.VERTICAL) {
             mRelY = offset
         }
     }
+
     /**
-     * Accessor for the skip value
+     * Set the baseline distance relative to the top of the widget
      *
-     * @return skip value
+     * @param baseline the distance of the baseline relative to the widget's top
      */
+    fun setBaselineDistance(baseline: Int) {
+        mBaselineDistance = baseline
+        mHasBaseline = baseline > 0
+    }
+
+    /**
+     * Set the companion widget. Typically, this would be the real widget we
+     * represent with this instance of ConstraintWidget.
+     */
+    fun setCompanionWidget(companion: Any) {
+        mCompanionWidget = companion
+    }
+
     /**
      * Set the skip value for this widget. This can be used when a widget is in a container,
      * so that container can position the widget as if it was positioned further in the list
      * of widgets. For example, with Table, this is used to skip empty cells
      * (the widget after an empty cell will have a skip value of one)
      */
-    var containerItemSkip: Int
-        get() = mContainerItemSkip
-        set(skip) {
-            mContainerItemSkip = if (skip >= 0) {
-                skip
-            } else {
-                0
-            }
+    fun setContainerItemSkip(skip: Int) {
+        if (skip >= 0) {
+            mContainerItemSkip = skip
+        } else {
+            mContainerItemSkip = 0
         }
+    }
+
+    /**
+     * Accessor for the skip value
+     *
+     * @return skip value
+     */
+    fun getContainerItemSkip(): Int {
+        return mContainerItemSkip
+    }
 
     /**
      * Set the horizontal weight (only used in chains)
@@ -1641,7 +2103,7 @@ open class ConstraintWidget {
      * @param horizontalWeight Floating point value weight
      */
     fun setHorizontalWeight(horizontalWeight: Float) {
-        mWeight[DIMENSION_HORIZONTAL] = horizontalWeight
+        mWeight[ConstraintWidget.DIMENSION_HORIZONTAL] = horizontalWeight
     }
 
     /**
@@ -1650,15 +2112,58 @@ open class ConstraintWidget {
      * @param verticalWeight Floating point value weight
      */
     fun setVerticalWeight(verticalWeight: Float) {
-        mWeight[DIMENSION_VERTICAL] = verticalWeight
+        mWeight[ConstraintWidget.DIMENSION_VERTICAL] = verticalWeight
+    }
+
+    /**
+     * Set the chain starting from this widget to be packed.
+     * The horizontal bias will control how elements of the chain are positioned.
+     *
+     * @param horizontalChainStyle (CHAIN_SPREAD, CHAIN_SPREAD_INSIDE, CHAIN_PACKED)
+     */
+    fun setHorizontalChainStyle(horizontalChainStyle: Int) {
+        mHorizontalChainStyle = horizontalChainStyle
+    }
+
+    /**
+     * get the chain starting from this widget to be packed.
+     * The horizontal bias will control how elements of the chain are positioned.
+     *
+     * @return Horizontal Chain Style
+     */
+    fun getHorizontalChainStyle(): Int {
+        return mHorizontalChainStyle
+    }
+
+    /**
+     * Set the chain starting from this widget to be packed.
+     * The vertical bias will control how elements of the chain are positioned.
+     *
+     * @param verticalChainStyle (CHAIN_SPREAD, CHAIN_SPREAD_INSIDE, CHAIN_PACKED)
+     */
+    fun setVerticalChainStyle(verticalChainStyle: Int) {
+        mVerticalChainStyle = verticalChainStyle
+    }
+
+    /**
+     * Set the chain starting from this widget to be packed.
+     * The vertical bias will control how elements of the chain are positioned.
+     */
+    fun getVerticalChainStyle(): Int {
+        return mVerticalChainStyle
     }
 
     /**
      * Returns true if this widget should be used in a barrier
      */
     open fun allowedInBarrier(): Boolean {
-        return visibility != GONE
+        return mVisibility != ConstraintWidget.GONE
     }
+
+    /*-----------------------------------------------------------------------*/
+    // Connections
+    /*-----------------------------------------------------------------------*/
+
     /*-----------------------------------------------------------------------*/ // Connections
     /*-----------------------------------------------------------------------*/
     /**
@@ -1669,14 +2174,14 @@ open class ConstraintWidget {
      * @param endType    The type of anchor on the target widget
      * @param margin     How much margin we want to keep as
      * a minimum distance between the two anchors
-     * @param goneMargin How much margin we want to keep if the target is set to `TView.GONE`
+     * @param goneMargin How much margin we want to keep if the target is set to `View.GONE`
      */
     fun immediateConnect(
         startType: ConstraintAnchor.Type, target: ConstraintWidget,
         endType: ConstraintAnchor.Type, margin: Int, goneMargin: Int
     ) {
-        val startAnchor: ConstraintAnchor? = getAnchor(startType)
-        val endAnchor: ConstraintAnchor? = target.getAnchor(endType)
+        val startAnchor = getAnchor(startType)
+        val endAnchor = target.getAnchor(endType)
         startAnchor!!.connect(endAnchor, margin, goneMargin, true)
     }
 
@@ -1705,10 +2210,10 @@ open class ConstraintWidget {
         target: ConstraintWidget,
         constraintTo: ConstraintAnchor.Type
     ) {
-        if (LinearSystem.Companion.I_DEBUG) {
+        if (LinearSystem.I_DEBUG) {
             println(
-                debugName.toString() + " connect "
-                        + constraintFrom + " to " + target + " " + constraintTo
+                (getDebugName() + " connect "
+                        + constraintFrom + " to " + target + " " + constraintTo)
             )
         }
         connect(constraintFrom, target, constraintTo, 0)
@@ -1732,14 +2237,14 @@ open class ConstraintWidget {
             // If we have center, we connect instead to the corresponding
             // left/right or top/bottom pairs
             if (constraintTo == ConstraintAnchor.Type.CENTER) {
-                val left: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.LEFT)
-                val right: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.RIGHT)
-                val top: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.TOP)
-                val bottom: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BOTTOM)
+                val left = getAnchor(ConstraintAnchor.Type.LEFT)
+                val right = getAnchor(ConstraintAnchor.Type.RIGHT)
+                val top = getAnchor(ConstraintAnchor.Type.TOP)
+                val bottom = getAnchor(ConstraintAnchor.Type.BOTTOM)
                 var centerX = false
                 var centerY = false
-                if (left != null && left.isConnected
-                    || right != null && right.isConnected
+                if (((left != null && left.isConnected)
+                            || (right != null && right.isConnected))
                 ) {
                     // don't apply center here
                 } else {
@@ -1753,8 +2258,8 @@ open class ConstraintWidget {
                     )
                     centerX = true
                 }
-                if (top != null && top.isConnected
-                    || bottom != null && bottom.isConnected
+                if (((top != null && top.isConnected)
+                            || (bottom != null && bottom.isConnected))
                 ) {
                     // don't apply center here
                 } else {
@@ -1769,17 +2274,17 @@ open class ConstraintWidget {
                     centerY = true
                 }
                 if (centerX && centerY) {
-                    val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
+                    val center = getAnchor(ConstraintAnchor.Type.CENTER)
                     center!!.connect(target.getAnchor(ConstraintAnchor.Type.CENTER), 0)
                 } else if (centerX) {
-                    val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_X)
+                    val center = getAnchor(ConstraintAnchor.Type.CENTER_X)
                     center!!.connect(target.getAnchor(ConstraintAnchor.Type.CENTER_X), 0)
                 } else if (centerY) {
-                    val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_Y)
+                    val center = getAnchor(ConstraintAnchor.Type.CENTER_Y)
                     center!!.connect(target.getAnchor(ConstraintAnchor.Type.CENTER_Y), 0)
                 }
-            } else if (constraintTo == ConstraintAnchor.Type.LEFT
-                || constraintTo == ConstraintAnchor.Type.RIGHT
+            } else if (((constraintTo == ConstraintAnchor.Type.LEFT)
+                        || (constraintTo == ConstraintAnchor.Type.RIGHT))
             ) {
                 connect(
                     ConstraintAnchor.Type.LEFT, target,
@@ -1789,10 +2294,10 @@ open class ConstraintWidget {
                     ConstraintAnchor.Type.RIGHT, target,
                     constraintTo, 0
                 )
-                val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
+                val center = getAnchor(ConstraintAnchor.Type.CENTER)
                 center!!.connect(target.getAnchor(constraintTo), 0)
-            } else if (constraintTo == ConstraintAnchor.Type.TOP
-                || constraintTo == ConstraintAnchor.Type.BOTTOM
+            } else if (((constraintTo == ConstraintAnchor.Type.TOP)
+                        || (constraintTo == ConstraintAnchor.Type.BOTTOM))
             ) {
                 connect(
                     ConstraintAnchor.Type.TOP, target,
@@ -1802,121 +2307,115 @@ open class ConstraintWidget {
                     ConstraintAnchor.Type.BOTTOM, target,
                     constraintTo, 0
                 )
-                val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
+                val center = getAnchor(ConstraintAnchor.Type.CENTER)
                 center!!.connect(target.getAnchor(constraintTo), 0)
             }
-        } else if (constraintFrom == ConstraintAnchor.Type.CENTER_X
-            && (constraintTo == ConstraintAnchor.Type.LEFT
-                    || constraintTo == ConstraintAnchor.Type.RIGHT)
+        } else if ((constraintFrom == ConstraintAnchor.Type.CENTER_X
+                    && (constraintTo == ConstraintAnchor.Type.LEFT
+                    || constraintTo == ConstraintAnchor.Type.RIGHT))
         ) {
-            val left: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.LEFT)
-            val targetAnchor: ConstraintAnchor? = target.getAnchor(constraintTo)
-            val right: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.RIGHT)
+            val left = getAnchor(ConstraintAnchor.Type.LEFT)
+            val targetAnchor = target.getAnchor(constraintTo)
+            val right = getAnchor(ConstraintAnchor.Type.RIGHT)
             left!!.connect(targetAnchor, 0)
             right!!.connect(targetAnchor, 0)
-            val centerX: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_X)
+            val centerX = getAnchor(ConstraintAnchor.Type.CENTER_X)
             centerX!!.connect(targetAnchor, 0)
-        } else if (constraintFrom == ConstraintAnchor.Type.CENTER_Y
-            && (constraintTo == ConstraintAnchor.Type.TOP
-                    || constraintTo == ConstraintAnchor.Type.BOTTOM)
+        } else if ((constraintFrom == ConstraintAnchor.Type.CENTER_Y
+                    && (constraintTo == ConstraintAnchor.Type.TOP
+                    || constraintTo == ConstraintAnchor.Type.BOTTOM))
         ) {
-            val targetAnchor: ConstraintAnchor? = target.getAnchor(constraintTo)
-            val top: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.TOP)
+            val targetAnchor = target.getAnchor(constraintTo)
+            val top = getAnchor(ConstraintAnchor.Type.TOP)
             top!!.connect(targetAnchor, 0)
-            val bottom: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BOTTOM)
+            val bottom = getAnchor(ConstraintAnchor.Type.BOTTOM)
             bottom!!.connect(targetAnchor, 0)
-            val centerY: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_Y)
+            val centerY = getAnchor(ConstraintAnchor.Type.CENTER_Y)
             centerY!!.connect(targetAnchor, 0)
-        } else if (constraintFrom == ConstraintAnchor.Type.CENTER_X
-            && constraintTo == ConstraintAnchor.Type.CENTER_X
+        } else if ((constraintFrom == ConstraintAnchor.Type.CENTER_X
+                    && constraintTo == ConstraintAnchor.Type.CENTER_X)
         ) {
             // Center X connection will connect left & right
-            val left: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.LEFT)
-            val leftTarget: ConstraintAnchor? = target.getAnchor(ConstraintAnchor.Type.LEFT)
+            val left = getAnchor(ConstraintAnchor.Type.LEFT)
+            val leftTarget = target.getAnchor(ConstraintAnchor.Type.LEFT)
             left!!.connect(leftTarget, 0)
-            val right: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.RIGHT)
-            val rightTarget: ConstraintAnchor? = target.getAnchor(ConstraintAnchor.Type.RIGHT)
+            val right = getAnchor(ConstraintAnchor.Type.RIGHT)
+            val rightTarget = target.getAnchor(ConstraintAnchor.Type.RIGHT)
             right!!.connect(rightTarget, 0)
-            val centerX: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_X)
+            val centerX = getAnchor(ConstraintAnchor.Type.CENTER_X)
             centerX!!.connect(target.getAnchor(constraintTo), 0)
-        } else if (constraintFrom == ConstraintAnchor.Type.CENTER_Y
-            && constraintTo == ConstraintAnchor.Type.CENTER_Y
+        } else if ((constraintFrom == ConstraintAnchor.Type.CENTER_Y
+                    && constraintTo == ConstraintAnchor.Type.CENTER_Y)
         ) {
             // Center Y connection will connect top & bottom.
-            val top: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.TOP)
-            val topTarget: ConstraintAnchor? = target.getAnchor(ConstraintAnchor.Type.TOP)
+            val top = getAnchor(ConstraintAnchor.Type.TOP)
+            val topTarget = target.getAnchor(ConstraintAnchor.Type.TOP)
             top!!.connect(topTarget, 0)
-            val bottom: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BOTTOM)
-            val bottomTarget: ConstraintAnchor? = target.getAnchor(ConstraintAnchor.Type.BOTTOM)
+            val bottom = getAnchor(ConstraintAnchor.Type.BOTTOM)
+            val bottomTarget = target.getAnchor(ConstraintAnchor.Type.BOTTOM)
             bottom!!.connect(bottomTarget, 0)
-            val centerY: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_Y)
+            val centerY = getAnchor(ConstraintAnchor.Type.CENTER_Y)
             centerY!!.connect(target.getAnchor(constraintTo), 0)
         } else {
-            val fromAnchor: ConstraintAnchor? = getAnchor(constraintFrom)
-            val toAnchor: ConstraintAnchor? = target.getAnchor(constraintTo)
+            val fromAnchor = getAnchor(constraintFrom)
+            val toAnchor = target.getAnchor(constraintTo)
             if (fromAnchor!!.isValidConnection(toAnchor)) {
                 // make sure that the baseline takes precedence over top/bottom
                 // and reversely, reset the baseline if we are connecting top/bottom
                 if (constraintFrom == ConstraintAnchor.Type.BASELINE) {
-                    val top: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.TOP)
-                    val bottom: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BOTTOM)
-                    if (top != null) {
-                        top.reset()
-                    }
-                    if (bottom != null) {
-                        bottom.reset()
-                    }
-                } else if (constraintFrom == ConstraintAnchor.Type.TOP
-                    || constraintFrom == ConstraintAnchor.Type.BOTTOM
+                    val top = getAnchor(ConstraintAnchor.Type.TOP)
+                    val bottom = getAnchor(ConstraintAnchor.Type.BOTTOM)
+                    top?.reset()
+                    bottom?.reset()
+                } else if (((constraintFrom == ConstraintAnchor.Type.TOP)
+                            || (constraintFrom == ConstraintAnchor.Type.BOTTOM))
                 ) {
-                    val baseline: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BASELINE)
-                    if (baseline != null) {
-                        baseline.reset()
-                    }
-                    val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
-                    if (center!!.target != toAnchor) {
+                    val baseline = getAnchor(ConstraintAnchor.Type.BASELINE)
+                    baseline?.reset()
+                    val center = getAnchor(ConstraintAnchor.Type.CENTER)
+                    if (center.target != toAnchor) {
                         center!!.reset()
                     }
-                    val opposite: ConstraintAnchor? = getAnchor(constraintFrom)?.opposite
-                    val centerY: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_Y)
+                    val opposite: ConstraintAnchor = getAnchor(constraintFrom).opposite!!
+                    val centerY = getAnchor(ConstraintAnchor.Type.CENTER_Y)
                     if (centerY!!.isConnected) {
-                        opposite?.reset()
+                        opposite.reset()
                         centerY.reset()
                     } else {
-                        if (AUTOTAG_CENTER) {
+                        if (ConstraintWidget.AUTOTAG_CENTER) {
                             // let's see if we need to mark center_y as connected
-                            if (opposite?.isConnected == true && opposite.target?.owner
-                                == toAnchor?.owner
+                            if (opposite.isConnected && opposite.target!!.owner
+                                == toAnchor.owner
                             ) {
-                                val targetCenterY: ConstraintAnchor? = toAnchor?.owner?.getAnchor(
+                                val targetCenterY: ConstraintAnchor = toAnchor.owner.getAnchor(
                                     ConstraintAnchor.Type.CENTER_Y
                                 )
                                 centerY.connect(targetCenterY, 0)
                             }
                         }
                     }
-                } else if (constraintFrom == ConstraintAnchor.Type.LEFT
-                    || constraintFrom == ConstraintAnchor.Type.RIGHT
+                } else if (((constraintFrom == ConstraintAnchor.Type.LEFT)
+                            || (constraintFrom == ConstraintAnchor.Type.RIGHT))
                 ) {
-                    val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
-                    if (center?.target != toAnchor) {
-                        center?.reset()
+                    val center = getAnchor(ConstraintAnchor.Type.CENTER)
+                    if (center.target != toAnchor) {
+                        center!!.reset()
                     }
-                    val opposite: ConstraintAnchor? = getAnchor(constraintFrom)?.opposite
-                    val centerX: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_X)
-                    if (centerX?.isConnected == true) {
-                        opposite?.reset()
+                    val opposite: ConstraintAnchor = getAnchor(constraintFrom).opposite!!
+                    val centerX = getAnchor(ConstraintAnchor.Type.CENTER_X)
+                    if (centerX!!.isConnected) {
+                        opposite.reset()
                         centerX.reset()
                     } else {
-                        if (AUTOTAG_CENTER) {
+                        if (ConstraintWidget.AUTOTAG_CENTER) {
                             // let's see if we need to mark center_x as connected
-                            if (opposite?.isConnected == true && opposite.target?.owner
-                                == toAnchor?.owner
+                            if (opposite.isConnected && opposite.target!!.owner
+                                == toAnchor.owner
                             ) {
-                                val targetCenterX: ConstraintAnchor? = toAnchor?.owner?.getAnchor(
+                                val targetCenterX: ConstraintAnchor = toAnchor.owner.getAnchor(
                                     ConstraintAnchor.Type.CENTER_X
                                 )
-                                centerX?.connect(targetCenterX, 0)
+                                centerX.connect(targetCenterX, 0)
                             }
                         }
                     }
@@ -1931,8 +2430,8 @@ open class ConstraintWidget {
      */
     fun resetAllConstraints() {
         resetAnchors()
-        verticalBiasPercent = DEFAULT_BIAS
-        horizontalBiasPercent = DEFAULT_BIAS
+        setVerticalBiasPercent(ConstraintWidget.DEFAULT_BIAS)
+        setHorizontalBiasPercent(ConstraintWidget.DEFAULT_BIAS)
     }
 
     /**
@@ -1941,59 +2440,59 @@ open class ConstraintWidget {
      * @param anchor the anchor we want to reset
      */
     fun resetAnchor(anchor: ConstraintAnchor) {
-        if (parent != null) {
-            if (parent is ConstraintWidgetContainer) {
-                val parent: ConstraintWidgetContainer? = parent as ConstraintWidgetContainer?
+        if (getParent() != null) {
+            if (getParent() is ConstraintWidgetContainer) {
+                val parent = getParent() as ConstraintWidgetContainer?
                 if (parent!!.handlesInternalConstraints()) {
                     return
                 }
             }
         }
-        val left: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.LEFT)
-        val right: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.RIGHT)
-        val top: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.TOP)
-        val bottom: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.BOTTOM)
-        val center: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER)
-        val centerX: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_X)
-        val centerY: ConstraintAnchor? = getAnchor(ConstraintAnchor.Type.CENTER_Y)
+        val left = getAnchor(ConstraintAnchor.Type.LEFT)
+        val right = getAnchor(ConstraintAnchor.Type.RIGHT)
+        val top = getAnchor(ConstraintAnchor.Type.TOP)
+        val bottom = getAnchor(ConstraintAnchor.Type.BOTTOM)
+        val center = getAnchor(ConstraintAnchor.Type.CENTER)
+        val centerX = getAnchor(ConstraintAnchor.Type.CENTER_X)
+        val centerY = getAnchor(ConstraintAnchor.Type.CENTER_Y)
         if (anchor == center) {
-            if (left?.isConnected == true && right?.isConnected == true
-                && left.target == right.target
+            if ((left!!.isConnected && right!!.isConnected
+                        && (left.target == right.target))
             ) {
                 left.reset()
                 right.reset()
             }
-            if (top?.isConnected == true && bottom?.isConnected == true
-                && top.target == bottom.target
+            if ((top!!.isConnected && bottom!!.isConnected
+                        && (top.target == bottom.target))
             ) {
                 top.reset()
                 bottom.reset()
             }
-            verticalBiasPercent = 0.5f
+            mHorizontalBiasPercent = 0.5f
             mVerticalBiasPercent = 0.5f
         } else if (anchor == centerX) {
-            if (left?.isConnected == true && right?.isConnected == true
-                && left.target?.owner == right.target?.owner
+            if ((left!!.isConnected && right!!.isConnected
+                        && (left.target!!.owner == right.target!!.owner))
             ) {
                 left.reset()
                 right.reset()
             }
-            verticalBiasPercent = 0.5f
+            mHorizontalBiasPercent = 0.5f
         } else if (anchor == centerY) {
-            if (top?.isConnected == true && bottom?.isConnected == true
-                && top.target?.owner == bottom.target?.owner
+            if ((top!!.isConnected && bottom!!.isConnected
+                        && (top.target!!.owner == bottom.target!!.owner))
             ) {
                 top.reset()
                 bottom.reset()
             }
             mVerticalBiasPercent = 0.5f
         } else if (anchor == left || anchor == right) {
-            if (left?.isConnected == true && left.target == right?.target) {
-                center?.reset()
+            if (left!!.isConnected && left.target == right.target) {
+                center!!.reset()
             }
         } else if (anchor == top || anchor == bottom) {
-            if (top?.isConnected == true && top.target == bottom?.target) {
-                center?.reset()
+            if (top!!.isConnected && top.target == bottom.target) {
+                center!!.reset()
             }
         }
         anchor.reset()
@@ -2003,9 +2502,9 @@ open class ConstraintWidget {
      * Reset all connections
      */
     fun resetAnchors() {
-        val parent = parent
+        val parent = getParent()
         if (parent != null && parent is ConstraintWidgetContainer) {
-            val parentContainer: ConstraintWidgetContainer? = parent as ConstraintWidgetContainer?
+            val parentContainer = getParent() as ConstraintWidgetContainer?
             if (parentContainer!!.handlesInternalConstraints()) {
                 return
             }
@@ -2013,8 +2512,8 @@ open class ConstraintWidget {
         var i = 0
         val mAnchorsSize: Int = mAnchors.size
         while (i < mAnchorsSize) {
-            val anchor: ConstraintAnchor? = mAnchors[i]
-            anchor!!.reset()
+            val anchor: ConstraintAnchor = mAnchors.get(i)
+            anchor.reset()
             i++
         }
     }
@@ -2051,39 +2550,27 @@ open class ConstraintWidget {
             ConstraintAnchor.Type.CENTER -> {
                 return mCenter
             }
-            ConstraintAnchor.Type.NONE -> throw AssertionError(anchorType.name)
+            ConstraintAnchor.Type.NONE -> throw Exception(anchorType.name)
         }
     }
+
     /**
      * Accessor for the horizontal dimension behaviour
      *
      * @return dimension behaviour
      */
-    /**
-     * Set the widget's behaviour for the horizontal dimension
-     *
-     * @param behaviour the horizontal dimension's behaviour
-     */
-    var horizontalDimensionBehaviour: DimensionBehaviour
-        get() = mListDimensionBehaviors[DIMENSION_HORIZONTAL]
-        set(behaviour) {
-            mListDimensionBehaviors[DIMENSION_HORIZONTAL] = behaviour
-        }
+    fun getHorizontalDimensionBehaviour(): DimensionBehaviour {
+        return mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL]
+    }
+
     /**
      * Accessor for the vertical dimension behaviour
      *
      * @return dimension behaviour
      */
-    /**
-     * Set the widget's behaviour for the vertical dimension
-     *
-     * @param behaviour the vertical dimension's behaviour
-     */
-    var verticalDimensionBehaviour: DimensionBehaviour
-        get() = mListDimensionBehaviors[DIMENSION_VERTICAL]
-        set(behaviour) {
-            mListDimensionBehaviors[DIMENSION_VERTICAL] = behaviour
-        }
+    fun getVerticalDimensionBehaviour(): DimensionBehaviour {
+        return mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL]
+    }
 
     /**
      * Get the widget's [DimensionBehaviour] in an specific orientation.
@@ -2091,13 +2578,31 @@ open class ConstraintWidget {
      * @return The [DimensionBehaviour] of the widget.
      */
     fun getDimensionBehaviour(orientation: Int): DimensionBehaviour? {
-        return if (orientation == HORIZONTAL) {
-            horizontalDimensionBehaviour
-        } else if (orientation == VERTICAL) {
-            verticalDimensionBehaviour
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            return getHorizontalDimensionBehaviour()
+        } else return if (orientation == ConstraintWidget.VERTICAL) {
+            getVerticalDimensionBehaviour()
         } else {
             null
         }
+    }
+
+    /**
+     * Set the widget's behaviour for the horizontal dimension
+     *
+     * @param behaviour the horizontal dimension's behaviour
+     */
+    fun setHorizontalDimensionBehaviour(behaviour: DimensionBehaviour) {
+        mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] = behaviour
+    }
+
+    /**
+     * Set the widget's behaviour for the vertical dimension
+     *
+     * @param behaviour the vertical dimension's behaviour
+     */
+    fun setVerticalDimensionBehaviour(behaviour: DimensionBehaviour) {
+        mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] = behaviour
     }
 
     /**
@@ -2105,12 +2610,13 @@ open class ConstraintWidget {
      *
      * @return true if in a horizontal chain
      */
-    val isInHorizontalChain: Boolean
-        get() = if (mLeft.target != null && mLeft.target!!.target == mLeft
-            || mRight.target != null && mRight.target!!.target == mRight
+    fun isInHorizontalChain(): Boolean {
+        return if (((mLeft.mTarget != null && mLeft.mTarget!!.mTarget == mLeft)
+                    || (mRight.mTarget != null && mRight.mTarget!!.mTarget == mRight))
         ) {
             true
         } else false
+    }
 
     /**
      * Return the previous chain member if one exists
@@ -2119,13 +2625,13 @@ open class ConstraintWidget {
      * @return the previous chain member or null if we are the first chain element
      */
     fun getPreviousChainMember(orientation: Int): ConstraintWidget? {
-        if (orientation == HORIZONTAL) {
-            if (mLeft.target != null && mLeft.target!!.target == mLeft) {
-                return mLeft.target!!.mOwner
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            if (mLeft.mTarget != null && mLeft.mTarget!!.mTarget == mLeft) {
+                return mLeft.mTarget!!.mOwner
             }
-        } else if (orientation == VERTICAL) {
-            if (mTop.target != null && mTop.target!!.target == mTop) {
-                return mTop.target!!.mOwner
+        } else if (orientation == ConstraintWidget.VERTICAL) {
+            if (mTop.mTarget != null && mTop.mTarget!!.mTarget == mTop) {
+                return mTop.mTarget!!.mOwner
             }
         }
         return null
@@ -2138,13 +2644,13 @@ open class ConstraintWidget {
      * @return the next chain member or null if we are the last chain element
      */
     fun getNextChainMember(orientation: Int): ConstraintWidget? {
-        if (orientation == HORIZONTAL) {
-            if (mRight.target != null && mRight.target!!.target == mRight) {
-                return mRight.target!!.mOwner
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            if (mRight.mTarget != null && mRight.mTarget!!.mTarget == mRight) {
+                return mRight.mTarget!!.mOwner
             }
-        } else if (orientation == VERTICAL) {
-            if (mBottom.target != null && mBottom.target!!.target == mBottom) {
-                return mBottom.target!!.mOwner
+        } else if (orientation == ConstraintWidget.VERTICAL) {
+            if (mBottom.mTarget != null && mBottom.mTarget!!.mTarget == mBottom) {
+                return mBottom.mTarget!!.mOwner
             }
         }
         return null
@@ -2155,78 +2661,72 @@ open class ConstraintWidget {
      *
      * @return left most widget in chain or null
      */
-    val horizontalChainControlWidget: ConstraintWidget?
-        get() {
-            var found: ConstraintWidget? = null
-            if (isInHorizontalChain) {
-                var tmp: ConstraintWidget? = this
-                while (found == null && tmp != null) {
-                    val anchor: ConstraintAnchor? = tmp.getAnchor(ConstraintAnchor.Type.LEFT)
-                    val targetOwner: ConstraintAnchor? =
-                        if (anchor == null) null else anchor.target
-                    val target: ConstraintWidget? =
-                        if (targetOwner == null) null else targetOwner.owner
-                    if (target == parent) {
-                        found = tmp
-                        break
-                    }
-                    val targetAnchor: ConstraintAnchor? =
-                        target?.getAnchor(ConstraintAnchor.Type.RIGHT)
-                            ?.target
-                    if (targetAnchor != null && targetAnchor.owner != tmp) {
-                        found = tmp
-                    } else {
-                        tmp = target
-                    }
+    fun getHorizontalChainControlWidget(): ConstraintWidget? {
+        var found: ConstraintWidget? = null
+        if (isInHorizontalChain()) {
+            var tmp: ConstraintWidget? = this
+            while (found == null && tmp != null) {
+                val anchor = tmp.getAnchor(ConstraintAnchor.Type.LEFT)
+                val targetOwner: ConstraintAnchor? = anchor?.target
+                val target: ConstraintWidget? = targetOwner?.owner
+                if (target == getParent()) {
+                    found = tmp
+                    break
+                }
+                val targetAnchor: ConstraintAnchor? = target?.getAnchor(ConstraintAnchor.Type.RIGHT)
+                    ?.target
+                if (targetAnchor != null && targetAnchor.owner != tmp) {
+                    found = tmp
+                } else {
+                    tmp = target
                 }
             }
-            return found
         }
+        return found
+    }
+
 
     /**
      * Test if you are in a vertical chain
      *
      * @return true if in a vertical chain
      */
-    val isInVerticalChain: Boolean
-        get() = if (mTop.target != null && mTop.target!!.target == mTop
-            || mBottom.target != null && mBottom.target!!.target == mBottom
+    fun isInVerticalChain(): Boolean {
+        return if (((mTop.mTarget != null && mTop.mTarget!!.mTarget == mTop)
+                    || (mBottom.mTarget != null && mBottom.mTarget!!.mTarget == mBottom))
         ) {
             true
         } else false
+    }
 
     /**
      * if in a vertical chain return the top most widget in the chain.
      *
      * @return top most widget in chain or null
      */
-    val verticalChainControlWidget: ConstraintWidget?
-        get() {
-            var found: ConstraintWidget? = null
-            if (isInVerticalChain) {
-                var tmp: ConstraintWidget? = this
-                while (found == null && tmp != null) {
-                    val anchor: ConstraintAnchor? = tmp.getAnchor(ConstraintAnchor.Type.TOP)
-                    val targetOwner: ConstraintAnchor? =
-                        if (anchor == null) null else anchor.target
-                    val target: ConstraintWidget? =
-                        if (targetOwner == null) null else targetOwner.owner
-                    if (target == parent) {
-                        found = tmp
-                        break
-                    }
-                    val targetAnchor: ConstraintAnchor? =
-                        target?.getAnchor(ConstraintAnchor.Type.BOTTOM)
-                            ?.target
-                    if (targetAnchor != null && targetAnchor.owner != tmp) {
-                        found = tmp
-                    } else {
-                        tmp = target
-                    }
+    fun getVerticalChainControlWidget(): ConstraintWidget? {
+        var found: ConstraintWidget? = null
+        if (isInVerticalChain()) {
+            var tmp: ConstraintWidget? = this
+            while (found == null && tmp != null) {
+                val anchor = tmp.getAnchor(ConstraintAnchor.Type.TOP)
+                val targetOwner: ConstraintAnchor? = anchor?.target
+                val target: ConstraintWidget? = targetOwner?.owner
+                if (target == getParent()) {
+                    found = tmp
+                    break
+                }
+                val targetAnchor: ConstraintAnchor? =
+                    target?.getAnchor(ConstraintAnchor.Type.BOTTOM)?.target
+                if (targetAnchor != null && targetAnchor.owner != tmp) {
+                    found = tmp
+                } else {
+                    tmp = target
                 }
             }
-            return found
         }
+        return found
+    }
 
     /**
      * Determine if the widget is the first element of a chain in a given orientation.
@@ -2236,11 +2736,17 @@ open class ConstraintWidget {
      */
     private fun isChainHead(orientation: Int): Boolean {
         val offset = orientation * 2
-        return ((mListAnchors[offset].target != null
-                && mListAnchors[offset].target!!.target != mListAnchors[offset])
-                && (mListAnchors[offset + 1].target != null
-                && mListAnchors[offset + 1].target!!.target == mListAnchors[offset + 1]))
+        return ((mListAnchors[offset].mTarget != null
+                && mListAnchors[offset].mTarget!!.mTarget != mListAnchors[offset])
+                && (mListAnchors[offset + 1].mTarget != null
+                && mListAnchors[offset + 1].mTarget!!.mTarget == mListAnchors[offset + 1]))
     }
+
+
+    /*-----------------------------------------------------------------------*/
+    // Constraints
+    /*-----------------------------------------------------------------------*/
+
     /*-----------------------------------------------------------------------*/ // Constraints
     /*-----------------------------------------------------------------------*/
     /**
@@ -2249,42 +2755,42 @@ open class ConstraintWidget {
      * @param system   the solver we want to add the widget to
      * @param optimize true if [Optimizer.OPTIMIZATION_GRAPH] is on
      */
-    open fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    open fun addToSolver(system: LinearSystem, optimize: Boolean) {
         if (LinearSystem.FULL_DEBUG) {
             println("\n----------------------------------------------")
-            println("-- adding $debugName to the solver")
-            if (isInVirtualLayout) {
+            println("-- adding " + getDebugName() + " to the solver")
+            if (isInVirtualLayout()) {
                 println("-- note: is in virtual layout")
             }
             println("----------------------------------------------\n")
         }
-        val left: SolverVariable? = system?.createObjectVariable(mLeft)
-        val right: SolverVariable? = system?.createObjectVariable(mRight)
-        val top: SolverVariable? = system?.createObjectVariable(mTop)
-        val bottom: SolverVariable? = system?.createObjectVariable(mBottom)
-        val baseline: SolverVariable? = system?.createObjectVariable(mBaseline)
+        val left: SolverVariable? = system.createObjectVariable(mLeft)
+        val right: SolverVariable? = system.createObjectVariable(mRight)
+        val top: SolverVariable? = system.createObjectVariable(mTop)
+        val bottom: SolverVariable? = system.createObjectVariable(mBottom)
+        val baseline: SolverVariable? = system.createObjectVariable(mBaseline)
         var horizontalParentWrapContent = false
         var verticalParentWrapContent = false
-        if (parent != null) {
+        if (mParent != null) {
             horizontalParentWrapContent =
-                if (parent != null) parent!!.mListDimensionBehaviors[DIMENSION_HORIZONTAL] == DimensionBehaviour.WRAP_CONTENT else false
+                if (mParent != null) mParent!!.mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.WRAP_CONTENT else false
             verticalParentWrapContent =
-                if (parent != null) parent!!.mListDimensionBehaviors[DIMENSION_VERTICAL] == DimensionBehaviour.WRAP_CONTENT else false
+                if (mParent != null) mParent!!.mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.WRAP_CONTENT else false
             when (mWrapBehaviorInParent) {
-                WRAP_BEHAVIOR_SKIPPED -> {
+                ConstraintWidget.WRAP_BEHAVIOR_SKIPPED -> {
                     horizontalParentWrapContent = false
                     verticalParentWrapContent = false
                 }
-                WRAP_BEHAVIOR_HORIZONTAL_ONLY -> {
+                ConstraintWidget.WRAP_BEHAVIOR_HORIZONTAL_ONLY -> {
                     verticalParentWrapContent = false
                 }
-                WRAP_BEHAVIOR_VERTICAL_ONLY -> {
+                ConstraintWidget.WRAP_BEHAVIOR_VERTICAL_ONLY -> {
                     horizontalParentWrapContent = false
                 }
             }
         }
-        if (!(visibility != GONE || isAnimated || hasDependencies()
-                    || mIsInBarrier[HORIZONTAL] || mIsInBarrier[VERTICAL])
+        if (!(mVisibility != ConstraintWidget.GONE || mAnimated || hasDependencies()
+                    || mIsInBarrier[ConstraintWidget.HORIZONTAL] || mIsInBarrier[ConstraintWidget.VERTICAL])
         ) {
             return
         }
@@ -2292,46 +2798,44 @@ open class ConstraintWidget {
             if (LinearSystem.FULL_DEBUG) {
                 println("\n----------------------------------------------")
                 println(
-                    "-- setting " + debugName
-                            + " to " + mX + ", " + mY + " " + mWidth + " x " + dimensionRatio
+                    "-- setting " + getDebugName()
+                            + " to " + mX + ", " + mY + " " + mWidth + " x " + mHeight
                 )
                 println("----------------------------------------------\n")
             }
             // For now apply all, but that won't work for wrap/wrap layouts.
             if (mResolvedHorizontal) {
-                system?.addEquality(left!!, mX)
-                system?.addEquality(right!!, mX + mWidth)
-                if (horizontalParentWrapContent && parent != null) {
+                system.addEquality(left, mX)
+                system.addEquality(right, mX + mWidth)
+                if (horizontalParentWrapContent && mParent != null) {
                     if (mOptimizeWrapOnResolved) {
-                        val container: ConstraintWidgetContainer =
-                            parent as ConstraintWidgetContainer
+                        val container = mParent as ConstraintWidgetContainer
                         container.addHorizontalWrapMinVariable(mLeft)
                         container.addHorizontalWrapMaxVariable(mRight)
                     } else {
                         val wrapStrength: Int = SolverVariable.STRENGTH_EQUALITY
-                        system?.addGreaterThan(
-                            system?.createObjectVariable(parent!!.mRight),
+                        system.addGreaterThan(
+                            system.createObjectVariable(mParent!!.mRight),
                             right, 0, wrapStrength
                         )
                     }
                 }
             }
             if (mResolvedVertical) {
-                system?.addEquality(top, mY)
-                system?.addEquality(bottom, (mY + dimensionRatio).toInt())
-                if (mBaseline!!.hasDependents()) {
-                    system?.addEquality(baseline, mY + mBaselineDistance)
+                system.addEquality(top, mY)
+                system.addEquality(bottom, mY + mHeight)
+                if (mBaseline.hasDependents()) {
+                    system.addEquality(baseline, mY + mBaselineDistance)
                 }
-                if (verticalParentWrapContent && parent != null) {
+                if (verticalParentWrapContent && mParent != null) {
                     if (mOptimizeWrapOnResolved) {
-                        val container: ConstraintWidgetContainer =
-                            parent as ConstraintWidgetContainer
+                        val container = mParent as ConstraintWidgetContainer
                         container.addVerticalWrapMinVariable(mTop)
                         container.addVerticalWrapMaxVariable(mBottom)
                     } else {
                         val wrapStrength: Int = SolverVariable.STRENGTH_EQUALITY
-                        system?.addGreaterThan(
-                            system?.createObjectVariable(parent!!.mBottom),
+                        system.addGreaterThan(
+                            system.createObjectVariable(mParent!!.mBottom),
                             bottom, 0, wrapStrength
                         )
                     }
@@ -2342,7 +2846,7 @@ open class ConstraintWidget {
                 mResolvedVertical = false
                 if (LinearSystem.FULL_DEBUG) {
                     println("\n----------------------------------------------")
-                    println("-- setting COMPLETED for $debugName")
+                    println("-- setting COMPLETED for " + getDebugName())
                     println("----------------------------------------------\n")
                 }
                 return
@@ -2351,41 +2855,42 @@ open class ConstraintWidget {
         if (LinearSystem.sMetrics != null) {
             LinearSystem.sMetrics!!.widgets++
         }
-        if (LinearSystem.FULL_DEBUG) {
-            if (optimize && mHorizontalRun != null && mVerticalRun != null) {
+        if (FULL_DEBUG) {
+            if (optimize && (mHorizontalRun != null) && (mVerticalRun != null)) {
                 println(
-                    ("-- horizontal run : "
-                            + mHorizontalRun?.start) + " : " + mHorizontalRun?.end
+                    (("-- horizontal run : "
+                            + mHorizontalRun!!.start) + " : " + mHorizontalRun!!.end)
                 )
                 println(
-                    ("-- vertical run : "
-                            + mVerticalRun?.start) + " : " + mVerticalRun?.end
+                    (("-- vertical run : "
+                            + mVerticalRun!!.start) + " : " + mVerticalRun!!.end)
                 )
             }
         }
-        if (optimize && mHorizontalRun != null && mVerticalRun != null && mHorizontalRun!!.start.resolved && mHorizontalRun!!.end.resolved
-            && mVerticalRun!!.start.resolved && mVerticalRun!!.end.resolved
+        if ((optimize && (mHorizontalRun != null) && (mVerticalRun != null
+                    ) && mHorizontalRun!!.start.resolved && mHorizontalRun!!.end.resolved
+                    && mVerticalRun!!.start.resolved && mVerticalRun!!.end.resolved)
         ) {
             if (LinearSystem.sMetrics != null) {
                 LinearSystem.sMetrics!!.graphSolved++
             }
-            system?.addEquality(left, mHorizontalRun!!.start.value)
-            system?.addEquality(right, mHorizontalRun!!.end.value)
-            system?.addEquality(top, mVerticalRun!!.start.value)
-            system?.addEquality(bottom, mVerticalRun!!.end.value)
-            system?.addEquality(baseline, mVerticalRun!!.baseline.value)
-            if (parent != null) {
-                if (horizontalParentWrapContent
-                    && isTerminalWidget[HORIZONTAL] && !isInHorizontalChain
+            system.addEquality(left, mHorizontalRun!!.start.value)
+            system.addEquality(right, mHorizontalRun!!.end.value)
+            system.addEquality(top, mVerticalRun!!.start.value)
+            system.addEquality(bottom, mVerticalRun!!.end.value)
+            system.addEquality(baseline, mVerticalRun!!.baseline.value)
+            if (mParent != null) {
+                if ((horizontalParentWrapContent
+                            && isTerminalWidget[ConstraintWidget.HORIZONTAL] && !isInHorizontalChain())
                 ) {
-                    val parentMax: SolverVariable? = system?.createObjectVariable(parent!!.mRight)
-                    system?.addGreaterThan(parentMax, right, 0, SolverVariable.STRENGTH_FIXED)
+                    val parentMax: SolverVariable? = system.createObjectVariable(mParent!!.mRight)
+                    system.addGreaterThan(parentMax, right, 0, SolverVariable.STRENGTH_FIXED)
                 }
-                if (verticalParentWrapContent
-                    && isTerminalWidget[VERTICAL] && !isInVerticalChain
+                if ((verticalParentWrapContent
+                            && isTerminalWidget[ConstraintWidget.VERTICAL] && !isInVerticalChain())
                 ) {
-                    val parentMax: SolverVariable? = system?.createObjectVariable(parent!!.mBottom)
-                    system?.addGreaterThan(parentMax, bottom, 0, SolverVariable.STRENGTH_FIXED)
+                    val parentMax: SolverVariable? = system.createObjectVariable(mParent!!.mBottom)
+                    system.addGreaterThan(parentMax, bottom, 0, SolverVariable.STRENGTH_FIXED)
                 }
             }
             mResolvedHorizontal = false
@@ -2397,111 +2902,123 @@ open class ConstraintWidget {
         }
         var inHorizontalChain = false
         var inVerticalChain = false
-        if (parent != null) {
+        if (mParent != null) {
             // Add this widget to a horizontal chain if it is the Head of it.
-            inHorizontalChain = if (isChainHead(HORIZONTAL)) {
-                (parent as ConstraintWidgetContainer).addChain(this, HORIZONTAL)
-                true
+            if (isChainHead(ConstraintWidget.HORIZONTAL)) {
+                (mParent as ConstraintWidgetContainer).addChain(this, ConstraintWidget.HORIZONTAL)
+                inHorizontalChain = true
             } else {
-                isInHorizontalChain
+                inHorizontalChain = isInHorizontalChain()
             }
 
             // Add this widget to a vertical chain if it is the Head of it.
-            inVerticalChain = if (isChainHead(VERTICAL)) {
-                (parent as ConstraintWidgetContainer).addChain(this, VERTICAL)
-                true
+            if (isChainHead(ConstraintWidget.VERTICAL)) {
+                (mParent as ConstraintWidgetContainer).addChain(this, ConstraintWidget.VERTICAL)
+                inVerticalChain = true
             } else {
-                isInVerticalChain
+                inVerticalChain = isInVerticalChain()
             }
-            if (!inHorizontalChain && horizontalParentWrapContent && visibility != GONE && mLeft.target == null && mRight.target == null) {
-                if (LinearSystem.Companion.FULL_DEBUG) {
-                    println("<>1 ADDING H WRAP GREATER FOR $debugName")
+            if (!inHorizontalChain && horizontalParentWrapContent && (mVisibility != ConstraintWidget.GONE
+                        ) && (mLeft.mTarget == null) && (mRight.mTarget == null)
+            ) {
+                if (FULL_DEBUG) {
+                    println("<>1 ADDING H WRAP GREATER FOR " + getDebugName())
                 }
-                val parentRight: SolverVariable? = system?.createObjectVariable(parent!!.mRight)
-                system?.addGreaterThan(parentRight, right, 0, SolverVariable.STRENGTH_LOW)
+                val parentRight: SolverVariable? = system.createObjectVariable(mParent!!.mRight)
+                system.addGreaterThan(parentRight, right, 0, SolverVariable.STRENGTH_LOW)
             }
-            if (!inVerticalChain && verticalParentWrapContent && visibility != GONE && mTop.target == null && mBottom.target == null && mBaseline == null) {
-                if (LinearSystem.Companion.FULL_DEBUG) {
-                    println("<>1 ADDING V WRAP GREATER FOR $debugName")
+            if (!inVerticalChain && verticalParentWrapContent && (mVisibility != ConstraintWidget.GONE
+                        ) && (mTop.mTarget == null) && (mBottom.mTarget == null) && (mBaseline == null)
+            ) {
+                if (FULL_DEBUG) {
+                    println("<>1 ADDING V WRAP GREATER FOR " + getDebugName())
                 }
-                val parentBottom: SolverVariable? = system?.createObjectVariable(parent!!.mBottom)
-                system?.addGreaterThan(parentBottom, bottom, 0, SolverVariable.STRENGTH_LOW)
+                val parentBottom: SolverVariable? = system.createObjectVariable(mParent!!.mBottom)
+                system.addGreaterThan(parentBottom, bottom, 0, SolverVariable.STRENGTH_LOW)
             }
         }
         var width = mWidth
         if (width < mMinWidth) {
             width = mMinWidth
         }
-        var height = dimensionRatio
-        if (height < horizontalBiasPercent) {
-            height = horizontalBiasPercent
+        var height = mHeight
+        if (height < mMinHeight) {
+            height = mMinHeight
         }
 
         // Dimensions can be either fixed (a given value)
         // or dependent on the solver if set to MATCH_CONSTRAINT
         val horizontalDimensionFixed =
-            mListDimensionBehaviors[DIMENSION_HORIZONTAL] != MATCH_CONSTRAINT
-        val verticalDimensionFixed = mListDimensionBehaviors[DIMENSION_VERTICAL] != MATCH_CONSTRAINT
+            mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] != DimensionBehaviour.MATCH_CONSTRAINT
+        val verticalDimensionFixed =
+            mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] != DimensionBehaviour.MATCH_CONSTRAINT
 
         // We evaluate the dimension ratio here as the connections can change.
         // TODO: have a validation pass after connection instead
         var useRatio = false
         mResolvedDimensionRatioSide = mDimensionRatioSide
-        mResolvedDimensionRatio = dimensionRatio
+        mResolvedDimensionRatio = mDimensionRatio
         var matchConstraintDefaultWidth = mMatchConstraintDefaultWidth
         var matchConstraintDefaultHeight = mMatchConstraintDefaultHeight
-        if (dimensionRatioSide > 0 && visibility != GONE) {
+        if (mDimensionRatio > 0 && mVisibility != ConstraintWidget.GONE) {
             useRatio = true
-            if (mListDimensionBehaviors[DIMENSION_HORIZONTAL] == MATCH_CONSTRAINT
-                && matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD
+            if ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        && matchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_SPREAD)
             ) {
-                matchConstraintDefaultWidth = MATCH_CONSTRAINT_RATIO
+                matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_RATIO
             }
-            if (mListDimensionBehaviors[DIMENSION_VERTICAL] == MATCH_CONSTRAINT
-                && matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD
+            if ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        && matchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_SPREAD)
             ) {
-                matchConstraintDefaultHeight = MATCH_CONSTRAINT_RATIO
+                matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_RATIO
             }
-            if (mListDimensionBehaviors[DIMENSION_HORIZONTAL] == MATCH_CONSTRAINT && mListDimensionBehaviors[DIMENSION_VERTICAL] == MATCH_CONSTRAINT && matchConstraintDefaultWidth == MATCH_CONSTRAINT_RATIO && matchConstraintDefaultHeight == MATCH_CONSTRAINT_RATIO) {
+            if ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        ) && (mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        ) && (matchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_RATIO
+                        ) && (matchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_RATIO)
+            ) {
                 setupDimensionRatio(
                     horizontalParentWrapContent, verticalParentWrapContent,
                     horizontalDimensionFixed, verticalDimensionFixed
                 )
-            } else if (mListDimensionBehaviors[DIMENSION_HORIZONTAL] == MATCH_CONSTRAINT
-                && matchConstraintDefaultWidth == MATCH_CONSTRAINT_RATIO
+            } else if ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        && matchConstraintDefaultWidth == ConstraintWidget.MATCH_CONSTRAINT_RATIO)
             ) {
-                mResolvedDimensionRatioSide = HORIZONTAL
-                width = (mResolvedDimensionRatio * dimensionRatio).toInt()
-                if (mListDimensionBehaviors[DIMENSION_VERTICAL] != MATCH_CONSTRAINT) {
-                    matchConstraintDefaultWidth = MATCH_CONSTRAINT_RATIO_RESOLVED
+                mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
+                width = (mResolvedDimensionRatio * mHeight).toInt()
+                if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] != DimensionBehaviour.MATCH_CONSTRAINT) {
+                    matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_RATIO_RESOLVED
                     useRatio = false
                 }
-            } else if (mListDimensionBehaviors[DIMENSION_VERTICAL] == MATCH_CONSTRAINT
-                && matchConstraintDefaultHeight == MATCH_CONSTRAINT_RATIO
+            } else if ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT
+                        && matchConstraintDefaultHeight == ConstraintWidget.MATCH_CONSTRAINT_RATIO)
             ) {
-                mResolvedDimensionRatioSide = VERTICAL
-                if (mDimensionRatioSide == UNKNOWN) {
+                mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
+                if (mDimensionRatioSide == ConstraintWidget.UNKNOWN) {
                     // need to reverse the ratio as the parsing is done in horizontal mode
                     mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
                 }
-                height = (mResolvedDimensionRatio * mWidth)
-                if (mListDimensionBehaviors[DIMENSION_HORIZONTAL] != MATCH_CONSTRAINT) {
-                    matchConstraintDefaultHeight = MATCH_CONSTRAINT_RATIO_RESOLVED
+                height = (mResolvedDimensionRatio * mWidth).toInt()
+                if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] != DimensionBehaviour.MATCH_CONSTRAINT) {
+                    matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_RATIO_RESOLVED
                     useRatio = false
                 }
             }
         }
-        mResolvedMatchConstraintDefault[HORIZONTAL] = matchConstraintDefaultWidth
-        mResolvedMatchConstraintDefault[VERTICAL] = matchConstraintDefaultHeight
+        mResolvedMatchConstraintDefault[ConstraintWidget.HORIZONTAL] = matchConstraintDefaultWidth
+        mResolvedMatchConstraintDefault[ConstraintWidget.VERTICAL] = matchConstraintDefaultHeight
         mResolvedHasRatio = useRatio
-        val useHorizontalRatio = useRatio && (mResolvedDimensionRatioSide == HORIZONTAL
-                || mResolvedDimensionRatioSide == UNKNOWN)
-        val useVerticalRatio = useRatio && (mResolvedDimensionRatioSide == VERTICAL
-                || mResolvedDimensionRatioSide == UNKNOWN)
+        val useHorizontalRatio =
+            useRatio && ((mResolvedDimensionRatioSide == ConstraintWidget.HORIZONTAL
+                    || mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN))
+        val useVerticalRatio =
+            useRatio && ((mResolvedDimensionRatioSide == ConstraintWidget.VERTICAL
+                    || mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN))
 
         // Horizontal resolution
-        var wrapContent = (mListDimensionBehaviors[DIMENSION_HORIZONTAL] == DimensionBehaviour.WRAP_CONTENT
-                && this is ConstraintWidgetContainer)
+        var wrapContent =
+            ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL] == DimensionBehaviour.WRAP_CONTENT)
+                    && (this is ConstraintWidgetContainer))
         if (wrapContent) {
             width = 0
         }
@@ -2509,65 +3026,86 @@ open class ConstraintWidget {
         if (mCenter.isConnected) {
             applyPosition = false
         }
-        val isInHorizontalBarrier = mIsInBarrier[HORIZONTAL]
-        val isInVerticalBarrier = mIsInBarrier[VERTICAL]
-        if (mHorizontalResolution != DIRECT && !mResolvedHorizontal) {
-            if (!optimize || !(mHorizontalRun != null && mHorizontalRun!!.start.resolved && mHorizontalRun!!.end.resolved)) {
-                val parentMax: SolverVariable? = if (parent != null) system?.createObjectVariable(
-                    parent!!.mRight
+        val isInHorizontalBarrier = mIsInBarrier[ConstraintWidget.HORIZONTAL]
+        val isInVerticalBarrier = mIsInBarrier[ConstraintWidget.VERTICAL]
+        if (mHorizontalResolution != ConstraintWidget.DIRECT && !mResolvedHorizontal) {
+            if (!optimize || !((mHorizontalRun != null
+                        ) && mHorizontalRun!!.start.resolved && mHorizontalRun!!.end.resolved)
+            ) {
+                val parentMax: SolverVariable? = if (mParent != null) system.createObjectVariable(
+                    mParent!!.mRight
                 ) else null
-                val parentMin: SolverVariable? = if (parent != null) system?.createObjectVariable(
-                    parent!!.mLeft
+                val parentMin: SolverVariable? = if (mParent != null) system.createObjectVariable(
+                    mParent!!.mLeft
                 ) else null
                 applyConstraints(
-                    system, true, horizontalParentWrapContent,
-                    verticalParentWrapContent, isTerminalWidget[HORIZONTAL], parentMin,
-                    parentMax, mListDimensionBehaviors[DIMENSION_HORIZONTAL], wrapContent,
-                    mLeft, mRight, mX, width,
-                    mMinWidth, mMaxDimension[HORIZONTAL],
-                    verticalBiasPercent, useHorizontalRatio,
-                    mListDimensionBehaviors[VERTICAL] == MATCH_CONSTRAINT,
-                    inHorizontalChain, inVerticalChain, isInHorizontalBarrier,
-                    matchConstraintDefaultWidth, matchConstraintDefaultHeight,
-                    mMatchConstraintMinWidth, mMatchConstraintMaxWidth,
-                    mMatchConstraintPercentWidth, applyPosition
+                    system,
+                    true,
+                    horizontalParentWrapContent,
+                    verticalParentWrapContent,
+                    isTerminalWidget[ConstraintWidget.HORIZONTAL],
+                    parentMin!!,
+                    parentMax!!,
+                    mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL],
+                    wrapContent,
+                    mLeft,
+                    mRight,
+                    mX,
+                    width,
+                    mMinWidth,
+                    mMaxDimension[ConstraintWidget.HORIZONTAL],
+                    mHorizontalBiasPercent,
+                    useHorizontalRatio,
+                    mListDimensionBehaviors[ConstraintWidget.VERTICAL] == DimensionBehaviour.MATCH_CONSTRAINT,
+                    inHorizontalChain,
+                    inVerticalChain,
+                    isInHorizontalBarrier,
+                    matchConstraintDefaultWidth,
+                    matchConstraintDefaultHeight,
+                    mMatchConstraintMinWidth,
+                    mMatchConstraintMaxWidth,
+                    mMatchConstraintPercentWidth,
+                    applyPosition
                 )
             } else if (optimize) {
-                system?.addEquality(left, mHorizontalRun?.start?.value ?: 0)
-                system?.addEquality(right, mHorizontalRun?.end?.value ?: 0)
-                if (parent != null) {
-                    if (horizontalParentWrapContent
-                        && isTerminalWidget[HORIZONTAL] && !isInHorizontalChain
+                system.addEquality(left, mHorizontalRun!!.start.value)
+                system.addEquality(right, mHorizontalRun!!.end.value)
+                if (mParent != null) {
+                    if ((horizontalParentWrapContent
+                                && isTerminalWidget[ConstraintWidget.HORIZONTAL] && !isInHorizontalChain())
                     ) {
-                        if (LinearSystem.Companion.FULL_DEBUG) {
-                            println("<>2 ADDING H WRAP GREATER FOR $debugName")
+                        if (FULL_DEBUG) {
+                            println("<>2 ADDING H WRAP GREATER FOR " + getDebugName())
                         }
-                        val parentMax: SolverVariable? = system?.createObjectVariable(parent!!.mRight)
-                        system?.addGreaterThan(parentMax, right, 0, SolverVariable.STRENGTH_FIXED)
+                        val parentMax: SolverVariable? =
+                            system.createObjectVariable(mParent!!.mRight)
+                        system.addGreaterThan(parentMax, right, 0, SolverVariable.STRENGTH_FIXED)
                     }
                 }
             }
         }
         var applyVerticalConstraints = true
-        if (optimize && mVerticalRun != null && mVerticalRun!!.start.resolved && mVerticalRun!!.end.resolved) {
-            system?.addEquality(top, mVerticalRun!!.start.value)
-            system?.addEquality(bottom, mVerticalRun!!.end.value)
-            system?.addEquality(baseline, mVerticalRun!!.baseline.value)
-            if (parent != null) {
-                if (!inVerticalChain && verticalParentWrapContent && isTerminalWidget[VERTICAL]) {
-                    if (LinearSystem.Companion.FULL_DEBUG) {
-                        println("<>2 ADDING V WRAP GREATER FOR $debugName")
+        if (optimize && (mVerticalRun != null
+                    ) && mVerticalRun!!.start.resolved && mVerticalRun!!.end.resolved
+        ) {
+            system.addEquality(top, mVerticalRun!!.start.value)
+            system.addEquality(bottom, mVerticalRun!!.end.value)
+            system.addEquality(baseline, mVerticalRun!!.baseline.value)
+            if (mParent != null) {
+                if (!inVerticalChain && verticalParentWrapContent && isTerminalWidget[ConstraintWidget.VERTICAL]) {
+                    if (FULL_DEBUG) {
+                        println("<>2 ADDING V WRAP GREATER FOR " + getDebugName())
                     }
-                    val parentMax: SolverVariable? = system?.createObjectVariable(parent!!.mBottom)
-                    system?.addGreaterThan(parentMax, bottom, 0, SolverVariable.STRENGTH_FIXED)
+                    val parentMax: SolverVariable? = system.createObjectVariable(mParent!!.mBottom)
+                    system.addGreaterThan(parentMax, bottom, 0, SolverVariable.STRENGTH_FIXED)
                 }
             }
             applyVerticalConstraints = false
         }
-        if (mVerticalResolution == DIRECT) {
+        if (mVerticalResolution == ConstraintWidget.DIRECT) {
             if (LinearSystem.FULL_DEBUG) {
                 println("\n----------------------------------------------")
-                println("-- DONE adding $debugName to the solver")
+                println("-- DONE adding " + getDebugName() + " to the solver")
                 println("-- SKIP VERTICAL RESOLUTION")
                 println("----------------------------------------------\n")
             }
@@ -2575,50 +3113,49 @@ open class ConstraintWidget {
         }
         if (applyVerticalConstraints && !mResolvedVertical) {
             // Vertical Resolution
-            wrapContent = (mListDimensionBehaviors[DIMENSION_VERTICAL] == DimensionBehaviour.WRAP_CONTENT
-                    && this is ConstraintWidgetContainer)
+            wrapContent =
+                ((mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL] == DimensionBehaviour.WRAP_CONTENT)
+                        && (this is ConstraintWidgetContainer))
             if (wrapContent) {
-                height = 0f
+                height = 0
             }
-            val parentMax: SolverVariable? = if (parent != null) system?.createObjectVariable(
-                parent!!.mBottom
-            ) else null
-            val parentMin: SolverVariable? = if (parent != null) system?.createObjectVariable(
-                parent!!.mTop
-            ) else null
-            if (mBaselineDistance > 0 || visibility == GONE) {
+            val parentMax: SolverVariable? =
+                if (mParent != null) system.createObjectVariable(mParent!!.mBottom) else null
+            val parentMin: SolverVariable? =
+                if (mParent != null) system.createObjectVariable(mParent!!.mTop) else null
+            if (mBaselineDistance > 0 || mVisibility == ConstraintWidget.GONE) {
                 // if we are GONE we might still have to deal with baseline,
                 // even if our baseline distance would be zero
-                if (mBaseline.target != null) {
-                    system?.addEquality(
-                        baseline, top, baselineDistance,
+                if (mBaseline.mTarget != null) {
+                    system.addEquality(
+                        baseline, top, getBaselineDistance(),
                         SolverVariable.STRENGTH_FIXED
                     )
                     val baselineTarget: SolverVariable? =
-                        system?.createObjectVariable(mBaseline.target)
-                    val baselineMargin: Int = mBaseline.margin
-                    system?.addEquality(
+                        system.createObjectVariable(mBaseline.mTarget)
+                    val baselineMargin: Int = mBaseline.getMargin()
+                    system.addEquality(
                         baseline, baselineTarget, baselineMargin,
                         SolverVariable.STRENGTH_FIXED
                     )
                     applyPosition = false
                     if (verticalParentWrapContent) {
-                        if (LinearSystem.Companion.FULL_DEBUG) {
-                            println("<>3 ADDING V WRAP GREATER FOR $debugName")
+                        if (FULL_DEBUG) {
+                            println("<>3 ADDING V WRAP GREATER FOR " + getDebugName())
                         }
-                        val end: SolverVariable? = system?.createObjectVariable(mBottom)
+                        val end: SolverVariable? = system.createObjectVariable(mBottom)
                         val wrapStrength: Int = SolverVariable.STRENGTH_EQUALITY
-                        system?.addGreaterThan(parentMax, end, 0, wrapStrength)
+                        system.addGreaterThan(parentMax, end, 0, wrapStrength)
                     }
-                } else if (visibility == GONE) {
+                } else if (mVisibility == ConstraintWidget.GONE) {
                     // TODO: use the constraints graph here to help
-                    system?.addEquality(
-                        baseline, top, mBaseline.margin,
+                    system.addEquality(
+                        baseline, top, mBaseline.getMargin(),
                         SolverVariable.STRENGTH_FIXED
                     )
                 } else {
-                    system?.addEquality(
-                        baseline, top, baselineDistance,
+                    system.addEquality(
+                        baseline, top, getBaselineDistance(),
                         SolverVariable.STRENGTH_FIXED
                     )
                 }
@@ -2628,20 +3165,20 @@ open class ConstraintWidget {
                 false,
                 verticalParentWrapContent,
                 horizontalParentWrapContent,
-                isTerminalWidget[VERTICAL],
-                parentMin,
-                parentMax,
-                mListDimensionBehaviors[DIMENSION_VERTICAL],
+                isTerminalWidget[ConstraintWidget.VERTICAL],
+                parentMin!!,
+                parentMax!!,
+                mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL],
                 wrapContent,
                 mTop,
                 mBottom,
                 mY,
-                height.toInt(),
-                horizontalBiasPercent.toInt(),
-                mMaxDimension[VERTICAL],
+                height,
+                mMinHeight,
+                mMaxDimension[ConstraintWidget.VERTICAL],
                 mVerticalBiasPercent,
                 useVerticalRatio,
-                mListDimensionBehaviors[HORIZONTAL] == MATCH_CONSTRAINT,
+                mListDimensionBehaviors[ConstraintWidget.HORIZONTAL] == DimensionBehaviour.MATCH_CONSTRAINT,
                 inVerticalChain,
                 inHorizontalChain,
                 isInVerticalBarrier,
@@ -2655,29 +3192,31 @@ open class ConstraintWidget {
         }
         if (useRatio) {
             val strength: Int = SolverVariable.STRENGTH_FIXED
-            if (mResolvedDimensionRatioSide == VERTICAL) {
-                system?.addRatio(bottom!!, top!!, right!!, left!!, mResolvedDimensionRatio, strength)
+            if (mResolvedDimensionRatioSide == ConstraintWidget.VERTICAL) {
+                system.addRatio(bottom!!, top!!, right!!, left!!, mResolvedDimensionRatio, strength)
             } else {
-                system?.addRatio(right!!, left!!, bottom!!, top!!, mResolvedDimensionRatio, strength)
+                system.addRatio(right!!, left!!, bottom!!, top!!, mResolvedDimensionRatio, strength)
             }
         }
         if (mCenter.isConnected) {
-            system?.addCenterPoint(
-                this, mCenter.target!!.owner,
-                toRadians(mCircleConstraintAngle + 90), mCenter.margin
+            system.addCenterPoint(
+                this,
+                mCenter.target!!.owner,
+                toRadians((mCircleConstraintAngle + 90).toDouble()).toFloat(),
+                mCenter.getMargin()
             )
         }
         if (LinearSystem.FULL_DEBUG) {
             println("\n----------------------------------------------")
-            println("-- DONE adding $debugName to the solver")
+            println("-- DONE adding " + getDebugName() + " to the solver")
             println("----------------------------------------------\n")
         }
         mResolvedHorizontal = false
         mResolvedVertical = false
-        if (LinearSystem.sMetrics != null) {
-            LinearSystem.sMetrics!!.mEquations = system?.numRows?.toLong() ?: 0
-            LinearSystem.sMetrics!!.mVariables = system?.numVariables?.toLong() ?:0
-        }
+        /*if (LinearSystem.sMetrics != null) {
+            LinearSystem.sMetrics!!.mEquations = system.getNumEquations()
+            LinearSystem.sMetrics!!.mVariables = system.getNumVariables()
+        }*/
     }
 
     /**
@@ -2702,60 +3241,60 @@ open class ConstraintWidget {
         horizontalDimensionFixed: Boolean,
         verticalDimensionFixed: Boolean
     ) {
-        if (mResolvedDimensionRatioSide == UNKNOWN) {
+        if (mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN) {
             if (horizontalDimensionFixed && !verticalDimensionFixed) {
-                mResolvedDimensionRatioSide = HORIZONTAL
+                mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
             } else if (!horizontalDimensionFixed && verticalDimensionFixed) {
-                mResolvedDimensionRatioSide = VERTICAL
-                if (mDimensionRatioSide == UNKNOWN) {
+                mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
+                if (mDimensionRatioSide == ConstraintWidget.UNKNOWN) {
                     // need to reverse the ratio as the parsing is done in horizontal mode
                     mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
                 }
             }
         }
-        if (mResolvedDimensionRatioSide == HORIZONTAL
+        if (mResolvedDimensionRatioSide == ConstraintWidget.HORIZONTAL
             && !(mTop.isConnected && mBottom.isConnected)
         ) {
-            mResolvedDimensionRatioSide = VERTICAL
-        } else if (mResolvedDimensionRatioSide == VERTICAL
-            && !(mLeft!!.isConnected && mRight!!.isConnected)
+            mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
+        } else if (mResolvedDimensionRatioSide == ConstraintWidget.VERTICAL
+            && !(mLeft.isConnected && mRight.isConnected)
         ) {
-            mResolvedDimensionRatioSide = HORIZONTAL
+            mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
         }
 
         // if dimension is still unknown... check parentWrap
-        if (mResolvedDimensionRatioSide == UNKNOWN) {
+        if (mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN) {
             if (!(mTop.isConnected && mBottom.isConnected
-                        && mLeft!!.isConnected && mRight!!.isConnected)
+                        && mLeft.isConnected && mRight.isConnected)
             ) {
                 // only do that if not all connections are set
                 if (mTop.isConnected && mBottom.isConnected) {
-                    mResolvedDimensionRatioSide = HORIZONTAL
-                } else if (mLeft!!.isConnected && mRight!!.isConnected) {
+                    mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
+                } else if (mLeft.isConnected && mRight.isConnected) {
                     mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
-                    mResolvedDimensionRatioSide = VERTICAL
+                    mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
                 }
             }
         }
-        if (DO_NOT_USE && mResolvedDimensionRatioSide == UNKNOWN) {
+        if (ConstraintWidget.DO_NOT_USE && mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN) {
             if (hParentWrapContent && !vParentWrapContent) {
-                mResolvedDimensionRatioSide = HORIZONTAL
+                mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
             } else if (!hParentWrapContent && vParentWrapContent) {
                 mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
-                mResolvedDimensionRatioSide = VERTICAL
+                mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
             }
         }
-        if (mResolvedDimensionRatioSide == UNKNOWN) {
+        if (mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN) {
             if (mMatchConstraintMinWidth > 0 && mMatchConstraintMinHeight == 0) {
-                mResolvedDimensionRatioSide = HORIZONTAL
+                mResolvedDimensionRatioSide = ConstraintWidget.HORIZONTAL
             } else if (mMatchConstraintMinWidth == 0 && mMatchConstraintMinHeight > 0) {
                 mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
-                mResolvedDimensionRatioSide = VERTICAL
+                mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
             }
         }
-        if (DO_NOT_USE && mResolvedDimensionRatioSide == UNKNOWN && hParentWrapContent && vParentWrapContent) {
+        if (ConstraintWidget.DO_NOT_USE && mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN && hParentWrapContent && vParentWrapContent) {
             mResolvedDimensionRatio = 1 / mResolvedDimensionRatio
-            mResolvedDimensionRatioSide = VERTICAL
+            mResolvedDimensionRatioSide = ConstraintWidget.VERTICAL
         }
     }
 
@@ -2773,12 +3312,12 @@ open class ConstraintWidget {
      * applied if in match constraint and percent mode
      */
     private fun applyConstraints(
-        system: LinearSystem?, isHorizontal: Boolean,
+        system: LinearSystem, isHorizontal: Boolean,
         parentWrapContent: Boolean, oppositeParentWrapContent: Boolean,
-        isTerminal: Boolean, parentMin: SolverVariable?,
-        parentMax: SolverVariable?,
+        isTerminal: Boolean, parentMin: SolverVariable,
+        parentMax: SolverVariable,
         dimensionBehaviour: DimensionBehaviour, wrapContent: Boolean,
-        beginAnchor: ConstraintAnchor?, endAnchor: ConstraintAnchor?,
+        beginAnchor: ConstraintAnchor, endAnchor: ConstraintAnchor,
         beginPosition: Int, dimension: Int, minDimension: Int,
         maxDimension: Int, bias: Float, useRatio: Boolean,
         oppositeVariable: Boolean, inChain: Boolean,
@@ -2794,15 +3333,15 @@ open class ConstraintWidget {
         var matchConstraintDefault = matchConstraintDefault
         var matchMinDimension = matchMinDimension
         var matchMaxDimension = matchMaxDimension
-        val begin: SolverVariable? = system?.createObjectVariable(beginAnchor)
-        val end: SolverVariable? = system?.createObjectVariable(endAnchor)
-        val beginTarget: SolverVariable? = system?.createObjectVariable(beginAnchor?.target)
-        val endTarget: SolverVariable? = system?.createObjectVariable(endAnchor?.target)
-        if (LinearSystem.metrics != null) {
-            LinearSystem.metrics!!.nonresolvedWidgets++
+        val begin: SolverVariable? = system.createObjectVariable(beginAnchor)
+        val end: SolverVariable? = system.createObjectVariable(endAnchor)
+        val beginTarget: SolverVariable? = system.createObjectVariable(beginAnchor.target)
+        val endTarget: SolverVariable? = system.createObjectVariable(endAnchor.target)
+        if (system.getMetrics() != null) {
+            system.getMetrics()!!.nonresolvedWidgets++
         }
-        val isBeginConnected: Boolean = beginAnchor!!.isConnected
-        val isEndConnected: Boolean = endAnchor!!.isConnected
+        val isBeginConnected: Boolean = beginAnchor.isConnected
+        val isEndConnected: Boolean = endAnchor.isConnected
         val isCenterConnected: Boolean = mCenter.isConnected
         var variableSize = false
         var numConnections = 0
@@ -2816,24 +3355,25 @@ open class ConstraintWidget {
             numConnections++
         }
         if (useRatio) {
-            matchConstraintDefault = MATCH_CONSTRAINT_RATIO
+            matchConstraintDefault = ConstraintWidget.MATCH_CONSTRAINT_RATIO
         }
-        variableSize = when (dimensionBehaviour) {
+        when (dimensionBehaviour) {
             DimensionBehaviour.FIXED -> {
-                false
+                variableSize = false
             }
             DimensionBehaviour.WRAP_CONTENT -> {
-                false
+                variableSize = false
             }
             DimensionBehaviour.MATCH_PARENT -> {
-                false
+                variableSize = false
             }
-            MATCH_CONSTRAINT -> {
-                matchConstraintDefault != MATCH_CONSTRAINT_RATIO_RESOLVED
+            DimensionBehaviour.MATCH_CONSTRAINT -> {
+                variableSize =
+                    matchConstraintDefault != ConstraintWidget.MATCH_CONSTRAINT_RATIO_RESOLVED
             }
         }
         if (mWidthOverride != -1 && isHorizontal) {
-            if (LinearSystem.Companion.FULL_DEBUG) {
+            if (FULL_DEBUG) {
                 println("OVERRIDE WIDTH to $mWidthOverride")
             }
             variableSize = false
@@ -2841,14 +3381,14 @@ open class ConstraintWidget {
             mWidthOverride = -1
         }
         if (mHeightOverride != -1 && !isHorizontal) {
-            if (LinearSystem.Companion.FULL_DEBUG) {
+            if (FULL_DEBUG) {
                 println("OVERRIDE HEIGHT to $mHeightOverride")
             }
             variableSize = false
             dimension = mHeightOverride
             mHeightOverride = -1
         }
-        if (visibility == GONE) {
+        if (mVisibility == ConstraintWidget.GONE) {
             dimension = 0
             variableSize = false
         }
@@ -2856,11 +3396,11 @@ open class ConstraintWidget {
         // First apply starting direct connections (more solver-friendly)
         if (applyPosition) {
             if (!isBeginConnected && !isEndConnected && !isCenterConnected) {
-                system?.addEquality(begin, beginPosition)
+                system.addEquality(begin, beginPosition)
             } else if (isBeginConnected && !isEndConnected) {
-                system?.addEquality(
+                system.addEquality(
                     begin, beginTarget,
-                    beginAnchor.margin, SolverVariable.STRENGTH_FIXED
+                    beginAnchor.getMargin(), SolverVariable.STRENGTH_FIXED
                 )
             }
         }
@@ -2868,41 +3408,41 @@ open class ConstraintWidget {
         // Then apply the dimension
         if (!variableSize) {
             if (wrapContent) {
-                system?.addEquality(end, begin, 0, SolverVariable.STRENGTH_HIGH)
+                system.addEquality(end, begin, 0, SolverVariable.STRENGTH_HIGH)
                 if (minDimension > 0) {
-                    system?.addGreaterThan(end, begin, minDimension, SolverVariable.STRENGTH_FIXED)
+                    system.addGreaterThan(end, begin, minDimension, SolverVariable.STRENGTH_FIXED)
                 }
                 if (maxDimension < Int.MAX_VALUE) {
-                    system?.addLowerThan(end, begin, maxDimension, SolverVariable.STRENGTH_FIXED)
+                    system.addLowerThan(end, begin, maxDimension, SolverVariable.STRENGTH_FIXED)
                 }
             } else {
-                system?.addEquality(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
+                system.addEquality(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
             }
         } else {
             if (numConnections != 2 && !useRatio
-                && (matchConstraintDefault == MATCH_CONSTRAINT_WRAP
-                        || matchConstraintDefault == MATCH_CONSTRAINT_SPREAD)
+                && (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_WRAP
+                        || matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_SPREAD)
             ) {
                 variableSize = false
                 var d: Int = max(matchMinDimension, dimension)
                 if (matchMaxDimension > 0) {
                     d = min(matchMaxDimension, d)
                 }
-                system?.addEquality(end, begin, d, SolverVariable.STRENGTH_FIXED)
+                system.addEquality(end, begin, d, SolverVariable.STRENGTH_FIXED)
             } else {
-                if (matchMinDimension == WRAP) {
+                if (matchMinDimension == ConstraintWidget.WRAP) {
                     matchMinDimension = dimension
                 }
-                if (matchMaxDimension == WRAP) {
+                if (matchMaxDimension == ConstraintWidget.WRAP) {
                     matchMaxDimension = dimension
                 }
                 if (dimension > 0
-                    && matchConstraintDefault != MATCH_CONSTRAINT_WRAP
+                    && matchConstraintDefault != ConstraintWidget.MATCH_CONSTRAINT_WRAP
                 ) {
-                    if (USE_WRAP_DIMENSION_FOR_SPREAD
-                        && matchConstraintDefault == MATCH_CONSTRAINT_SPREAD
+                    if (ConstraintWidget.USE_WRAP_DIMENSION_FOR_SPREAD
+                        && matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_SPREAD
                     ) {
-                        system?.addGreaterThan(
+                        system.addGreaterThan(
                             end, begin, dimension,
                             SolverVariable.STRENGTH_HIGHEST
                         )
@@ -2910,7 +3450,7 @@ open class ConstraintWidget {
                     dimension = 0
                 }
                 if (matchMinDimension > 0) {
-                    system?.addGreaterThan(
+                    system.addGreaterThan(
                         end, begin, matchMinDimension,
                         SolverVariable.STRENGTH_FIXED
                     )
@@ -2918,49 +3458,49 @@ open class ConstraintWidget {
                 }
                 if (matchMaxDimension > 0) {
                     var applyLimit = true
-                    if (parentWrapContent && matchConstraintDefault == MATCH_CONSTRAINT_WRAP) {
+                    if (parentWrapContent && matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_WRAP) {
                         applyLimit = false
                     }
                     if (applyLimit) {
-                        system?.addLowerThan(
+                        system.addLowerThan(
                             end, begin,
                             matchMaxDimension, SolverVariable.STRENGTH_FIXED
                         )
                     }
                     dimension = min(dimension, matchMaxDimension)
                 }
-                if (matchConstraintDefault == MATCH_CONSTRAINT_WRAP) {
+                if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_WRAP) {
                     if (parentWrapContent) {
-                        system?.addEquality(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
+                        system.addEquality(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
                     } else if (inChain) {
-                        system?.addEquality(end, begin, dimension, SolverVariable.STRENGTH_EQUALITY)
-                        system?.addLowerThan(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
+                        system.addEquality(end, begin, dimension, SolverVariable.STRENGTH_EQUALITY)
+                        system.addLowerThan(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
                     } else {
-                        system?.addEquality(end, begin, dimension, SolverVariable.STRENGTH_EQUALITY)
-                        system?.addLowerThan(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
+                        system.addEquality(end, begin, dimension, SolverVariable.STRENGTH_EQUALITY)
+                        system.addLowerThan(end, begin, dimension, SolverVariable.STRENGTH_FIXED)
                     }
-                } else if (matchConstraintDefault == MATCH_CONSTRAINT_PERCENT) {
+                } else if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_PERCENT) {
                     var percentBegin: SolverVariable? = null
                     var percentEnd: SolverVariable? = null
                     if (beginAnchor.type == ConstraintAnchor.Type.TOP
                         || beginAnchor.type == ConstraintAnchor.Type.BOTTOM
                     ) {
                         // vertical
-                        percentBegin = system?.createObjectVariable(
-                            parent!!.getAnchor(ConstraintAnchor.Type.TOP)
+                        percentBegin = system.createObjectVariable(
+                            mParent!!.getAnchor(ConstraintAnchor.Type.TOP)
                         )
-                        percentEnd = system?.createObjectVariable(
-                            parent!!.getAnchor(ConstraintAnchor.Type.BOTTOM)
+                        percentEnd = system.createObjectVariable(
+                            mParent!!.getAnchor(ConstraintAnchor.Type.BOTTOM)
                         )
                     } else {
-                        percentBegin = system?.createObjectVariable(
-                            parent!!.getAnchor(ConstraintAnchor.Type.LEFT)
+                        percentBegin = system.createObjectVariable(
+                            mParent!!.getAnchor(ConstraintAnchor.Type.LEFT)
                         )
-                        percentEnd = system?.createObjectVariable(
-                            parent!!.getAnchor(ConstraintAnchor.Type.RIGHT)
+                        percentEnd = system.createObjectVariable(
+                            mParent!!.getAnchor(ConstraintAnchor.Type.RIGHT)
                         )
                     }
-                    system?.addConstraint(
+                    system.addConstraint(
                         system.createRow().createRowDimensionRatio(
                             end,
                             begin, percentEnd, percentBegin, matchPercentDimension
@@ -2978,32 +3518,33 @@ open class ConstraintWidget {
             // If we don't need to apply the position, let's finish now.
             if (LinearSystem.FULL_DEBUG) {
                 println(
-                    "only deal with dimension for " + debugName
+                    "only deal with dimension for " + mDebugName
                             + ", not positioning (applyPosition: "
                             + applyPosition + " inChain: " + inChain + ")"
                 )
             }
-            if (numConnections < 2 && parentWrapContent && isTerminal) {
-                system?.addGreaterThan(begin, parentMin, 0, SolverVariable.STRENGTH_FIXED)
-                var applyEnd = isHorizontal || mBaseline.target == null
-                if (!isHorizontal && mBaseline.target != null) {
+            if ((numConnections < 2) && parentWrapContent && isTerminal) {
+                system.addGreaterThan(begin, parentMin, 0, SolverVariable.STRENGTH_FIXED)
+                var applyEnd = isHorizontal || (mBaseline.mTarget == null)
+                if (!isHorizontal && mBaseline.mTarget != null) {
                     // generally we wouldn't take the current widget in the wrap content,
                     // but if the connected element is a ratio widget,
                     // then we can contribute (as the ratio widget may not be enough by itself)
                     // to it.
-                    val target: ConstraintWidget = mBaseline.target!!.mOwner
-                    applyEnd =
-                        if (target.dimensionRatioSide != 0 && target.mListDimensionBehaviors[0] == MATCH_CONSTRAINT && target.mListDimensionBehaviors[1] == MATCH_CONSTRAINT) {
-                            true
-                        } else {
-                            false
-                        }
+                    val target: ConstraintWidget = mBaseline.mTarget!!.mOwner
+                    if ((target.mDimensionRatio != 0f) && (target.mListDimensionBehaviors[0] == DimensionBehaviour.MATCH_CONSTRAINT
+                                ) && (target.mListDimensionBehaviors[1] == DimensionBehaviour.MATCH_CONSTRAINT)
+                    ) {
+                        applyEnd = true
+                    } else {
+                        applyEnd = false
+                    }
                 }
                 if (applyEnd) {
-                    if (LinearSystem.Companion.FULL_DEBUG) {
-                        println("<>4 ADDING WRAP GREATER FOR $debugName")
+                    if (FULL_DEBUG) {
+                        println("<>4 ADDING WRAP GREATER FOR " + getDebugName())
                     }
-                    system?.addGreaterThan(parentMax, end, 0, SolverVariable.STRENGTH_FIXED)
+                    system.addGreaterThan(parentMax, end, 0, SolverVariable.STRENGTH_FIXED)
                 }
             }
             return
@@ -3017,28 +3558,28 @@ open class ConstraintWidget {
             // note we already applied the start position before, no need to redo it...
 
             // If we are constrained to a barrier, make sure that we are not bypassed in the wrap
-            val beginWidget: ConstraintWidget? = beginAnchor.target?.mOwner
+            val beginWidget: ConstraintWidget? = beginAnchor.mTarget?.mOwner
             if (parentWrapContent && beginWidget is Barrier) {
                 wrapStrength = SolverVariable.STRENGTH_FIXED
             }
         } else if (!isBeginConnected && isEndConnected) {
-            system?.addEquality(
+            system.addEquality(
                 end, endTarget,
-                -endAnchor.margin, SolverVariable.STRENGTH_FIXED
+                -endAnchor.getMargin(), SolverVariable.STRENGTH_FIXED
             )
             if (parentWrapContent) {
-                if (mOptimizeWrapO && begin?.isFinalValue == true && parent != null) {
-                    val container: ConstraintWidgetContainer = parent as ConstraintWidgetContainer
+                if (mOptimizeWrapO && begin!!.isFinalValue && (mParent != null)) {
+                    val container = mParent as ConstraintWidgetContainer
                     if (isHorizontal) {
                         container.addHorizontalWrapMinVariable(beginAnchor)
                     } else {
                         container.addVerticalWrapMinVariable(beginAnchor)
                     }
                 } else {
-                    if (LinearSystem.Companion.FULL_DEBUG) {
-                        println("<>5 ADDING WRAP GREATER FOR $debugName")
+                    if (FULL_DEBUG) {
+                        println("<>5 ADDING WRAP GREATER FOR " + getDebugName())
                     }
-                    system?.addGreaterThan(begin, parentMin, 0, SolverVariable.STRENGTH_EQUALITY)
+                    system.addGreaterThan(begin, parentMin, 0, SolverVariable.STRENGTH_EQUALITY)
                 }
             }
         } else if (isBeginConnected && isEndConnected) {
@@ -3054,24 +3595,24 @@ open class ConstraintWidget {
             if (parentWrapContent) {
                 rangeCheckStrength = SolverVariable.STRENGTH_EQUALITY
             }
-            val beginWidget: ConstraintWidget? = beginAnchor.target?.mOwner
-            val endWidget: ConstraintWidget? = endAnchor.target?.mOwner
-            val parent = parent
+            val beginWidget: ConstraintWidget = beginAnchor.mTarget!!.mOwner
+            val endWidget: ConstraintWidget = endAnchor.mTarget!!.mOwner
+            val parent = getParent()
             if (variableSize) {
-                if (matchConstraintDefault == MATCH_CONSTRAINT_SPREAD) {
+                if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_SPREAD) {
                     if (matchMaxDimension == 0 && matchMinDimension == 0) {
                         applyStrongChecks = true
                         rangeCheckStrength = SolverVariable.STRENGTH_FIXED
                         boundsCheckStrength = SolverVariable.STRENGTH_FIXED
                         // Optimization in case of centering in parent
-                        if (beginTarget?.isFinalValue == true && endTarget?.isFinalValue == true) {
+                        if (beginTarget!!.isFinalValue && endTarget!!.isFinalValue) {
                             system.addEquality(
                                 begin, beginTarget,
-                                beginAnchor.margin, SolverVariable.STRENGTH_FIXED
+                                beginAnchor.getMargin(), SolverVariable.STRENGTH_FIXED
                             )
                             system.addEquality(
                                 end, endTarget,
-                                -endAnchor.margin, SolverVariable.STRENGTH_FIXED
+                                -endAnchor.getMargin(), SolverVariable.STRENGTH_FIXED
                             )
                             return
                         }
@@ -3085,7 +3626,7 @@ open class ConstraintWidget {
                     if (beginWidget is Barrier || endWidget is Barrier) {
                         boundsCheckStrength = SolverVariable.STRENGTH_HIGHEST
                     }
-                } else if (matchConstraintDefault == MATCH_CONSTRAINT_PERCENT) {
+                } else if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_PERCENT) {
                     applyCentering = true
                     rangeCheckStrength = SolverVariable.STRENGTH_EQUALITY
                     boundsCheckStrength = SolverVariable.STRENGTH_EQUALITY
@@ -3094,12 +3635,12 @@ open class ConstraintWidget {
                     if (beginWidget is Barrier || endWidget is Barrier) {
                         boundsCheckStrength = SolverVariable.STRENGTH_HIGHEST
                     }
-                } else if (matchConstraintDefault == MATCH_CONSTRAINT_WRAP) {
+                } else if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_WRAP) {
                     applyCentering = true
                     applyRangeCheck = true
                     rangeCheckStrength = SolverVariable.STRENGTH_FIXED
-                } else if (matchConstraintDefault == MATCH_CONSTRAINT_RATIO) {
-                    if (mResolvedDimensionRatioSide == UNKNOWN) {
+                } else if (matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_RATIO) {
+                    if (mResolvedDimensionRatioSide == ConstraintWidget.UNKNOWN) {
                         applyCentering = true
                         applyRangeCheck = true
                         applyStrongChecks = true
@@ -3123,9 +3664,9 @@ open class ConstraintWidget {
                             // if the side we base ourselves on for the ratio is this one
                             // if that's not the case, we need to have a stronger constraint.
                             val otherSideInvariable =
-                                (oppositeMatchConstraintDefault == MATCH_CONSTRAINT_PERCENT
+                                (oppositeMatchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_PERCENT
                                         || oppositeMatchConstraintDefault
-                                        == MATCH_CONSTRAINT_WRAP)
+                                        == ConstraintWidget.MATCH_CONSTRAINT_WRAP)
                             if (!otherSideInvariable) {
                                 rangeCheckStrength = SolverVariable.STRENGTH_FIXED
                                 boundsCheckStrength = SolverVariable.STRENGTH_EQUALITY
@@ -3138,12 +3679,11 @@ open class ConstraintWidget {
                                 if (!oppositeInChain) {
                                     boundsCheckStrength = SolverVariable.STRENGTH_FIXED
                                 } else {
-                                    rangeCheckStrength =
-                                        if (beginWidget != parent && endWidget != parent) {
-                                            SolverVariable.STRENGTH_HIGHEST
-                                        } else {
-                                            SolverVariable.STRENGTH_EQUALITY
-                                        }
+                                    if (beginWidget != parent && endWidget != parent) {
+                                        rangeCheckStrength = SolverVariable.STRENGTH_HIGHEST
+                                    } else {
+                                        rangeCheckStrength = SolverVariable.STRENGTH_EQUALITY
+                                    }
                                     boundsCheckStrength = SolverVariable.STRENGTH_HIGHEST
                                 }
                             }
@@ -3155,20 +3695,20 @@ open class ConstraintWidget {
                 applyRangeCheck = true
 
                 // Let's optimize away if we can...
-                if (beginTarget?.isFinalValue == true && endTarget?.isFinalValue == true) {
+                if (beginTarget!!.isFinalValue && endTarget!!.isFinalValue) {
                     system.addCentering(
-                        begin, beginTarget, beginAnchor.margin,
-                        bias, endTarget, end, endAnchor.margin,
+                        begin, beginTarget, beginAnchor.getMargin(),
+                        bias, endTarget, end, endAnchor.getMargin(),
                         SolverVariable.STRENGTH_FIXED
                     )
                     if (parentWrapContent && isTerminal) {
                         var margin = 0
-                        if (endAnchor.target != null) {
-                            margin = endAnchor.margin
+                        if (endAnchor.mTarget != null) {
+                            margin = endAnchor.getMargin()
                         }
                         if (endTarget != parentMax) { // if not already applied
-                            if (LinearSystem.Companion.FULL_DEBUG) {
-                                println("<>6 ADDING WRAP GREATER FOR $debugName")
+                            if (FULL_DEBUG) {
+                                println("<>6 ADDING WRAP GREATER FOR " + getDebugName())
                             }
                             system.addGreaterThan(parentMax, end, margin, wrapStrength)
                         }
@@ -3176,14 +3716,14 @@ open class ConstraintWidget {
                     return
                 }
             }
-            if (applyRangeCheck && beginTarget == endTarget && beginWidget != parent) {
+            if (applyRangeCheck && (beginTarget == endTarget) && (beginWidget != parent)) {
                 // no need to apply range / bounds check if we are centered on the same anchor
                 applyRangeCheck = false
                 applyBoundsCheck = false
             }
             if (applyCentering) {
-                if (!variableSize && !oppositeVariable && !oppositeInChain
-                    && beginTarget == parentMin && endTarget == parentMax
+                if ((!variableSize && !oppositeVariable && !oppositeInChain
+                            && (beginTarget == parentMin) && (endTarget == parentMax))
                 ) {
                     // for fixed size widgets, we can simplify the constraints
                     centeringStrength = SolverVariable.STRENGTH_FIXED
@@ -3191,29 +3731,31 @@ open class ConstraintWidget {
                     applyBoundsCheck = false
                     parentWrapContent = false
                 }
-                system?.addCentering(
-                    begin, beginTarget, beginAnchor.margin,
-                    bias, endTarget, end, endAnchor.margin, centeringStrength
+                system.addCentering(
+                    begin, beginTarget, beginAnchor.getMargin(),
+                    bias, endTarget, end, endAnchor.getMargin(), centeringStrength
                 )
             }
-            if (visibility == GONE && !endAnchor!!.hasDependents()) {
+            if (mVisibility == ConstraintWidget.GONE && !endAnchor.hasDependents()) {
                 return
             }
             if (applyRangeCheck) {
-                if (parentWrapContent && beginTarget != endTarget && !variableSize) {
+                if (parentWrapContent && (beginTarget != endTarget
+                            ) && !variableSize
+                ) {
                     if (beginWidget is Barrier || endWidget is Barrier) {
                         rangeCheckStrength = SolverVariable.STRENGTH_BARRIER
                     }
                 }
-                system?.addGreaterThan(
+                system.addGreaterThan(
                     begin, beginTarget,
-                    beginAnchor.margin, rangeCheckStrength
+                    beginAnchor.getMargin(), rangeCheckStrength
                 )
-                system?.addLowerThan(end, endTarget, -endAnchor.margin, rangeCheckStrength)
+                system.addLowerThan(end, endTarget, -endAnchor.getMargin(), rangeCheckStrength)
             }
-            if (parentWrapContent && inBarrier // if we are referenced by a barrier
-                && !(beginWidget is Barrier || endWidget is Barrier)
-                && !(endWidget == parent)
+            if ((parentWrapContent && inBarrier // if we are referenced by a barrier
+                        && !(beginWidget is Barrier || endWidget is Barrier)
+                        && !(endWidget == parent))
             ) {
                 // ... but not directly constrained by it
                 // ... then make sure we can hold our own
@@ -3239,52 +3781,53 @@ open class ConstraintWidget {
                     boundsCheckStrength = max(strength, boundsCheckStrength)
                 }
                 if (parentWrapContent) {
-                    boundsCheckStrength = min(rangeCheckStrength, boundsCheckStrength)
-                    if (useRatio && !oppositeInChain
-                        && (beginWidget == parent || endWidget == parent)
+                    boundsCheckStrength =
+                        min(rangeCheckStrength, boundsCheckStrength)
+                    if ((useRatio && !oppositeInChain
+                                && (beginWidget == parent || endWidget == parent))
                     ) {
                         // When using ratio, relax some strength to allow other parts of the system
                         // to take precedence rather than driving it
                         boundsCheckStrength = SolverVariable.STRENGTH_HIGHEST
                     }
                 }
-                system?.addEquality(
+                system.addEquality(
                     begin, beginTarget,
-                    beginAnchor.margin, boundsCheckStrength
+                    beginAnchor.getMargin(), boundsCheckStrength
                 )
-                system?.addEquality(end, endTarget, -endAnchor.margin, boundsCheckStrength)
+                system.addEquality(end, endTarget, -endAnchor.getMargin(), boundsCheckStrength)
             }
             if (parentWrapContent) {
                 var margin = 0
                 if (parentMin == beginTarget) {
-                    margin = beginAnchor.margin
+                    margin = beginAnchor.getMargin()
                 }
                 if (beginTarget != parentMin) { // already done otherwise
-                    if (LinearSystem.Companion.FULL_DEBUG) {
-                        println("<>7 ADDING WRAP GREATER FOR $debugName")
+                    if (FULL_DEBUG) {
+                        println("<>7 ADDING WRAP GREATER FOR " + getDebugName())
                     }
-                    system?.addGreaterThan(begin, parentMin, margin, wrapStrength)
+                    system.addGreaterThan(begin, parentMin, margin, wrapStrength)
                 }
             }
-            if (parentWrapContent && variableSize && minDimension == 0 && matchMinDimension == 0) {
-                if (LinearSystem.Companion.FULL_DEBUG) {
-                    println("<>8 ADDING WRAP GREATER FOR $debugName")
+            if (parentWrapContent && variableSize && (minDimension == 0) && (matchMinDimension == 0)) {
+                if (FULL_DEBUG) {
+                    println("<>8 ADDING WRAP GREATER FOR " + getDebugName())
                 }
-                if (variableSize && matchConstraintDefault == MATCH_CONSTRAINT_RATIO) {
-                    system?.addGreaterThan(end, begin, 0, SolverVariable.STRENGTH_FIXED)
+                if (variableSize && matchConstraintDefault == ConstraintWidget.MATCH_CONSTRAINT_RATIO) {
+                    system.addGreaterThan(end, begin, 0, SolverVariable.STRENGTH_FIXED)
                 } else {
-                    system?.addGreaterThan(end, begin, 0, wrapStrength)
+                    system.addGreaterThan(end, begin, 0, wrapStrength)
                 }
             }
         }
         if (parentWrapContent && isTerminal) {
             var margin = 0
-            if (endAnchor.target != null) {
-                margin = endAnchor.margin
+            if (endAnchor.mTarget != null) {
+                margin = endAnchor.getMargin()
             }
             if (endTarget != parentMax) { // if not already applied
-                if (mOptimizeWrapO && end?.isFinalValue == true && parent != null) {
-                    val container: ConstraintWidgetContainer = parent as ConstraintWidgetContainer
+                if (mOptimizeWrapO && end!!.isFinalValue && (mParent != null)) {
+                    val container = mParent as ConstraintWidgetContainer
                     if (isHorizontal) {
                         container.addHorizontalWrapMaxVariable(endAnchor)
                     } else {
@@ -3292,10 +3835,10 @@ open class ConstraintWidget {
                     }
                     return
                 }
-                if (LinearSystem.Companion.FULL_DEBUG) {
-                    println("<>9 ADDING WRAP GREATER FOR $debugName")
+                if (FULL_DEBUG) {
+                    println("<>9 ADDING WRAP GREATER FOR " + getDebugName())
                 }
-                system?.addGreaterThan(parentMax, end, margin, wrapStrength)
+                system.addGreaterThan(parentMax, end, margin, wrapStrength)
             }
         }
     }
@@ -3307,10 +3850,10 @@ open class ConstraintWidget {
      * @param optimize true if [Optimizer.OPTIMIZATION_GRAPH] is on
      */
     open fun updateFromSolver(system: LinearSystem, optimize: Boolean) {
-        var left: Int = system.getObjectVariableValue(mLeft)
-        var top: Int = system.getObjectVariableValue(mTop)
-        var right: Int = system.getObjectVariableValue(mRight)
-        var bottom: Int = system.getObjectVariableValue(mBottom)
+        var left = system.getObjectVariableValue(mLeft)
+        var top = system.getObjectVariableValue(mTop)
+        var right = system.getObjectVariableValue(mRight)
+        var bottom = system.getObjectVariableValue(mBottom)
         if (optimize && mHorizontalRun != null && mHorizontalRun!!.start.resolved && mHorizontalRun!!.end.resolved) {
             left = mHorizontalRun!!.start.value
             right = mHorizontalRun!!.end.value
@@ -3328,7 +3871,7 @@ open class ConstraintWidget {
             bottom = 0
         }
         setFrame(left, top, right, bottom)
-        if (LinearSystem.Companion.I_DEBUG) {
+        if (LinearSystem.I_DEBUG) {
             println(" *** UPDATE FROM SOLVER $this")
         }
     }
@@ -3347,30 +3890,30 @@ open class ConstraintWidget {
         mMatchConstraintMinHeight = src.mMatchConstraintMinHeight
         mMatchConstraintMaxHeight = src.mMatchConstraintMaxHeight
         mMatchConstraintPercentHeight = src.mMatchConstraintPercentHeight
-        isWidthWrapContent = src.isWidthWrapContent
-        isHeightWrapContent = src.isHeightWrapContent
+        mIsWidthWrapContent = src.mIsWidthWrapContent
+        mIsHeightWrapContent = src.mIsHeightWrapContent
         mResolvedDimensionRatioSide = src.mResolvedDimensionRatioSide
         mResolvedDimensionRatio = src.mResolvedDimensionRatio
         mMaxDimension = Arrays.copyOf(src.mMaxDimension, src.mMaxDimension.size)
         mCircleConstraintAngle = src.mCircleConstraintAngle
-        hasBaseline = src.hasBaseline
-        isInPlaceholder = src.isInPlaceholder
+        mHasBaseline = src.mHasBaseline
+        mInPlaceholder = src.mInPlaceholder
 
         // The anchors available on the widget
         // note: all anchors should be added to the mAnchors array (see addAnchors())
-        mLeft!!.reset()
+        mLeft.reset()
         mTop.reset()
-        mRight!!.reset()
+        mRight.reset()
         mBottom.reset()
-        mBaseline!!.reset()
+        mBaseline.reset()
         mCenterX.reset()
         mCenterY.reset()
         mCenter.reset()
-        mListDimensionBehaviors = Arrays.copyOfN(mListDimensionBehaviors, 2) as Array<DimensionBehaviour>
-        parent = if (parent == null) null else map[src.parent]
+        mListDimensionBehaviors = Arrays.copyOfNonNull(mListDimensionBehaviors, 2)
+        mParent = if (mParent == null) null else map.get(src.mParent)
         mWidth = src.mWidth
-        dimensionRatio = src.dimensionRatio
-        dimensionRatioSide = src.dimensionRatioSide
+        mHeight = src.mHeight
+        mDimensionRatio = src.mDimensionRatio
         mDimensionRatioSide = src.mDimensionRatioSide
         mX = src.mX
         mY = src.mY
@@ -3380,15 +3923,15 @@ open class ConstraintWidget {
         mOffsetY = src.mOffsetY
         mBaselineDistance = src.mBaselineDistance
         mMinWidth = src.mMinWidth
-        horizontalBiasPercent = src.horizontalBiasPercent
-        verticalBiasPercent = src.verticalBiasPercent
+        mMinHeight = src.mMinHeight
+        mHorizontalBiasPercent = src.mHorizontalBiasPercent
         mVerticalBiasPercent = src.mVerticalBiasPercent
         mCompanionWidget = src.mCompanionWidget
         mContainerItemSkip = src.mContainerItemSkip
-        visibility = src.visibility
-        isAnimated = src.isAnimated
-        debugName = src.debugName
-        type = src.type
+        mVisibility = src.mVisibility
+        mAnimated = src.mAnimated
+        mDebugName = src.mDebugName
+        mType = src.mType
         mDistToTop = src.mDistToTop
         mDistToLeft = src.mDistToLeft
         mDistToRight = src.mDistToRight
@@ -3399,7 +3942,7 @@ open class ConstraintWidget {
         mBottomHasCentered = src.mBottomHasCentered
         mHorizontalWrapVisited = src.mHorizontalWrapVisited
         mVerticalWrapVisited = src.mVerticalWrapVisited
-        verticalChainStyle = src.verticalChainStyle
+        mHorizontalChainStyle = src.mHorizontalChainStyle
         mVerticalChainStyle = src.mVerticalChainStyle
         mHorizontalChainFixedPosition = src.mHorizontalChainFixedPosition
         mVerticalChainFixedPosition = src.mVerticalChainFixedPosition
@@ -3410,21 +3953,21 @@ open class ConstraintWidget {
         mNextChainWidget[0] = src.mNextChainWidget[0]
         mNextChainWidget[1] = src.mNextChainWidget[1]
         mHorizontalNextWidget =
-            if (src.mHorizontalNextWidget == null) null else map[src.mHorizontalNextWidget]
+            if (src.mHorizontalNextWidget == null) null else map.get(src.mHorizontalNextWidget)
         mVerticalNextWidget =
-            if (src.mVerticalNextWidget == null) null else map[src.mVerticalNextWidget]
+            if (src.mVerticalNextWidget == null) null else map.get(src.mVerticalNextWidget)
     }
 
     // @TODO: add description
     open fun updateFromRuns(updateHorizontal: Boolean, updateVertical: Boolean) {
         var updateHorizontal = updateHorizontal
         var updateVertical = updateVertical
-        updateHorizontal = updateHorizontal and (mHorizontalRun?.isResolved ?: false)
-        updateVertical = updateVertical and (mVerticalRun?.isResolved ?: false)
-        var left: Int = mHorizontalRun?.start?.value ?: 0
-        var top: Int = mVerticalRun?.start?.value ?: 0
-        var right: Int = mHorizontalRun?.end?.value ?: 0
-        var bottom: Int = mVerticalRun?.end?.value ?: 0
+        updateHorizontal = updateHorizontal and mHorizontalRun!!.isResolved
+        updateVertical = updateVertical and mVerticalRun!!.isResolved
+        var left = mHorizontalRun!!.start.value
+        var top = mVerticalRun!!.start.value
+        var right = mHorizontalRun!!.end.value
+        var bottom = mVerticalRun!!.end.value
         var w = right - left
         var h = bottom - top
         if (w < 0 || h < 0 || left == Int.MIN_VALUE || left == Int.MAX_VALUE || top == Int.MIN_VALUE || top == Int.MAX_VALUE || right == Int.MIN_VALUE || right == Int.MAX_VALUE || bottom == Int.MIN_VALUE || bottom == Int.MAX_VALUE) {
@@ -3441,15 +3984,15 @@ open class ConstraintWidget {
         if (updateVertical) {
             mY = top
         }
-        if (visibility == GONE) {
+        if (mVisibility == ConstraintWidget.GONE) {
             mWidth = 0
-            dimensionRatio = 0f
+            mHeight = 0
             return
         }
 
         // correct dimensional instability caused by rounding errors
         if (updateHorizontal) {
-            if (mListDimensionBehaviors[DIMENSION_HORIZONTAL]
+            if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_HORIZONTAL]
                 == DimensionBehaviour.FIXED && w < mWidth
             ) {
                 w = mWidth
@@ -3460,14 +4003,14 @@ open class ConstraintWidget {
             }
         }
         if (updateVertical) {
-            if (mListDimensionBehaviors[DIMENSION_VERTICAL]
-                == DimensionBehaviour.FIXED && h < dimensionRatio
+            if (mListDimensionBehaviors[ConstraintWidget.DIMENSION_VERTICAL]
+                == DimensionBehaviour.FIXED && h < mHeight
             ) {
-                h = dimensionRatio.toInt()
+                h = mHeight
             }
-            dimensionRatio = h.toFloat()
-            if (dimensionRatio < horizontalBiasPercent) {
-                dimensionRatio = horizontalBiasPercent
+            mHeight = h
+            if (mHeight < mMinHeight) {
+                mHeight = mMinHeight
             }
         }
     }
@@ -3475,7 +4018,7 @@ open class ConstraintWidget {
     // @TODO: add description
     fun addChildrenToSolverByDependency(
         container: ConstraintWidgetContainer,
-        system: LinearSystem,
+        system: LinearSystem?,
         widgets: MutableSet<ConstraintWidget>,
         orientation: Int,
         addSelf: Boolean
@@ -3484,12 +4027,12 @@ open class ConstraintWidget {
             if (!widgets.contains(this)) {
                 return
             }
-            Optimizer.checkMatchParent(container, system, this)
+            Optimizer.checkMatchParent(container, system!!, this)
             widgets.remove(this)
             addToSolver(system, container.optimizeFor(Optimizer.OPTIMIZATION_GRAPH))
         }
-        if (orientation == HORIZONTAL) {
-            var dependents: MutableSet<ConstraintAnchor>? = mLeft.dependents
+        if (orientation == ConstraintWidget.HORIZONTAL) {
+            var dependents = mLeft.dependents
             if (dependents != null) {
                 for (anchor in dependents) {
                     anchor.mOwner.addChildrenToSolverByDependency(
@@ -3508,7 +4051,7 @@ open class ConstraintWidget {
                 }
             }
         } else {
-            var dependents: MutableSet<ConstraintAnchor>? = mTop.dependents
+            var dependents = mTop.dependents
             if (dependents != null) {
                 for (anchor in dependents) {
                     anchor.mOwner.addChildrenToSolverByDependency(
@@ -3544,7 +4087,7 @@ open class ConstraintWidget {
         ret.append("  $stringId:{\n")
         ret.append("    actualWidth:$mWidth")
         ret.append("\n")
-        ret.append("    actualHeight:" + dimensionRatio)
+        ret.append("    actualHeight:$mHeight")
         ret.append("\n")
         ret.append("    actualLeft:$mX")
         ret.append("\n")
@@ -3561,42 +4104,62 @@ open class ConstraintWidget {
             ret, "    width",
             mWidth,
             mMinWidth,
-            mMaxDimension[HORIZONTAL],
+            mMaxDimension[ConstraintWidget.HORIZONTAL],
             mWidthOverride,
             mMatchConstraintMinWidth,
             mMatchConstraintDefaultWidth,
             mMatchConstraintPercentWidth,
-            mListDimensionBehaviors[HORIZONTAL],
-            mWeight[DIMENSION_HORIZONTAL]
+            mListDimensionBehaviors[ConstraintWidget.HORIZONTAL],
+            mWeight[ConstraintWidget.DIMENSION_HORIZONTAL]
         )
         getSceneString(
             ret, "    height",
-            dimensionRatio.toInt(),
-            horizontalBiasPercent.toInt(),
-            mMaxDimension[VERTICAL],
+            mHeight,
+            mMinHeight,
+            mMaxDimension[ConstraintWidget.VERTICAL],
             mHeightOverride,
             mMatchConstraintMinHeight,
             mMatchConstraintDefaultHeight,
             mMatchConstraintPercentHeight,
-            mListDimensionBehaviors[VERTICAL],
-            mWeight[DIMENSION_VERTICAL]
+            mListDimensionBehaviors[ConstraintWidget.VERTICAL],
+            mWeight[ConstraintWidget.DIMENSION_VERTICAL]
         )
-        serializeDimensionRatio(ret, "    dimensionRatio", dimensionRatioSide.toFloat(), mDimensionRatioSide)
-        serializeAttribute(ret, "    horizontalBias", verticalBiasPercent, DEFAULT_BIAS)
-        serializeAttribute(ret, "    verticalBias", mVerticalBiasPercent, DEFAULT_BIAS)
-        serializeAttribute(ret, "    horizontalChainStyle", verticalChainStyle, CHAIN_SPREAD)
-        serializeAttribute(ret, "    verticalChainStyle", mVerticalChainStyle, CHAIN_SPREAD)
+        serializeDimensionRatio(ret, "    dimensionRatio", mDimensionRatio, mDimensionRatioSide)
+        serializeAttribute(
+            ret,
+            "    horizontalBias",
+            mHorizontalBiasPercent,
+            ConstraintWidget.DEFAULT_BIAS
+        )
+        serializeAttribute(
+            ret,
+            "    verticalBias",
+            mVerticalBiasPercent,
+            ConstraintWidget.DEFAULT_BIAS
+        )
+        serializeAttribute(
+            ret,
+            "    horizontalChainStyle",
+            mHorizontalChainStyle,
+            ConstraintWidget.CHAIN_SPREAD
+        )
+        serializeAttribute(
+            ret,
+            "    verticalChainStyle",
+            mVerticalChainStyle,
+            ConstraintWidget.CHAIN_SPREAD
+        )
         ret.append("  }")
     }
 
     private fun getSceneString(
         ret: StringBuilder, type: String, size: Int,
         min: Int, max: Int,
-         override: Int,
+        override: Int,
         matchConstraintMin: Int, matchConstraintDefault: Int,
         matchConstraintPercent: Float,
         behavior: DimensionBehaviour,
-         weight: Float
+        weight: Float
     ) {
         ret.append(type)
         ret.append(" :  {\n")
@@ -3608,78 +4171,36 @@ open class ConstraintWidget {
         serializeAttribute(ret, "      min", min, 0)
         serializeAttribute(ret, "      max", max, Int.MAX_VALUE)
         serializeAttribute(ret, "      matchMin", matchConstraintMin, 0)
-        serializeAttribute(ret, "      matchDef", matchConstraintDefault, MATCH_CONSTRAINT_SPREAD)
+        serializeAttribute(
+            ret,
+            "      matchDef",
+            matchConstraintDefault,
+            ConstraintWidget.MATCH_CONSTRAINT_SPREAD
+        )
         serializeAttribute(ret, "      matchPercent", matchConstraintPercent, 1f)
         ret.append("    },\n")
     }
 
-    private fun getSceneString(ret: StringBuilder, side: String, a: ConstraintAnchor?) {
-        if (a?.target == null) {
+    private fun getSceneString(ret: StringBuilder, side: String, a: ConstraintAnchor) {
+        if (a.mTarget == null) {
             return
         }
         ret.append("    ")
         ret.append(side)
         ret.append(" : [ '")
-        ret.append(a.target)
+        ret.append(a.mTarget)
         ret.append("'")
-        if (a!!.mGoneMargin != Int.MIN_VALUE || a!!.mMargin != 0) {
+        if (a.mGoneMargin != Int.MIN_VALUE || a.mMargin != 0) {
             ret.append(",")
-            ret.append(a!!.mMargin)
-            if (a!!.mGoneMargin != Int.MIN_VALUE) {
+            ret.append(a.mMargin)
+            if (a.mGoneMargin != Int.MIN_VALUE) {
                 ret.append(",")
-                ret.append(a!!.mGoneMargin)
+                ret.append(a.mGoneMargin)
                 ret.append(",")
             }
         }
         ret.append(" ] ,\n")
     }
 
-    companion object {
-        private const val AUTOTAG_CENTER = false
-        private const val DO_NOT_USE = false
-        protected const val SOLVER = 1
-        const val DIRECT = 2
-
-        // apply an intrinsic size when wrap content for spread dimensions
-        private const val USE_WRAP_DIMENSION_FOR_SPREAD = false
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        const val MATCH_CONSTRAINT_SPREAD = 0
-        const val MATCH_CONSTRAINT_WRAP = 1
-        const val MATCH_CONSTRAINT_PERCENT = 2
-        const val MATCH_CONSTRAINT_RATIO = 3
-        const val MATCH_CONSTRAINT_RATIO_RESOLVED = 4
-        const val UNKNOWN = -1
-        const val HORIZONTAL = 0
-        const val VERTICAL = 1
-        const val BOTH = 2
-        const val VISIBLE = 0
-        const val INVISIBLE = 4
-        const val GONE = 8
-
-        // Values of the chain styles
-        const val CHAIN_SPREAD = 0
-        const val CHAIN_SPREAD_INSIDE = 1
-        const val CHAIN_PACKED = 2
-
-        // Values of the wrap behavior in parent
-        const val WRAP_BEHAVIOR_INCLUDED = 0 // default
-        const val WRAP_BEHAVIOR_HORIZONTAL_ONLY = 1
-        const val WRAP_BEHAVIOR_VERTICAL_ONLY = 2
-        const val WRAP_BEHAVIOR_SKIPPED = 3
-        private const val WRAP = -2
-        const val ANCHOR_LEFT = 0
-        const val ANCHOR_RIGHT = 1
-        const val ANCHOR_TOP = 2
-        const val ANCHOR_BOTTOM = 3
-        const val ANCHOR_BASELINE = 4
-
-        // The horizontal and vertical behaviour for the widgets' dimensions
-        const val DIMENSION_HORIZONTAL = 0
-        const val DIMENSION_VERTICAL = 1
-
-        // Percentages used for biasing one connection over another when dual connections
-        // of the same strength exist
-        var DEFAULT_BIAS = 0.5f
-    }
+    open var isResolvedVertically: Boolean = false
 }

@@ -896,7 +896,7 @@ object Direct {
      * @return true if fully resolved
      */
     fun solveChain(
-        container: ConstraintWidgetContainer, system: LinearSystem?,
+        container: ConstraintWidgetContainer, system: LinearSystem,
         orientation: Int, offset: Int, chainHead: ChainHead,
         isChainSpread: Boolean, isChainSpreadInside: Boolean,
         isChainPacked: Boolean

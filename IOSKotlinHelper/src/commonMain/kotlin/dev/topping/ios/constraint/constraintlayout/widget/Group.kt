@@ -17,6 +17,9 @@ package dev.topping.ios.constraint.constraintlayout.widget
 
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
+import dev.topping.ios.constraint.core.widgets.ConstraintWidget
+import dev.topping.ios.constraint.core.widgets.height
+import dev.topping.ios.constraint.core.widgets.width
 
 /**
  * Control the visibility and elevation of the referenced views

@@ -760,9 +760,9 @@ class MotionScene {
                 mTransition = transition
                 val a = Xml.asAttributeSet(parser)
                 a.forEach { kvp ->
-                    if (kvp.key == "app_targetId") {
-                        mTargetId = context.getResources().getString(kvp.value)
-                    } else if (kvp.key == "app_clickAction") {
+                    if (kvp.key == "targetId") {
+                        mTargetId = context.getResources().getString(kvp.key, kvp.value)
+                    } else if (kvp.key == "clickAction") {
                         mMode = context.getResources().getInt(kvp.value, mMode)
                     }
                 }
@@ -979,7 +979,7 @@ class MotionScene {
 
         private fun fill(motionScene: MotionScene, context: TContext, a: AttributeSet) {
             a.forEach { kvp ->
-                if (kvp.key == "app_constraintSetEnd") {
+                if (kvp.key == "constraintSetEnd") {
                     endConstraintSetId = context.getResources().getResourceId(kvp.value, endConstraintSetId)
                     val type = context.getResources().getResourceType(
                         endConstraintSetId
@@ -998,7 +998,7 @@ class MotionScene {
                         val id = motionScene.parseInclude(context, endConstraintSetId)
                         endConstraintSetId = id
                     }
-                } else if (kvp.key == "app_constraintSetStart") {
+                } else if (kvp.key == "constraintSetStart") {
                     startConstraintSetId = context.getResources().getResourceId(kvp.value, startConstraintSetId)
                     val type = context.getResources().getResourceType(
                         startConstraintSetId
@@ -1011,7 +1011,7 @@ class MotionScene {
                         val id = motionScene.parseInclude(context, startConstraintSetId)
                         startConstraintSetId = id
                     }
-                } else if (kvp.key == "app_motionInterpolator") {
+                } else if (kvp.key == "motionInterpolator") {
                     val type = context.getResources().getResourceType(kvp.key)
                     if (type == TypedValue.TYPE_REFERENCE) {
                         mDefaultInterpolatorID = context.getResources().getResourceId(kvp.value, mDefaultInterpolatorID)
@@ -1019,10 +1019,16 @@ class MotionScene {
                             mDefaultInterpolator = INTERPOLATOR_REFERENCE_ID
                         }
                     } else if (type == TypedValue.TYPE_STRING) {
-                        mDefaultInterpolatorString = context.getResources().getString(kvp.value)
+                        mDefaultInterpolatorString = context.getResources().getString(
+                            kvp.key,
+                            kvp.value
+                        )
                         if (mDefaultInterpolatorString != null) {
                             if (mDefaultInterpolatorString!!.indexOf("/") > 0) {
-                                mDefaultInterpolatorID = context.getResources().getString(kvp.value)
+                                mDefaultInterpolatorID = context.getResources().getString(
+                                    kvp.key,
+                                    kvp.value
+                                )
                                 mDefaultInterpolator = INTERPOLATOR_REFERENCE_ID
                             } else {
                                 mDefaultInterpolator = SPLINE_STRING
@@ -1031,24 +1037,24 @@ class MotionScene {
                     } else {
                         mDefaultInterpolator = context.getResources().getInt(kvp.value, mDefaultInterpolator)
                     }
-                } else if (kvp.key == "app_duration") {
+                } else if (kvp.key == "duration") {
                     mDuration = context.getResources().getInt(kvp.key, mDuration)
                     if (mDuration < MIN_DURATION) {
                         mDuration = MIN_DURATION
                     }
-                } else if (kvp.key == "app_staggered") {
+                } else if (kvp.key == "staggered") {
                     stagger = context.getResources().getFloat(kvp.key, stagger)
-                } else if (kvp.key == "app_autoTransition") {
+                } else if (kvp.key == "autoTransition") {
                     autoTransition = context.getResources().getInt(kvp.key, autoTransition)
                 } else if (kvp.key == "android_id") {
                     id = context.getResources().getResourceId(kvp.key, id)
-                } else if (kvp.key == "app_transitionDisable") {
+                } else if (kvp.key == "transitionDisable") {
                     mDisable = context.getResources().getBoolean(kvp.key, mDisable)
-                } else if (kvp.key == "app_pathMotionArc") {
+                } else if (kvp.key == "pathMotionArc") {
                     pathMotionArc = context.getResources().getInt(kvp.key, pathMotionArc)
-                } else if (kvp.key == "app_layoutDuringTransition") {
+                } else if (kvp.key == "layoutDuringTransition") {
                     layoutDuringTransition = context.getResources().getInt(kvp.key, layoutDuringTransition)
-                } else if (kvp.key == "app_transitionFlags") {
+                } else if (kvp.key == "transitionFlags") {
                     mTransitionFlags = context.getResources().getInt(kvp.key, mTransitionFlags)
                 }
             }
@@ -1202,12 +1208,12 @@ class MotionScene {
     private fun parseMotionSceneTags(context: TContext, parser: XmlBufferedReader) {
         val attrs: AttributeSet = Xml.asAttributeSet(parser)
         attrs.forEach { kvp ->
-            if(kvp.key == "app_defaultDuration") {
+            if(kvp.key == "defaultDuration") {
                 mDefaultDuration = context.getResources().getInt(kvp.value, mDefaultDuration)
                 if (mDefaultDuration < MIN_DURATION) {
                     mDefaultDuration = MIN_DURATION
                 }
-            } else if(kvp.key == "app_layoutDuringTransition") {
+            } else if(kvp.key == "layoutDuringTransition") {
                 mLayoutDuringTransition = context.getResources().getInt(kvp.value, mLayoutDuringTransition)
             }
         }
@@ -1235,7 +1241,7 @@ class MotionScene {
     private fun parseInclude(context: TContext, mainParser: XmlBufferedReader) {
         val attrs: AttributeSet = Xml.asAttributeSet(mainParser)
         attrs.forEach { kvp ->
-            if (kvp.key == "app_include_constraintSet") {
+            if (kvp.key == "include_constraintSet") {
                 val resourceId = context.getResources().getResourceId(kvp.value, UNSET_ID)
                 parseInclude(context, resourceId)
             }

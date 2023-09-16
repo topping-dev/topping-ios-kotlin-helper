@@ -362,7 +362,7 @@ class MotionWidget : TypedValues {
         const val UNSET = -1
         const val UNSET_ID = ""
         const val MATCH_CONSTRAINT = 0
-        const val PARENT_ID = 0
+        const val PARENT_ID = "0"
         const val FILL_PARENT = -1
         const val MATCH_PARENT = -1
         const val WRAP_CONTENT = -2

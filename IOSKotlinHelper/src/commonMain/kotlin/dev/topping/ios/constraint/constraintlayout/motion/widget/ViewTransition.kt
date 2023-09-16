@@ -168,7 +168,7 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
             if(kvp.key == "android_id")
             {
                 id = context.getResources().getResourceId(kvp.value, UNSET_ID)
-            } else if(kvp.key == "app_motionTarget") {
+            } else if(kvp.key == "motionTarget") {
                 if (MotionLayout.IS_IN_EDIT_MODE) {
                     mTargetId = context.getResources().getResourceId(kvp.value, mTargetId)
                     if (mTargetId == UNSET_ID) {
@@ -182,19 +182,19 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
                         mTargetId = context.getResources().getResourceId(kvp.value, mTargetId)
                     }
                 }
-            } else if (kvp.key == "app_onStateTransition") {
+            } else if (kvp.key == "onStateTransition") {
                 stateTransition = context.getResources().getInt(kvp.value, stateTransition)
-            } else if (kvp.key == "app_transitionDisable") {
+            } else if (kvp.key == "transitionDisable") {
                 mDisabled = context.getResources().getBoolean(kvp.value, mDisabled)
-            } else if (kvp.key == "app_pathMotionArc") {
+            } else if (kvp.key == "pathMotionArc") {
                 mPathMotionArc = context.getResources().getInt(kvp.value, mPathMotionArc)
-            } else if (kvp.key == "app_duration") {
+            } else if (kvp.key == "duration") {
                 mDuration = context.getResources().getInt(kvp.value, mDuration)
-            } else if (kvp.key == "app_upDuration") {
+            } else if (kvp.key == "upDuration") {
                 mUpDuration = context.getResources().getInt(kvp.value, mUpDuration)
-            } else if (kvp.key == "app_viewTransitionMode") {
+            } else if (kvp.key == "viewTransitionMode") {
                 mViewTransitionMode = context.getResources().getInt(kvp.value, mViewTransitionMode)
-            } else if (kvp.key == "app_motionInterpolator") {
+            } else if (kvp.key == "motionInterpolator") {
                 val type = context.getResources().getResourceType(kvp.value)
                 if (type == TypedValue.TYPE_REFERENCE) {
                     mDefaultInterpolatorID = context.getResources().getResourceId(kvp.value, UNSET_ID)
@@ -202,7 +202,10 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
                         mDefaultInterpolator = INTERPOLATOR_REFERENCE_ID
                     }
                 } else if (type == TypedValue.TYPE_STRING) {
-                    mDefaultInterpolatorString = context.getResources().getString(kvp.value)
+                    mDefaultInterpolatorString = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
                     if (mDefaultInterpolatorString != null
                         && mDefaultInterpolatorString!!.indexOf("/") > 0
                     ) {
@@ -214,17 +217,17 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
                 } else {
                     mDefaultInterpolator = context.getResources().getInt(kvp.value, mDefaultInterpolator)
                 }
-            } else if (kvp.key == "app_setsTag") {
+            } else if (kvp.key == "setsTag") {
                 mSetsTag = context.getResources().getResourceId(kvp.value, mSetsTag)
-            } else if (kvp.key == "app_clearsTag") {
+            } else if (kvp.key == "clearsTag") {
                 mClearsTag = context.getResources().getResourceId(kvp.value, mClearsTag)
-            } else if (kvp.key == "app_ifTagSet") {
+            } else if (kvp.key == "ifTagSet") {
                 mIfTagSet = context.getResources().getResourceId(kvp.value, mIfTagSet)
-            } else if (kvp.key == "app_ifTagNotSet") {
+            } else if (kvp.key == "ifTagNotSet") {
                 mIfTagNotSet = context.getResources().getResourceId(kvp.value, mIfTagNotSet)
-            } else if (kvp.key == "app_SharedValueId") {
+            } else if (kvp.key == "SharedValueId") {
                 sharedValueID = context.getResources().getResourceId(kvp.value, mIfTagNotSet)
-            } else if (kvp.key == "app_SharedValue") {
+            } else if (kvp.key == "SharedValue") {
                 sharedValue = context.getResources().getInt(kvp.value, sharedValue)
             }
         }

@@ -33,16 +33,19 @@ class Barrier : HelperWidget {
      */
     var allowsGoneWidget = true
     var margin = 0
-    
-    override var isResolvedVertically = false
-         get() = field
+
+    var mResolved = false
 
     constructor() {}
     constructor(debugName: String?) {
         this.debugName = debugName
     }
 
-    
+
+    override fun isResolvedVertically(): Boolean {
+        return false
+    }
+
     override fun allowedInBarrier(): Boolean {
         return true
     }
@@ -107,7 +110,7 @@ class Barrier : HelperWidget {
      * @param optimize true if [Optimizer.OPTIMIZATION_GRAPH] is on
      */
     
-    override fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    override fun addToSolver(system: LinearSystem, optimize: Boolean) {
         if (LinearSystem.FULL_DEBUG) {
             println("\n----------------------------------------------")
             println("-- adding " + debugName.toString() + " to the solver")
@@ -127,11 +130,11 @@ class Barrier : HelperWidget {
             return
         }
         if (USE_RESOLUTION) {
-            if (!isResolvedVertically) {
+            if (!mResolved) {
                 allSolved()
             }
-            if (isResolvedVertically) {
-                isResolvedVertically = false
+            if (mResolved) {
+                mResolved = false
                 if (barrierType == LEFT || barrierType == RIGHT) {
                     system?.addEquality(mLeft.mSolverVariable, mX)
                     system?.addEquality(mRight.mSolverVariable, mX)
@@ -233,11 +236,11 @@ class Barrier : HelperWidget {
             )
             system?.addEquality(
                 mLeft.mSolverVariable,
-                parent?.mRight?.mSolverVariable, 0, barrierParentStrength
+                getParent()?.mRight?.mSolverVariable, 0, barrierParentStrength
             )
             system?.addEquality(
                 mLeft.mSolverVariable,
-                parent?.mLeft?.mSolverVariable, 0, barrierParentStrengthOpposite
+                getParent()?.mLeft?.mSolverVariable, 0, barrierParentStrengthOpposite
             )
         } else if (barrierType == RIGHT) {
             system?.addEquality(
@@ -246,11 +249,11 @@ class Barrier : HelperWidget {
             )
             system?.addEquality(
                 mLeft.mSolverVariable,
-                parent?.mLeft?.mSolverVariable, 0, barrierParentStrength
+                getParent()?.mLeft?.mSolverVariable, 0, barrierParentStrength
             )
             system?.addEquality(
                 mLeft.mSolverVariable,
-                parent?.mRight?.mSolverVariable, 0, barrierParentStrengthOpposite
+                getParent()?.mRight?.mSolverVariable, 0, barrierParentStrengthOpposite
             )
         } else if (barrierType == TOP) {
             system?.addEquality(
@@ -259,11 +262,11 @@ class Barrier : HelperWidget {
             )
             system?.addEquality(
                 mTop.mSolverVariable,
-                parent?.mBottom?.mSolverVariable, 0, barrierParentStrength
+                getParent()?.mBottom?.mSolverVariable, 0, barrierParentStrength
             )
             system?.addEquality(
                 mTop.mSolverVariable,
-                parent?.mTop?.mSolverVariable, 0, barrierParentStrengthOpposite
+                getParent()?.mTop?.mSolverVariable, 0, barrierParentStrengthOpposite
             )
         } else if (barrierType == BOTTOM) {
             system?.addEquality(
@@ -272,11 +275,11 @@ class Barrier : HelperWidget {
             )
             system?.addEquality(
                 mTop.mSolverVariable,
-                parent?.mTop?.mSolverVariable, 0, barrierParentStrength
+                getParent()?.mTop?.mSolverVariable, 0, barrierParentStrength
             )
             system?.addEquality(
                 mTop.mSolverVariable,
-                parent?.mBottom?.mSolverVariable, 0, barrierParentStrengthOpposite
+                getParent()?.mBottom?.mSolverVariable, 0, barrierParentStrengthOpposite
             )
         }
     }
@@ -371,7 +374,7 @@ class Barrier : HelperWidget {
                         .toString() + " SOLVED TO " + barrierPosition.toString() + " ***"
                 )
             }
-            isResolvedVertically = true
+            mResolved = true
             return true
         }
         return false

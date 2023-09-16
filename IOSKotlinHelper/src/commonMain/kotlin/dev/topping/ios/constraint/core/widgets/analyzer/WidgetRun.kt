@@ -15,8 +15,7 @@
  */
 package dev.topping.ios.constraint.core.widgets.analyzer
 
-import dev.topping.ios.constraint.core.widgets.ConstraintAnchor
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget
+import dev.topping.ios.constraint.core.widgets.*
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget.DimensionBehaviour
 
 import kotlin.math.*

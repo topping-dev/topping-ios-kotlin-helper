@@ -15,7 +15,7 @@
  */
 package dev.topping.ios.constraint.core.state
 
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget
+import dev.topping.ios.constraint.core.widgets.*
 
 /**
  * Represents a dimension (width or height) of a constrained widget

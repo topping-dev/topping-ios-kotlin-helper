@@ -1484,9 +1484,13 @@ class LinearSystem {
         addConstraint(row)
     }
 
+    fun getMetrics(): Metrics? {
+        return sMetrics
+    }
+
     companion object {
-        const val FULL_DEBUG = false
-        const val I_DEBUG = false
+        const val FULL_DEBUG = true
+        const val I_DEBUG = true
         private const val DO_NOT_USE = false
         private const val DEBUG_CONSTRAINTS = FULL_DEBUG
         var USE_DEPENDENCY_ORDERING = false

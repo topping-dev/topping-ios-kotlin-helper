@@ -20,7 +20,7 @@ class OvershootInterpolator : Interpolator {
     }
 
     constructor(res: TResources, attrs: MutableMap<String, String>) {
-        mTension = res.getFloat(attrs["app_tension"] ?: "", 2.0f)
+        mTension = res.getFloat(attrs["tension"] ?: "", 2.0f)
     }
 
     override fun getInterpolation(input: Float): Float {

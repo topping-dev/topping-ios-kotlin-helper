@@ -352,19 +352,19 @@ class KeyTimeCycle : Key() {
             sAttrMap["android_rotationX"] = ANDROID_ROTATION_X
             sAttrMap["android_rotationY"] = ANDROID_ROTATION_Y
             sAttrMap["android_scaleX"] = ANDROID_SCALE_X
-            sAttrMap["app_transitionPathRotate"] = TRANSITION_PATH_ROTATE
-            sAttrMap["app_transitionEasing"] = TRANSITION_EASING
-            sAttrMap["app_motionTarget"] = TARGET_ID
-            sAttrMap["app_framePosition"] = FRAME_POSITION
-            sAttrMap["app_curveFit"] = CURVE_FIT
+            sAttrMap["transitionPathRotate"] = TRANSITION_PATH_ROTATE
+            sAttrMap["transitionEasing"] = TRANSITION_EASING
+            sAttrMap["motionTarget"] = TARGET_ID
+            sAttrMap["framePosition"] = FRAME_POSITION
+            sAttrMap["curveFit"] = CURVE_FIT
             sAttrMap["android_scaleY"] = ANDROID_SCALE_Y
             sAttrMap["android_translationX"] = ANDROID_TRANSLATION_X
             sAttrMap["android_translationY"] = ANDROID_TRANSLATION_Y
             sAttrMap["android_translationZ"] = ANDROID_TRANSLATION_Z
-            sAttrMap["app_motionProgress"] = PROGRESS
-            sAttrMap["app_wavePeriod"] = WAVE_PERIOD
-            sAttrMap["app_waveOffset"] = WAVE_OFFSET
-            sAttrMap["app_waveShape"] = WAVE_SHAPE
+            sAttrMap["motionProgress"] = PROGRESS
+            sAttrMap["wavePeriod"] = WAVE_PERIOD
+            sAttrMap["waveOffset"] = WAVE_OFFSET
+            sAttrMap["waveShape"] = WAVE_SHAPE
         }
 
         fun read(context: TContext, c: KeyTimeCycle, a: AttributeSet) {
@@ -392,7 +392,7 @@ class KeyTimeCycle : Key() {
                     ANDROID_ROTATION -> c.mRotation = context.getResources().getFloat(kvp.value, c.mRotation)
                     CURVE_FIT -> c.mCurveFit = context.getResources().getInt(kvp.value, c.mCurveFit)
                     WAVE_SHAPE -> if (context.getResources().getType(kvp.value) == "string") {
-                        c.mCustomWaveShape = context.getResources().getString(kvp.value)
+                        c.mCustomWaveShape = context.getResources().getString(kvp.key, kvp.value)
                         c.mWaveShape = Oscillator.CUSTOM
                     } else {
                         c.mWaveShape = context.getResources().getInt(kvp.value, c.mWaveShape)
@@ -408,7 +408,10 @@ class KeyTimeCycle : Key() {
                     ANDROID_SCALE_X -> c.mScaleX = context.getResources().getFloat(kvp.value, c.mScaleX)
                     ANDROID_ROTATION_X -> c.mRotationX = context.getResources().getFloat(kvp.value, c.mRotationX)
                     ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(kvp.value, c.mRotationY)
-                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(kvp.value)
+                    TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
                     ANDROID_SCALE_Y -> c.mScaleY = context.getResources().getFloat(kvp.value, c.mScaleY)
                     TRANSITION_PATH_ROTATE -> c.mTransitionPathRotate =
                         context.getResources().getFloat(kvp.value, c.mTransitionPathRotate)

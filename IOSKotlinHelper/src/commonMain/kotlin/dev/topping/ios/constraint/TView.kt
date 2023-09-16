@@ -123,6 +123,8 @@ open class ViewGroup
             width = source.width
             height = source.height
         }
+
+        open fun resolveLayoutDirection(layoutDirection: Int) {}
     }
 }
 
@@ -152,6 +154,52 @@ open class MarginLayoutParams : ViewGroup.LayoutParams {
         mMarginFlags = mMarginFlags or RIGHT_MARGIN_UNDEFINED_MASK
         mMarginFlags = mMarginFlags and NEED_RESOLUTION_MASK.inv()
         mMarginFlags = mMarginFlags and RTL_COMPATIBILITY_MODE_MASK.inv()
+    }
+
+    constructor(c: TContext, attrs: AttributeSet) : super(TView.WRAP_CONTENT, TView.WRAP_CONTENT) {
+        val margin = c.getResources().getDimensionPixelSize(attrs["layout_margin"] ?: "", -1)
+        if(margin != -1) {
+            leftMargin = margin
+            topMargin = margin
+            rightMargin= margin
+            bottomMargin = margin
+        } else {
+            val horizontalMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginHorizontal"] ?: "", -1)
+            val verticalMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginVertical"] ?: "", -1)
+
+            if(horizontalMargin >= 0) {
+                leftMargin = horizontalMargin
+                startMargin = horizontalMargin
+            }
+            else {
+                val leftMargin =
+                    c.getResources().getDimensionPixelSize(attrs["layout_marginLeft"] ?: "", -1)
+                if (leftMargin >= 0)
+                    this.leftMargin = leftMargin
+
+                val rightMargin =
+                    c.getResources().getDimensionPixelSize(attrs["layout_marginRight"] ?: "", -1)
+                if (rightMargin >= 0)
+                    this.rightMargin = rightMargin
+            }
+
+            val startMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginStart"] ?: "", -1)
+            if(startMargin >= 0)
+                this.startMargin = startMargin
+
+            val endMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginEnd"] ?: "", -1)
+            if(endMargin >= 0)
+                this.endMargin = endMargin
+
+            if (verticalMargin >= 0) {
+                topMargin = verticalMargin
+                bottomMargin = verticalMargin
+            } else {
+                topMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginTop"] ?: "", 0)
+                bottomMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginBottom"] ?: "", 0);
+            }
+
+        }
     }
 
     constructor(source: MarginLayoutParams) : super(source.width, source.height) {
@@ -312,7 +360,7 @@ open class MarginLayoutParams : ViewGroup.LayoutParams {
      * This will be called by [android.view.View.requestLayout]. Left and Right margins
      * may be overridden depending on layout direction.
      */
-    open fun resolveLayoutDirection(layoutDirection: Int) {
+    override fun resolveLayoutDirection(layoutDirection: Int) {
         setLayoutDirection(layoutDirection)
         // No relative margin or pre JB-MR1 case or no need to resolve, just dont do anything
         // Will use the left and right margins if no relative margin is defined.
@@ -386,7 +434,7 @@ interface TResources {
     fun getInt(value: String, def: Int): Int
     fun getFloat(value: String, def: Float): Float
     fun getDimension(value: String, def: Float): Float
-    fun getString(value: String): String
+    fun getString(key: String?, value: String): String
     fun getType(value: String): String
     fun getBoolean(value: String, def: Boolean): Boolean
     fun getXml(resourceId: String): XmlBufferedReader
@@ -539,7 +587,6 @@ interface TView {
     fun getY(): Int
     fun getWidth(): Int
     fun getHeight(): Int
-    fun getOptimizationLevel(): Int
     fun makeMeasureSpec(measureSpec: Int, type: Int): Int
     fun layout(l: Int, t: Int, r: Int, b: Int)
     fun onAttachedToWindow()

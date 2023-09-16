@@ -24,6 +24,8 @@ import dev.topping.ios.constraint.core.motion.key.MotionKeyPosition
 import dev.topping.ios.constraint.core.motion.utils.*
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
 import dev.topping.ios.constraint.core.widgets.ConstraintWidgetContainer
+import dev.topping.ios.constraint.core.widgets.height
+import dev.topping.ios.constraint.core.widgets.width
 import dev.topping.ios.constraint.isNaN
 import dev.topping.ios.constraint.nanoTime
 

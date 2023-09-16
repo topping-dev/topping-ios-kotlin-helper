@@ -27,7 +27,7 @@ class DecelerateInterpolator : Interpolator {
     }
 
     constructor(res: TResources, attrs: MutableMap<String, String>) {
-        mFactor = res.getFloat(attrs["app_factor"] ?: "", 1.0f)
+        mFactor = res.getFloat(attrs["factor"] ?: "", 1.0f)
     }
 
     override fun getInterpolation(input: Float): Float {

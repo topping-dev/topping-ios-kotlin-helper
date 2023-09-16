@@ -134,7 +134,7 @@ open class WidgetContainer : ConstraintWidget {
         val count: Int = mChildren!!.size
         for (i in 0 until count) {
             val widget: ConstraintWidget = mChildren!![i]
-            widget.setOffset(rootX, rootY)
+            widget.setOffset(getRootX(), getRootY())
         }
     }
 

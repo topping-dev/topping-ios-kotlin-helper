@@ -361,50 +361,50 @@ class ConstraintAttribute {
             var value: Any? = null
             var type: AttributeType = AttributeType.STRING_TYPE
             attributeSet.forEach { kvp ->
-                if(kvp.key == "app_attributeName") {
-                    name = context.getResources().getString(kvp.value)
+                if(kvp.key == "attributeName") {
+                    name = context.getResources().getString(kvp.key, kvp.value)
                     if (name != null && name!!.length > 0) {
                         name = name!![0].uppercase() + name!!.substring(1)
                     }
-                } else if(kvp.key == "app_customBoolean") {
+                } else if(kvp.key == "customBoolean") {
 
                 }
-                else if (kvp.key == "app_methodName") {
+                else if (kvp.key == "methodName") {
                     method = true
-                    name = context.getResources().getString(kvp.value)
-                } else if (kvp.key == "app_customBoolean") {
+                    name = context.getResources().getString(kvp.key, kvp.value)
+                } else if (kvp.key == "customBoolean") {
                     value = context.getResources().getBoolean(kvp.value, false)
                     type = AttributeType.BOOLEAN_TYPE
-                } else if (kvp.key == "app_customColorValue") {
+                } else if (kvp.key == "customColorValue") {
                     type = AttributeType.COLOR_TYPE
                     value = context.getResources().getColor(kvp.value, TColor.argb(255f, 255f, 255f, 255f))
-                } else if (kvp.key == "app_customColorDrawableValue") {
+                } else if (kvp.key == "customColorDrawableValue") {
                     type = AttributeType.COLOR_DRAWABLE_TYPE
                     value = context.getResources().getColor(kvp.value, TColor.argb(255f, 255f, 255f, 255f))
-                } else if (kvp.key == "app_customPixelDimension") {
+                } else if (kvp.key == "customPixelDimension") {
                     type = AttributeType.DIMENSION_TYPE
                     value = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
                         context.getResources().getDimension(kvp.value, 0f),
                         context.getResources().getDisplayMetrics()
                     )
-                } else if (kvp.key == "app_customDimension") {
+                } else if (kvp.key == "customDimension") {
                     type = AttributeType.DIMENSION_TYPE
                     value = context.getResources().getDimension(kvp.value, 0f)
-                } else if (kvp.key == "app_customFloatValue") {
+                } else if (kvp.key == "customFloatValue") {
                     type = AttributeType.FLOAT_TYPE
                     value = context.getResources().getFloat(kvp.value, Float.NaN)
-                } else if (kvp.key == "app_customIntegerValue") {
+                } else if (kvp.key == "customIntegerValue") {
                     type = AttributeType.INT_TYPE
                     value = context.getResources().getInt(kvp.value, -1)
-                } else if (kvp.key == "app_customStringValue") {
+                } else if (kvp.key == "customStringValue") {
                     type = AttributeType.STRING_TYPE
-                    value = context.getResources().getString(kvp.value)
-                } else if (kvp.key == "app_customReference") {
+                    value = context.getResources().getString(kvp.key, kvp.value)
+                } else if (kvp.key == "customReference") {
                     type = AttributeType.REFERENCE_TYPE
                     var tmp = context.getResources().getResourceId(kvp.value, "")
                     if (tmp == "") {
-                        tmp = context.getResources().getString(kvp.value)
+                        tmp = context.getResources().getString(kvp.key, kvp.value)
                     }
                     value = tmp
                 }

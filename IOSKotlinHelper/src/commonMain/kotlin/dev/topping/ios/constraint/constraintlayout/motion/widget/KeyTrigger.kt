@@ -309,19 +309,19 @@ class KeyTrigger : Key() {
         private val sAttrMap: MutableMap<String, Int> = mutableMapOf()
 
         init {
-            sAttrMap["app_framePosition"] = FRAME_POS
-            sAttrMap["app_onCross"] = CROSS
-            sAttrMap["app_onNegativeCross"] = NEGATIVE_CROSS
-            sAttrMap["app_onPositiveCross"] = POSITIVE_CROSS
-            sAttrMap["app_motionTarget"] = TARGET_ID
-            sAttrMap["app_triggerId"] = TRIGGER_ID
-            sAttrMap["app_triggerSlack"] = TRIGGER_SLACK
-            sAttrMap["app_motion_triggerOnCollision"] = COLLISION
-            sAttrMap["app_motion_postLayoutCollision"] = POST_LAYOUT
-            sAttrMap["app_triggerReceiver"] = TRIGGER_RECEIVER
-            sAttrMap["app_viewTransitionOnCross"] = VT_CROSS
-            sAttrMap["app_viewTransitionOnNegativeCross"] = VT_NEGATIVE_CROSS
-            sAttrMap["app_viewTransitionOnPositiveCross"] = VT_POSITIVE_CROSS
+            sAttrMap["framePosition"] = FRAME_POS
+            sAttrMap["onCross"] = CROSS
+            sAttrMap["onNegativeCross"] = NEGATIVE_CROSS
+            sAttrMap["onPositiveCross"] = POSITIVE_CROSS
+            sAttrMap["motionTarget"] = TARGET_ID
+            sAttrMap["triggerId"] = TRIGGER_ID
+            sAttrMap["triggerSlack"] = TRIGGER_SLACK
+            sAttrMap["motion_triggerOnCollision"] = COLLISION
+            sAttrMap["motion_postLayoutCollision"] = POST_LAYOUT
+            sAttrMap["triggerReceiver"] = TRIGGER_RECEIVER
+            sAttrMap["viewTransitionOnCross"] = VT_CROSS
+            sAttrMap["viewTransitionOnNegativeCross"] = VT_NEGATIVE_CROSS
+            sAttrMap["viewTransitionOnPositiveCross"] = VT_POSITIVE_CROSS
         }
 
         fun read(context: TContext, c: KeyTrigger, a: AttributeSet) {
@@ -347,9 +347,15 @@ class KeyTrigger : Key() {
                             }
                         }
                     }
-                    NEGATIVE_CROSS -> c.mNegativeCross = context.getResources().getString(kvp.value)
-                    POSITIVE_CROSS -> c.mPositiveCross = context.getResources().getString(kvp.value)
-                    CROSS -> c.mCross = context.getResources().getString(kvp.value)
+                    NEGATIVE_CROSS -> c.mNegativeCross = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
+                    POSITIVE_CROSS -> c.mPositiveCross = context.getResources().getString(
+                        kvp.key,
+                        kvp.value
+                    )
+                    CROSS -> c.mCross = context.getResources().getString(kvp.key, kvp.value)
                     TRIGGER_SLACK -> c.mTriggerSlack = context.getResources().getFloat(kvp.value, c.mTriggerSlack)
                     TRIGGER_ID -> c.mTriggerID = context.getResources().getResourceId(kvp.value, c.mTriggerID)
                     COLLISION -> c.mTriggerCollisionId = context.getResources().getResourceId(kvp.value, c.mTriggerCollisionId)

@@ -917,7 +917,7 @@ class GridCore : VirtualLayout {
     
     override fun measure(widthMode: Int, widthSize: Int, heightMode: Int, heightSize: Int) {
         super.measure(widthMode, widthSize, heightMode, heightSize)
-        mContainer = parent as ConstraintWidgetContainer?
+        mContainer = getParent() as ConstraintWidgetContainer?
         setupGrid(false)
         mBoxWidgets?.forEach {
             it?.let {
@@ -928,7 +928,7 @@ class GridCore : VirtualLayout {
     }
 
     
-    override fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    override fun addToSolver(system: LinearSystem, optimize: Boolean) {
         super.addToSolver(system, optimize)
         addConstraints()
     }

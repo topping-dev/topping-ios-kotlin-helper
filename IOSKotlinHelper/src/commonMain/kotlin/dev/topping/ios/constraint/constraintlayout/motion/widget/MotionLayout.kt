@@ -1169,21 +1169,21 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         var apply = true
         if (attrs != null) {
             attrs!!.forEach { a ->
-                if(a.key == "app_layoutDescription") {
+                if(a.key == "layoutDescription") {
                     val id = context.getResources().getResourceId(a.value, UNSET_ID)
                     mScene = MotionScene(context, this, id)
-                } else if(a.key == "app_currentState") {
+                } else if(a.key == "currentState") {
                     currentState = context.getResources().getResourceId(a.value, currentState)
-                } else if(a.key == "app_motionProgress") {
+                } else if(a.key == "motionProgress") {
                     targetPosition = context.getResources().getFloat(a.value, targetPosition)
                     mInTransition = true
-                } else if(a.key == "app_applyMotionScene") {
+                } else if(a.key == "applyMotionScene") {
                     apply = context.getResources().getBoolean(a.value, apply)
-                } else if(a.key == "app_showPaths") {
+                } else if(a.key == "showPaths") {
                     if (mDebugPath == 0) { // favor motionDebug
                         mDebugPath = if (context.getResources().getBoolean(a.value, false)) DEBUG_SHOW_PATH else 0
                     }
-                } else if(a.key == "app_motionDebug") {
+                } else if(a.key == "motionDebug") {
                     mDebugPath = context.getResources().getInt(a.value, mDebugPath)
                 }
             }
@@ -2555,7 +2555,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
             mLayoutStart.updateHierarchy()
             if (I_DEBUG) {
                 for (child in mLayoutStart.children) {
-                    val view: TView = child.companionWidget as TView
+                    val view: TView = child.getCompanionWidget() as TView
                     debugWidget(">>>>>>>  " + Debug.getName(view), child)
                 }
                 Log.v(TAG, "> mLayoutEnd.updateHierarchy " + Debug.location)
@@ -2568,19 +2568,19 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
             mLayoutEnd.updateHierarchy()
             if (I_DEBUG) {
                 for (child in mLayoutEnd.children) {
-                    val view: TView = child.companionWidget as TView
+                    val view: TView = child.getCompanionWidget() as TView
                     debugWidget(">>>>>>>  " + Debug.getName(view), child)
                 }
             }
             val layoutParams: ViewGroup.LayoutParams? = self.getLayoutParams() as ViewGroup.LayoutParams?
             if (layoutParams != null) {
                 if (layoutParams.width == WRAP_CONTENT) {
-                    mLayoutStart.horizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
-                    mLayoutEnd.horizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
+                    mLayoutStart.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    mLayoutEnd.setHorizontalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
                 }
                 if (layoutParams.height == WRAP_CONTENT) {
-                    mLayoutStart.verticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
-                    mLayoutEnd.verticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
+                    mLayoutStart.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    mLayoutEnd.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
                 }
             }
         }
@@ -2596,24 +2596,24 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
             mapIdToWidget[self.getId()] = base
             if (cSet != null && cSet.mRotate != 0) {
                 resolveSystem(
-                    mLayoutEnd, self.getOptimizationLevel(),
+                    mLayoutEnd, optimizationLevel,
                     MeasureSpec.makeMeasureSpec(self.getHeight(), MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(self.getWidth(), MeasureSpec.EXACTLY)
                 )
             }
             //  build id widget map
             for (child in base.children) {
-                child.isAnimated = true
-                val view: TView = child.companionWidget as TView
+                child.setAnimated(true)
+                val view: TView = child.getCompanionWidget() as TView
                 mapIdToWidget[view.getId()] = child
             }
             for (child in base.children) {
-                val view: TView = child.companionWidget as TView
+                val view: TView = child.getCompanionWidget() as TView
                 cSet?.applyToLayoutParams(view.getId(), layoutParams as ConstraintLayout.LayoutParams)
-                child.width = (cSet?.getWidth(view.getId()) ?: 0)
-                child.height = (cSet?.getHeight(view.getId()) ?: 0)
-                if (view is ConstraintHelper) {
-                    cSet?.applyToHelper(view as ConstraintHelper, child, layoutParams as ConstraintLayout.LayoutParams, mapIdToWidget)
+                child.setWidth(cSet?.getWidth(view.getId()) ?: 0)
+                child.setHeight(cSet?.getHeight(view.getId()) ?: 0)
+                if (view.getParentType() is ConstraintHelper) {
+                    cSet?.applyToHelper(view.getParentType() as ConstraintHelper, child, layoutParams as ConstraintLayout.LayoutParams, mapIdToWidget)
                     if (view.getParentType() is Barrier) {
                         (view.getParentType() as Barrier).validateParams()
                         if (I_DEBUG) {
@@ -2634,14 +2634,14 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
 
                 applyConstraintsFromLayoutParams(false, view, child, layoutParams, mapIdToWidget)
                 if (cSet!!.getVisibilityMode(view.getId()) == ConstraintSet.VISIBILITY_MODE_IGNORE) {
-                    child.visibility = (view.getVisibility())
+                    child.setVisibility(view.getVisibility())
                 } else {
-                    child.visibility = (cSet!!.getVisibility(view.getId()))
+                    child.setVisibility(cSet!!.getVisibility(view.getId()))
                 }
             }
             for (child in base.children) {
                 if (child is VirtualLayout) {
-                    val view: ConstraintHelper = child.companionWidget as ConstraintHelper
+                    val view: ConstraintHelper = child.getCompanionWidget() as ConstraintHelper
                     val helper: Helper = child as Helper
                     view.updatePreLayout(base, helper, mapIdToWidget)
                     val virtualLayout: VirtualLayout = helper as VirtualLayout
@@ -2668,14 +2668,14 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         }
 
         fun getWidget(container: ConstraintWidgetContainer, view: TView): ConstraintWidget? {
-            if (container.companionWidget == view.getParentType()) {
+            if (container.getCompanionWidget() == view.getParentType()) {
                 return container
             }
             val children: MutableList<ConstraintWidget> = container.children
             val count: Int = children.size
             for (i in 0 until count) {
                 val widget: ConstraintWidget = children[i]
-                if (widget.companionWidget === view) {
+                if (widget.getCompanionWidget() == view) {
                     return widget
                 }
             }
@@ -2692,7 +2692,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         }
 
         private fun debugLayout(title: String, c: ConstraintWidgetContainer) {
-            var v: TView = c.companionWidget as TView
+            var v: TView = c.getCompanionWidget() as TView
             val cName = title + " " + Debug.getName(v)
             Log.v(TAG, "$cName  ========= $c")
             val count: Int = c.children.size
@@ -2704,7 +2704,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
                 a += if (child.mBottom.target != null) "B" else "_"
                 a += if (child.mLeft.target != null) "L" else "_"
                 a += if (child.mRight.target != null) "R" else "_"
-                v = child.companionWidget as TView
+                v = child.getCompanionWidget() as TView
                 var name: String = Debug.getName(v)
                 Log.v(TAG, "$str  $name $child $a")
             }
@@ -2737,10 +2737,10 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
             }
             if (recompute_start_end_size) {
                 computeStartEndSize(widthMeasureSpec, heightMeasureSpec)
-                mStartWrapWidth = mLayoutStart.width
-                mStartWrapHeight = mLayoutStart.height
-                mEndWrapWidth = mLayoutEnd.width
-                mEndWrapHeight = mLayoutEnd.height
+                mStartWrapWidth = mLayoutStart.getWidth()
+                mStartWrapHeight = mLayoutStart.getHeight()
+                mEndWrapWidth = mLayoutEnd.getWidth()
+                mEndWrapHeight = mLayoutEnd.getHeight()
                 mMeasureDuringTransition = (mStartWrapWidth != mEndWrapWidth
                         || mStartWrapHeight != mEndWrapHeight)
             }
@@ -2774,7 +2774,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         }
 
         private fun computeStartEndSize(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-            val optimisationLevel: Int = self.getOptimizationLevel()
+            val optimisationLevel: Int = optimizationLevel
             if (currentState == startState) {
                 resolveSystem(
                     mLayoutEnd, optimisationLevel,
@@ -2880,10 +2880,10 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
 
     var mModel: Model = Model()
     private fun toRect(cw: ConstraintWidget): Rect {
-        mTempRect.top = cw.y
-        mTempRect.left = cw.x
-        mTempRect.right = cw.width + mTempRect.left
-        mTempRect.bottom = cw.height + mTempRect.top
+        mTempRect.top = cw.getY()
+        mTempRect.left = cw.getX()
+        mTempRect.right = cw.getWidth() + mTempRect.left
+        mTempRect.bottom = cw.getHeight() + mTempRect.top
         return mTempRect
     }
 
@@ -2914,12 +2914,12 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
                 + " (pos:" + mTransitionLastPosition + " Dpos/Dt:" + this.velocity)
     }
 
-    fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (I_DEBUG) {
             Log.v(TAG, "onMeasure " + Debug.location)
         }
         if (mScene == null) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            super.onMeasure(sup, widthMeasureSpec, heightMeasureSpec)
             return
         }
         var recalc = (mLastWidthMeasureSpec != widthMeasureSpec
@@ -2939,7 +2939,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         val endId = mScene!!.endId
         var setMeasure = true
         if ((recalc || mModel.isNotConfiguredWith(startId, endId)) && mBeginState != UNSET_ID) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            super.onMeasure(sup, widthMeasureSpec, heightMeasureSpec)
             mModel.initFrom(
                 mLayoutWidget, mScene!!.getConstraintSet(startId),
                 mScene!!.getConstraintSet(endId)
@@ -2948,13 +2948,13 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
             mModel.setMeasuredId(startId, endId)
             setMeasure = false
         } else if (recalc) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            super.onMeasure(sup, widthMeasureSpec, heightMeasureSpec)
         }
         if (mMeasureDuringTransition || setMeasure) {
             val heightPadding: Int = self.getPaddingTop() + self.getPaddingBottom()
             val widthPadding: Int = self.getPaddingLeft() + self.getPaddingRight()
-            var androidLayoutWidth: Int = mLayoutWidget.width + widthPadding
-            var androidLayoutHeight: Int = mLayoutWidget.height + heightPadding
+            var androidLayoutWidth: Int = mLayoutWidget.getWidth() + widthPadding
+            var androidLayoutHeight: Int = mLayoutWidget.getHeight() + heightPadding
             if (mWidthMeasureMode == MeasureSpec.AT_MOST
                 || mWidthMeasureMode == MeasureSpec.UNSPECIFIED
             ) {
@@ -3870,14 +3870,21 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
 
     private var mNeedsFireTransitionCompleted = false
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onLayout(
+        sup: TView?,
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    ) {
         mInLayout = true
         try {
             if (I_DEBUG) {
                 Log.v(TAG, " onLayout " + progress + "  " + Debug.location)
             }
             if (mScene == null) {
-                super.onLayout(changed, left, top, right, bottom)
+                super.onLayout(sup, changed, left, top, right, bottom)
                 return
             }
             val w = right - left

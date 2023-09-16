@@ -84,9 +84,9 @@ abstract class ConstraintHelper(val myContext: TContext?, val self: TView) {
 
     init {
         self.setParentType(this)
-        mReferenceIds = self.getObjCProperty("app_constraint_referenced_ids") as String?
+        mReferenceIds = self.getObjCProperty("constraint_referenced_ids") as String?
         setIds(mReferenceIds)
-        mReferenceTags = self.getObjCProperty("app_constraint_referenced_tags") as String?
+        mReferenceTags = self.getObjCProperty("constraint_referenced_tags") as String?
         setReferenceTags(mReferenceTags)
         self.swizzleFunction("onAttachedToWindow") { sup, params ->
             onAttachedToWindow(sup)

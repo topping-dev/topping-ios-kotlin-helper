@@ -110,9 +110,9 @@ class Barrier(myContext: TContext?, self: TView) : ConstraintHelper(myContext, s
         self.setParentType(this)
         self.setVisibility(TView.GONE)
         mBarrier = dev.topping.ios.constraint.core.widgets.Barrier()
-        type = self.getObjCProperty("app_layout_barrierDirection") as Int
-        mBarrier.allowsGoneWidget = self.getObjCProperty("app_layout_barrierAllowsGoneWidgets") as Boolean? ?: false
-        val margin: Float = self.dpToPixel(self.getObjCProperty("app_layout_barrierMargin") as Float? ?: 0f)
+        type = self.getObjCProperty("layout_barrierDirection") as Int
+        mBarrier.allowsGoneWidget = self.getObjCProperty("layout_barrierAllowsGoneWidgets") as Boolean? ?: false
+        val margin: Float = self.dpToPixel(self.getObjCProperty("layout_barrierMargin") as Float? ?: 0f)
         mHelperWidget = mBarrier
         validateParams()
     }
@@ -197,7 +197,7 @@ class Barrier(myContext: TContext?, self: TView) : ConstraintHelper(myContext, s
             val barrier: dev.topping.ios.constraint.core.widgets.Barrier =
                 child
             val container: ConstraintWidgetContainer =
-                child.parent as ConstraintWidgetContainer
+                child.getParent() as ConstraintWidgetContainer
             val isRtl: Boolean = container.isRtl
             updateType(barrier, constraint.layout.mBarrierDirection, isRtl)
             barrier.allowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets

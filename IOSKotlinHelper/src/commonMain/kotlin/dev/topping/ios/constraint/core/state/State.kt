@@ -505,8 +505,8 @@ class State {
             val reference: Reference? = mReferences[key]
             if (reference != mParent) {
                 val widget: ConstraintWidget? = reference?.constraintWidget
-                widget?.debugName = reference?.key.toString()
-                widget?.parent = null
+                widget?.setDebugName(reference?.key.toString())
+                widget?.setParent(null)
                 if (reference?.facade is GuidelineReference) {
                     // we apply Guidelines first to correctly setup their ConstraintWidget.
                     reference.apply()

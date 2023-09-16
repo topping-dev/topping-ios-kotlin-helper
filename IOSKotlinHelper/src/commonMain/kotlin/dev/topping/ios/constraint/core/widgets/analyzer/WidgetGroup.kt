@@ -17,9 +17,7 @@ package dev.topping.ios.constraint.core.widgets.analyzer
 
 import dev.topping.ios.constraint.Arrays
 import dev.topping.ios.constraint.core.LinearSystem
-import dev.topping.ios.constraint.core.widgets.Chain
-import dev.topping.ios.constraint.core.widgets.ConstraintWidget
-import dev.topping.ios.constraint.core.widgets.ConstraintWidgetContainer
+import dev.topping.ios.constraint.core.widgets.*
 import kotlin.native.ref.WeakReference
 
 /**

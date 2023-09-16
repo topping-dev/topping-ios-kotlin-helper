@@ -481,18 +481,23 @@ class ConstraintSet {
                 val a = context.getResources()
                 val attr = kvp.value
                 when (sMapToConstant.get(attr)) {
-                    LEFT_TO_LEFT -> leftToLeft = lookupID(a, attr, leftToLeft)
-                    LEFT_TO_RIGHT -> leftToRight = lookupID(a, attr, leftToRight)
-                    RIGHT_TO_LEFT -> rightToLeft = lookupID(a, attr, rightToLeft)
-                    RIGHT_TO_RIGHT -> rightToRight = lookupID(a, attr, rightToRight)
-                    TOP_TO_TOP -> topToTop = lookupID(a, attr, topToTop)
-                    TOP_TO_BOTTOM -> topToBottom = lookupID(a, attr, topToBottom)
-                    BOTTOM_TO_TOP -> bottomToTop = lookupID(a, attr, bottomToTop)
-                    BOTTOM_TO_BOTTOM -> bottomToBottom = lookupID(a, attr, bottomToBottom)
+                    LEFT_TO_LEFT -> leftToLeft = lookupID(a, kvp.key, attr, leftToLeft)
+                    LEFT_TO_RIGHT -> leftToRight = lookupID(a, kvp.key, attr, leftToRight)
+                    RIGHT_TO_LEFT -> rightToLeft = lookupID(a, kvp.key, attr, rightToLeft)
+                    RIGHT_TO_RIGHT -> rightToRight = lookupID(a, kvp.key, attr, rightToRight)
+                    TOP_TO_TOP -> topToTop = lookupID(a, kvp.key, attr, topToTop)
+                    TOP_TO_BOTTOM -> topToBottom = lookupID(a, kvp.key, attr, topToBottom)
+                    BOTTOM_TO_TOP -> bottomToTop = lookupID(a, kvp.key, attr, bottomToTop)
+                    BOTTOM_TO_BOTTOM -> bottomToBottom = lookupID(a, kvp.key, attr, bottomToBottom)
                     BASELINE_TO_BASELINE -> baselineToBaseline =
-                        lookupID(a, attr, baselineToBaseline)
-                    BASELINE_TO_TOP -> baselineToTop = lookupID(a, attr, baselineToTop)
-                    BASELINE_TO_BOTTOM -> baselineToBottom = lookupID(a, attr, baselineToBottom)
+                        lookupID(a, kvp.key, attr, baselineToBaseline)
+                    BASELINE_TO_TOP -> baselineToTop = lookupID(a, kvp.key, attr, baselineToTop)
+                    BASELINE_TO_BOTTOM -> baselineToBottom = lookupID(
+                        a,
+                        kvp.key,
+                        attr,
+                        baselineToBottom
+                    )
                     EDITOR_ABSOLUTE_X -> editorAbsoluteX =
                         a.getDimensionPixelOffset(attr, editorAbsoluteX)
                     EDITOR_ABSOLUTE_Y -> editorAbsoluteY =
@@ -502,11 +507,11 @@ class ConstraintSet {
                     GUIDE_PERCENT -> guidePercent = a.getFloat(attr, guidePercent)
                     GUIDE_USE_RTL -> guidelineUseRtl = a.getBoolean(attr, guidelineUseRtl)
                     ORIENTATION -> orientation = a.getInt(attr, orientation)
-                    START_TO_END -> startToEnd = lookupID(a, attr, startToEnd)
-                    START_TO_START -> startToStart = lookupID(a, attr, startToStart)
-                    END_TO_START -> endToStart = lookupID(a, attr, endToStart)
-                    END_TO_END -> endToEnd = lookupID(a, attr, endToEnd)
-                    CIRCLE -> circleConstraint = lookupID(a, attr, circleConstraint)
+                    START_TO_END -> startToEnd = lookupID(a, kvp.key, attr, startToEnd)
+                    START_TO_START -> startToStart = lookupID(a, kvp.key, attr, startToStart)
+                    END_TO_START -> endToStart = lookupID(a, kvp.key, attr, endToStart)
+                    END_TO_END -> endToEnd = lookupID(a, kvp.key, attr, endToEnd)
+                    CIRCLE -> circleConstraint = lookupID(a, kvp.key, attr, circleConstraint)
                     CIRCLE_RADIUS -> circleRadius = a.getDimensionPixelSize(attr, circleRadius)
                     CIRCLE_ANGLE -> circleAngle = a.getFloat(attr, circleAngle)
                     GONE_LEFT_MARGIN -> goneLeftMargin =
@@ -533,15 +538,27 @@ class ConstraintSet {
                         a.getDimensionPixelSize(attr, baselineMargin)
                     LAYOUT_WIDTH -> mWidth = a.getLayoutDimension(attr, mWidth)
                     LAYOUT_HEIGHT -> mHeight = a.getLayoutDimension(attr, mHeight)
-                    LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(this, a, attr, HORIZONTAL)
-                    LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(this, a, attr, VERTICAL)
+                    LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(
+                        this,
+                        a,
+                        kvp.key,
+                        attr,
+                        HORIZONTAL
+                    )
+                    LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(
+                        this,
+                        a,
+                        kvp.key,
+                        attr,
+                        VERTICAL
+                    )
                     WIDTH_DEFAULT -> widthDefault = a.getInt(attr, widthDefault)
                     HEIGHT_DEFAULT -> heightDefault = a.getInt(attr, heightDefault)
                     VERTICAL_WEIGHT -> verticalWeight = a.getFloat(attr, verticalWeight)
                     HORIZONTAL_WEIGHT -> horizontalWeight = a.getFloat(attr, horizontalWeight)
                     VERTICAL_STYLE -> verticalChainStyle = a.getInt(attr, verticalChainStyle)
                     HORIZONTAL_STYLE -> horizontalChainStyle = a.getInt(attr, horizontalChainStyle)
-                    DIMENSION_RATIO -> dimensionRatio = a.getString(attr)
+                    DIMENSION_RATIO -> dimensionRatio = a.getString(kvp.key, attr)
                     HEIGHT_MAX -> heightMax = a.getDimensionPixelSize(attr, heightMax)
                     WIDTH_MAX -> widthMax = a.getDimensionPixelSize(attr, widthMax)
                     HEIGHT_MIN -> heightMin = a.getDimensionPixelSize(attr, heightMin)
@@ -557,10 +574,10 @@ class ConstraintSet {
                     BARRIER_DIRECTION -> mBarrierDirection = a.getInt(attr, mBarrierDirection)
                     LAYOUT_WRAP_BEHAVIOR -> mWrapBehavior = a.getInt(attr, mWrapBehavior)
                     BARRIER_MARGIN -> mBarrierMargin = a.getDimensionPixelSize(attr, mBarrierMargin)
-                    CONSTRAINT_REFERENCED_IDS -> mReferenceIdString = a.getString(attr)
+                    CONSTRAINT_REFERENCED_IDS -> mReferenceIdString = a.getString(kvp.key, attr)
                     BARRIER_ALLOWS_GONE_WIDGETS -> mBarrierAllowsGoneWidgets =
                         a.getBoolean(attr, mBarrierAllowsGoneWidgets)
-                    CONSTRAINT_TAG -> mConstraintTag = a.getString(attr)
+                    CONSTRAINT_TAG -> mConstraintTag = a.getString(kvp.key, attr)
                     UNUSED -> Log.w(
                         TAG,
                         "unused attribute 0x" + attr
@@ -927,7 +944,12 @@ class ConstraintSet {
                     SCALE_Y -> scaleY = a.getFloat(attr, scaleY)
                     TRANSFORM_PIVOT_X -> transformPivotX = a.getDimension(attr, transformPivotX)
                     TRANSFORM_PIVOT_Y -> transformPivotY = a.getDimension(attr, transformPivotY)
-                    TRANSFORM_PIVOT_TARGET -> transformPivotTarget = lookupID(a, attr, transformPivotTarget)
+                    TRANSFORM_PIVOT_TARGET -> transformPivotTarget = lookupID(
+                        a,
+                        kvp.key,
+                        attr,
+                        transformPivotTarget
+                    )
                     TRANSLATION_X -> translationX = a.getDimension(attr, translationX)
                     TRANSLATION_Y -> translationY = a.getDimension(attr, translationY)
                     TRANSLATION_Z -> translationZ = a.getDimension(attr, translationZ)
@@ -1066,14 +1088,14 @@ class ConstraintSet {
                     TRANSITION_EASING -> {
                         val type = a.getResourceType(attr)
                         mTransitionEasing = if (type == TypedValue.TYPE_STRING) {
-                            a.getString(attr)
+                            a.getString(kvp.key, attr)
                         } else {
                             Easing.NAMED_EASING.get(a.getInt(attr, 0))
                         }
                     }
                     MOTION_DRAW_PATH -> mDrawPath = a.getInt(attr, 0)
                     ANIMATE_RELATIVE_TO -> mAnimateRelativeTo =
-                        lookupID(a, attr, mAnimateRelativeTo)
+                        lookupID(a, kvp.key, attr, mAnimateRelativeTo)
                     ANIMATE_CIRCLE_ANGLE_TO -> mAnimateCircleAngleTo =
                         a.getInt(attr, mAnimateCircleAngleTo)
                     MOTION_STAGGER -> mMotionStagger = a.getFloat(attr, mMotionStagger)
@@ -1089,7 +1111,7 @@ class ConstraintSet {
                                 mQuantizeInterpolatorType = INTERPOLATOR_REFERENCE_ID
                             }
                         } else if (type == TypedValue.TYPE_STRING) {
-                            mQuantizeInterpolatorString = a.getString(attr)
+                            mQuantizeInterpolatorString = a.getString(kvp.key, attr)
                             if (mQuantizeInterpolatorString!!.indexOf("/") > 0) {
                                 mQuantizeInterpolatorID = a.getResourceId(attr, "")
                                 mQuantizeInterpolatorType = INTERPOLATOR_REFERENCE_ID
@@ -1576,8 +1598,8 @@ class ConstraintSet {
                 mConstraints[id] = Constraint()
             }
             val constraint = mConstraints[id] ?: continue
-            if (view is ConstraintHelper) {
-                constraint.fillFromConstraints(view, id, param)
+            if (view.getParentType() is ConstraintHelper) {
+                constraint.fillFromConstraints(view.getParentType() as ConstraintHelper, id, param)
             }
             constraint.fillFromConstraints(id, param)
         }
@@ -1793,8 +1815,8 @@ class ConstraintSet {
         }
         for (i in 0 until count) {
             val view: TView = constraintLayout.self.getChildAt(i)
-            if (view is ConstraintHelper) {
-                view.applyLayoutFeaturesInConstraintSet(constraintLayout)
+            if (view.getParentType() is ConstraintHelper) {
+                (view.getParentType() as ConstraintHelper).applyLayoutFeaturesInConstraintSet(constraintLayout)
             }
         }
     }
@@ -3614,21 +3636,51 @@ class ConstraintSet {
                 c.transform.mApply = true
             }
             when (sMapToConstant.get(attrId)) {
-                LEFT_TO_LEFT -> c.layout.leftToLeft = lookupID(a, attr, c.layout.leftToLeft)
-                LEFT_TO_RIGHT -> c.layout.leftToRight = lookupID(a, attr, c.layout.leftToRight)
-                RIGHT_TO_LEFT -> c.layout.rightToLeft = lookupID(a, attr, c.layout.rightToLeft)
-                RIGHT_TO_RIGHT -> c.layout.rightToRight = lookupID(a, attr, c.layout.rightToRight)
-                TOP_TO_TOP -> c.layout.topToTop = lookupID(a, attr, c.layout.topToTop)
-                TOP_TO_BOTTOM -> c.layout.topToBottom = lookupID(a, attr, c.layout.topToBottom)
-                BOTTOM_TO_TOP -> c.layout.bottomToTop = lookupID(a, attr, c.layout.bottomToTop)
+                LEFT_TO_LEFT -> c.layout.leftToLeft = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.leftToLeft
+                )
+                LEFT_TO_RIGHT -> c.layout.leftToRight = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.leftToRight
+                )
+                RIGHT_TO_LEFT -> c.layout.rightToLeft = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.rightToLeft
+                )
+                RIGHT_TO_RIGHT -> c.layout.rightToRight = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.rightToRight
+                )
+                TOP_TO_TOP -> c.layout.topToTop = lookupID(a, kvp.key, attr, c.layout.topToTop)
+                TOP_TO_BOTTOM -> c.layout.topToBottom = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.topToBottom
+                )
+                BOTTOM_TO_TOP -> c.layout.bottomToTop = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.bottomToTop
+                )
                 BOTTOM_TO_BOTTOM -> c.layout.bottomToBottom =
-                    lookupID(a, attr, c.layout.bottomToBottom)
+                    lookupID(a, kvp.key, attr, c.layout.bottomToBottom)
                 BASELINE_TO_BASELINE -> c.layout.baselineToBaseline =
-                    lookupID(a, attr, c.layout.baselineToBaseline)
+                    lookupID(a, kvp.key, attr, c.layout.baselineToBaseline)
                 BASELINE_TO_TOP -> c.layout.baselineToTop =
-                    lookupID(a, attr, c.layout.baselineToTop)
+                    lookupID(a, kvp.key, attr, c.layout.baselineToTop)
                 BASELINE_TO_BOTTOM -> c.layout.baselineToBottom =
-                    lookupID(a, attr, c.layout.baselineToBottom)
+                    lookupID(a, kvp.key, attr, c.layout.baselineToBottom)
                 EDITOR_ABSOLUTE_X -> c.layout.editorAbsoluteX = a.getDimensionPixelOffset(
                     attr,
                     c.layout.editorAbsoluteX
@@ -3642,11 +3694,31 @@ class ConstraintSet {
                 GUIDE_END -> c.layout.guideEnd = a.getDimensionPixelOffset(attr, c.layout.guideEnd)
                 GUIDE_PERCENT -> c.layout.guidePercent = a.getFloat(attr, c.layout.guidePercent)
                 ORIENTATION -> c.layout.orientation = a.getInt(attr, c.layout.orientation)
-                START_TO_END -> c.layout.startToEnd = lookupID(a, attr, c.layout.startToEnd)
-                START_TO_START -> c.layout.startToStart = lookupID(a, attr, c.layout.startToStart)
-                END_TO_START -> c.layout.endToStart = lookupID(a, attr, c.layout.endToStart)
-                END_TO_END -> c.layout.endToEnd = lookupID(a, attr, c.layout.endToEnd)
-                CIRCLE -> c.layout.circleConstraint = lookupID(a, attr, c.layout.circleConstraint)
+                START_TO_END -> c.layout.startToEnd = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.startToEnd
+                )
+                START_TO_START -> c.layout.startToStart = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.startToStart
+                )
+                END_TO_START -> c.layout.endToStart = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.endToStart
+                )
+                END_TO_END -> c.layout.endToEnd = lookupID(a, kvp.key, attr, c.layout.endToEnd)
+                CIRCLE -> c.layout.circleConstraint = lookupID(
+                    a,
+                    kvp.key,
+                    attr,
+                    c.layout.circleConstraint
+                )
                 CIRCLE_RADIUS -> c.layout.circleRadius =
                     a.getDimensionPixelSize(attr, c.layout.circleRadius)
                 CIRCLE_ANGLE -> c.layout.circleAngle = a.getFloat(attr, c.layout.circleAngle)
@@ -3690,8 +3762,20 @@ class ConstraintSet {
                 )
                 LAYOUT_WIDTH -> c.layout.mWidth = a.getLayoutDimension(attr, c.layout.mWidth)
                 LAYOUT_HEIGHT -> c.layout.mHeight = a.getLayoutDimension(attr, c.layout.mHeight)
-                LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(c.layout, a, attr, HORIZONTAL)
-                LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(c.layout, a, attr, VERTICAL)
+                LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(
+                    c.layout,
+                    a,
+                    kvp.key,
+                    attr,
+                    HORIZONTAL
+                )
+                LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(
+                    c.layout,
+                    a,
+                    kvp.key,
+                    attr,
+                    VERTICAL
+                )
                 LAYOUT_WRAP_BEHAVIOR -> c.layout.mWrapBehavior =
                     a.getInt(attr, c.layout.mWrapBehavior)
                 WIDTH_DEFAULT -> c.layout.widthDefault = a.getInt(attr, c.layout.widthDefault)
@@ -3732,7 +3816,7 @@ class ConstraintSet {
                     c.transform.translationZ = a.getDimension(attr, c.transform.translationZ)
                 }
                 TRANSFORM_PIVOT_TARGET -> c.transform.transformPivotTarget =
-                    lookupID(a, attr, c.transform.transformPivotTarget)
+                    lookupID(a, kvp.key, attr, c.transform.transformPivotTarget)
                 VERTICAL_WEIGHT -> c.layout.verticalWeight =
                     a.getFloat(attr, c.layout.verticalWeight)
                 HORIZONTAL_WEIGHT -> c.layout.horizontalWeight =
@@ -3742,18 +3826,18 @@ class ConstraintSet {
                 HORIZONTAL_STYLE -> c.layout.horizontalChainStyle =
                     a.getInt(attr, c.layout.horizontalChainStyle)
                 VIEW_ID -> c.mViewId = a.getResourceId(attr, c.mViewId)
-                DIMENSION_RATIO -> c.layout.dimensionRatio = a.getString(attr)
+                DIMENSION_RATIO -> c.layout.dimensionRatio = a.getString(kvp.key, attr)
                 WIDTH_PERCENT -> c.layout.widthPercent = a.getFloat(attr, 1f)
                 HEIGHT_PERCENT -> c.layout.heightPercent = a.getFloat(attr, 1f)
                 PROGRESS -> c.propertySet.mProgress = a.getFloat(attr, c.propertySet.mProgress)
                 ANIMATE_RELATIVE_TO -> c.motion.mAnimateRelativeTo =
-                    lookupID(a, attr, c.motion.mAnimateRelativeTo)
+                    lookupID(a, kvp.key, attr, c.motion.mAnimateRelativeTo)
                 ANIMATE_CIRCLE_ANGLE_TO -> c.motion.mAnimateCircleAngleTo =
                     a.getInt(attr, c.motion.mAnimateCircleAngleTo)
                 TRANSITION_EASING -> {
                     val type = a.getResourceType(attr)
                     if (type == TypedValue.TYPE_STRING) {
-                        c.motion.mTransitionEasing = a.getString(attr)
+                        c.motion.mTransitionEasing = a.getString(kvp.key, attr)
                     } else {
                         c.motion.mTransitionEasing = Easing.NAMED_EASING.get(a.getInt(attr, 0))
                     }
@@ -3777,7 +3861,7 @@ class ConstraintSet {
                             c.motion.mQuantizeInterpolatorType = Motion.INTERPOLATOR_REFERENCE_ID
                         }
                     } else if (type === TypedValue.TYPE_STRING) {
-                        c.motion.mQuantizeInterpolatorString = a.getString(attr)
+                        c.motion.mQuantizeInterpolatorString = a.getString(kvp.key, attr)
                         if (c.motion.mQuantizeInterpolatorString!!.indexOf("/") > 0) {
                             c.motion.mQuantizeInterpolatorID = a.getResourceId(attr, "")
                             c.motion.mQuantizeInterpolatorType = Motion.INTERPOLATOR_REFERENCE_ID
@@ -3799,8 +3883,11 @@ class ConstraintSet {
                     attr,
                     c.layout.mBarrierMargin
                 )
-                CONSTRAINT_REFERENCED_IDS -> c.layout.mReferenceIdString = a.getString(attr)
-                CONSTRAINT_TAG -> c.layout.mConstraintTag = a.getString(attr)
+                CONSTRAINT_REFERENCED_IDS -> c.layout.mReferenceIdString = a.getString(
+                    kvp.key,
+                    attr
+                )
+                CONSTRAINT_TAG -> c.layout.mConstraintTag = a.getString(kvp.key, attr)
                 BARRIER_ALLOWS_GONE_WIDGETS -> c.layout.mBarrierAllowsGoneWidgets = a.getBoolean(
                     attr,
                     c.layout.mBarrierAllowsGoneWidgets
@@ -5356,7 +5443,7 @@ class ConstraintSet {
          * @param attr
          * @param orientation
          */
-        fun parseDimensionConstraints(data: Any?, a: TResources, attr: String, orientation: Int) {
+        fun parseDimensionConstraints(data: Any?, a: TResources, key: String, attr: String, orientation: Int) {
             if (data == null) {
                 return
             }
@@ -5373,7 +5460,7 @@ class ConstraintSet {
                     finalValue = a.getDimensionPixelSize(attr, 0)
                 }
                 TypedValue.TYPE_STRING -> {
-                    val value: String = a.getString(attr)
+                    val value: String = a.getString(key, attr)
                     parseDimensionConstraintsString(data, value, orientation)
                     return
                 }
@@ -5623,10 +5710,10 @@ class ConstraintSet {
             return list.toTypedArray()
         }
 
-        private fun lookupID(a: TResources, index: String, def: String): String {
+        private fun lookupID(a: TResources, key: String, index: String, def: String): String {
             var ret = a.getResourceId(index, def)
             if (ret == Layout.UNSET_ID) {
-                ret = a.getString(index)
+                ret = a.getString(key, index)
             }
             return ret
         }
@@ -5763,8 +5850,20 @@ class ConstraintSet {
                         LAYOUT_HEIGHT,
                         a.getLayoutDimension(attr, c.layout.mHeight)
                     )
-                    LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(delta, a, attr, HORIZONTAL)
-                    LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(delta, a, attr, VERTICAL)
+                    LAYOUT_CONSTRAINT_WIDTH -> parseDimensionConstraints(
+                        delta,
+                        a,
+                        kvp.key,
+                        attr,
+                        HORIZONTAL
+                    )
+                    LAYOUT_CONSTRAINT_HEIGHT -> parseDimensionConstraints(
+                        delta,
+                        a,
+                        kvp.key,
+                        attr,
+                        VERTICAL
+                    )
                     LAYOUT_WRAP_BEHAVIOR -> delta.add(
                         LAYOUT_WRAP_BEHAVIOR,
                         a.getInt(attr, c.layout.mWrapBehavior)
@@ -5837,7 +5936,7 @@ class ConstraintSet {
                     }
                     TRANSFORM_PIVOT_TARGET -> delta.add(
                         TRANSFORM_PIVOT_TARGET,
-                        lookupID(a, attr, c.transform.transformPivotTarget)
+                        lookupID(a, kvp.key, attr, c.transform.transformPivotTarget)
                     )
                     VERTICAL_WEIGHT -> delta.add(
                         VERTICAL_WEIGHT,
@@ -5862,22 +5961,22 @@ class ConstraintSet {
                     MOTION_TARGET -> if (MotionLayout.IS_IN_EDIT_MODE) {
                         c.mViewId = a.getResourceId(attr, c.mViewId)
                         if (c.mViewId == "") {
-                            c.mTargetString = a.getString(attr)
+                            c.mTargetString = a.getString(kvp.key, attr)
                         }
                     } else {
                         if (a.getResourceType(attr) == TypedValue.TYPE_STRING) {
-                            c.mTargetString = a.getString(attr)
+                            c.mTargetString = a.getString(kvp.key, attr)
                         } else {
                             c.mViewId = a.getResourceId(attr, c.mViewId)
                         }
                     }
-                    DIMENSION_RATIO -> delta.add(DIMENSION_RATIO, a.getString(attr))
+                    DIMENSION_RATIO -> delta.add(DIMENSION_RATIO, a.getString(kvp.key, attr))
                     WIDTH_PERCENT -> delta.add(WIDTH_PERCENT, a.getFloat(attr, 1f))
                     HEIGHT_PERCENT -> delta.add(HEIGHT_PERCENT, a.getFloat(attr, 1f))
                     PROGRESS -> delta.add(PROGRESS, a.getFloat(attr, c.propertySet.mProgress))
                     ANIMATE_RELATIVE_TO -> delta.add(
                         ANIMATE_RELATIVE_TO,
-                        lookupID(a, attr, c.motion.mAnimateRelativeTo)
+                        lookupID(a, kvp.key, attr, c.motion.mAnimateRelativeTo)
                     )
                     ANIMATE_CIRCLE_ANGLE_TO -> delta.add(
                         ANIMATE_CIRCLE_ANGLE_TO,
@@ -5886,7 +5985,7 @@ class ConstraintSet {
                     TRANSITION_EASING -> {
                         type = a.getResourceType(attr)
                         if (type == TypedValue.TYPE_STRING) {
-                            delta.add(TRANSITION_EASING, a.getString(attr))
+                            delta.add(TRANSITION_EASING, a.getString(kvp.key, attr))
                         } else {
                             delta.add(
                                 TRANSITION_EASING,
@@ -5935,7 +6034,7 @@ class ConstraintSet {
                                 )
                             }
                         } else if (type == TypedValue.TYPE_STRING) {
-                            c.motion.mQuantizeInterpolatorString = a.getString(attr)
+                            c.motion.mQuantizeInterpolatorString = a.getString(kvp.key, attr)
                             delta.add(
                                 QUANTIZE_MOTION_INTERPOLATOR_STR,
                                 c.motion.mQuantizeInterpolatorString
@@ -5985,9 +6084,9 @@ class ConstraintSet {
                     )
                     CONSTRAINT_REFERENCED_IDS -> delta.add(
                         CONSTRAINT_REFERENCED_IDS,
-                        a.getString(attr)
+                        a.getString(kvp.key, attr)
                     )
-                    CONSTRAINT_TAG -> delta.add(CONSTRAINT_TAG, a.getString(attr))
+                    CONSTRAINT_TAG -> delta.add(CONSTRAINT_TAG, a.getString(kvp.key, attr))
                     BARRIER_ALLOWS_GONE_WIDGETS -> delta.add(
                         BARRIER_ALLOWS_GONE_WIDGETS, a.getBoolean(
                             attr,

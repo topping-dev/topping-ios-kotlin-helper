@@ -66,7 +66,7 @@ class Placeholder : VirtualLayout() {
     }
 
     
-    override fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    override fun addToSolver(system: LinearSystem, optimize: Boolean) {
         super.addToSolver(system, optimize)
         if (mWidgetsCount > 0) {
             val widget: ConstraintWidget? = mWidgets[0]

@@ -30,8 +30,8 @@ abstract class VirtualLayout(myContext: TContext?, self: TView) : ConstraintHelp
     private var mApplyElevationOnAttach = false
 
     init {
-        mApplyElevationOnAttach = self.getObjCProperty("app_layout_android_visibility") as Boolean? ?: false
-        mApplyElevationOnAttach = self.getObjCProperty("app_layout_android_elevation") as Boolean? ?: false
+        mApplyElevationOnAttach = self.getObjCProperty("layout_android_visibility") as Boolean? ?: false
+        mApplyElevationOnAttach = self.getObjCProperty("layout_android_elevation") as Boolean? ?: false
         self.swizzleFunction("setVisibility")  { sup, params ->
             val args = params as Array<Any>
             setVisibility(sup, args[0] as Int)
@@ -42,6 +42,14 @@ abstract class VirtualLayout(myContext: TContext?, self: TView) : ConstraintHelp
             setElevation(sup, args[0] as Float)
             0
         }
+    }
+
+    fun onMeasure(
+        layout: dev.topping.ios.constraint.core.widgets.VirtualLayout?,
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int
+    ) {
+        // nothing
     }
 
     /**

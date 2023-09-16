@@ -174,7 +174,7 @@ class Flow : VirtualLayout() {
             } else if (widget.mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_PERCENT) {
                 val value = (widget.mMatchConstraintPercentWidth * max).toInt()
                 if (value != widget.width) {
-                    widget.isMeasureRequested = true
+                    widget.setMeasureRequested(true)
                     measure(
                         widget, DimensionBehaviour.FIXED, value,
                         widget.verticalDimensionBehaviour, widget.height
@@ -200,7 +200,7 @@ class Flow : VirtualLayout() {
             } else if (widget.mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_PERCENT) {
                 val value = (widget.mMatchConstraintPercentHeight * max).toInt()
                 if (value != widget.height) {
-                    widget.isMeasureRequested = true
+                    widget.setMeasureRequested(true)
                     measure(
                         widget, widget.horizontalDimensionBehaviour,
                         widget.width, DimensionBehaviour.FIXED, value
@@ -1368,9 +1368,9 @@ class Flow : VirtualLayout() {
      * @param optimize true if [Optimizer.OPTIMIZATION_GRAPH] is on
      */
     
-    override fun addToSolver(system: LinearSystem?, optimize: Boolean) {
+    override fun addToSolver(system: LinearSystem, optimize: Boolean) {
         super.addToSolver(system, optimize)
-        val isInRtl = parent != null && (parent as ConstraintWidgetContainer).isRtl
+        val isInRtl = getParent() != null && (getParent() as ConstraintWidgetContainer).isRtl
         when (mWrapMode) {
             WRAP_CHAIN -> {
                 val count: Int = mChainList.size

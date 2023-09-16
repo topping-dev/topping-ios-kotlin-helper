@@ -126,10 +126,10 @@ class WidgetFrame {
     // @TODO: add description
     fun update(): WidgetFrame {
         if (widget != null) {
-            left = widget!!.left
-            top = widget!!.top
-            right = widget!!.right
-            bottom = widget!!.bottom
+            left = widget!!.getLeft()
+            top = widget!!.getTop()
+            right = widget!!.getRight()
+            bottom = widget!!.getBottom()
             val frame: WidgetFrame = widget!!.frame
             updateAttributes(frame)
         }

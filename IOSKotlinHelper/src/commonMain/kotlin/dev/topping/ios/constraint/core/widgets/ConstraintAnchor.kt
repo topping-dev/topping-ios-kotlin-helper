@@ -83,6 +83,14 @@ class ConstraintAnchor(owner: ConstraintWidget, type: Type) {
         return mHasFinalValue
     }
 
+    fun getFinalValue(): Int {
+        return finalValue
+    }
+
+    fun setFinalValue(value : Int) {
+        finalValue = value
+    }
+
     /**
      * Define the type of anchor
      */
@@ -105,6 +113,13 @@ class ConstraintAnchor(owner: ConstraintWidget, type: Type) {
      * @return the ConstraintAnchor target
      */
     var target: ConstraintAnchor? = null
+    var mTarget : ConstraintAnchor?
+        get() {
+            return target
+        }
+        set(value) {
+            target = value
+        }
     var mMargin = 0
     var mGoneMargin = UNSET_GONE_MARGIN
     var mSolverVariable: SolverVariable? = null
@@ -192,6 +207,10 @@ class ConstraintAnchor(owner: ConstraintWidget, type: Type) {
                 mMargin = margin
             }
         }
+
+    fun getMargin() : Int {
+        return margin
+    }
 
     /**
      * Resets the anchor's connection.
@@ -406,11 +425,11 @@ class ConstraintAnchor(owner: ConstraintWidget, type: Type) {
         if (isConnectionToMe(target, checked)) {
             return false
         }
-        val parent: ConstraintWidget? = owner.parent
+        val parent: ConstraintWidget? = owner.getParent()
         if (parent == target) { // allow connections to parent
             return true
         }
-        return if (target.parent == parent) { // allow if we share the same parent
+        return if (target.getParent() == parent) { // allow if we share the same parent
             true
         } else false
     }
@@ -432,7 +451,7 @@ class ConstraintAnchor(owner: ConstraintWidget, type: Type) {
         if (target == owner) {
             return true
         }
-        val targetAnchors: ArrayList<ConstraintAnchor?> = target.anchors
+        val targetAnchors: ArrayList<ConstraintAnchor> = target.getAnchors()
         var i = 0
         val targetAnchorsSize: Int = targetAnchors.size
         while (i < targetAnchorsSize) {

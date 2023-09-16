@@ -52,7 +52,7 @@ class StateSet(val context: TContext, val parser: XmlBufferedReader) {
         }
         // Parse the stateSet attributes
         val attrs: AttributeSet = Xml.asAttributeSet(parser)
-        mDefaultState = context.getResources().getResourceId(attrs["app_defaultState"] ?: "", mDefaultState)
+        mDefaultState = context.getResources().getResourceId(attrs["defaultState"] ?: "", mDefaultState)
         try {
             var match: Variant
             var state: State? = null
@@ -224,7 +224,7 @@ class StateSet(val context: TContext, val parser: XmlBufferedReader) {
             attrs.forEach { kvp ->
                 if (kvp.key == "android_id") {
                     mId = context.getResources().getResourceId(kvp.value, mId)
-                } else if (kvp.key == "app_constraints") {
+                } else if (kvp.key == "constraints") {
                     mConstraintID = context.getResources().getResourceId(kvp.value, mConstraintID)
                     val type: Int = context.getResources().getResourceType(mConstraintID)
                     val name: String =
@@ -262,7 +262,7 @@ class StateSet(val context: TContext, val parser: XmlBufferedReader) {
         init {
             val attrs: AttributeSet = Xml.asAttributeSet(parser)
             attrs.forEach { kvp ->
-                if (kvp.key == "app_constraints") {
+                if (kvp.key == "constraints") {
                     mConstraintID = context.getResources().getResourceId(kvp.value, mConstraintID)
                     val type = context.getResources().getResourceType(mConstraintID)
                     val name: String =
@@ -270,13 +270,13 @@ class StateSet(val context: TContext, val parser: XmlBufferedReader) {
                     if (TypedValue.TYPE_LAYOUT == (type)) {
                         mIsLayout = true
                     }
-                } else if (kvp.key == "app_region_heightLessThan") {
+                } else if (kvp.key == "region_heightLessThan") {
                     mMaxHeight = context.getResources().getDimension(kvp.value, mMaxHeight)
-                } else if (kvp.key == "app_region_heightMoreThan") {
+                } else if (kvp.key == "region_heightMoreThan") {
                     mMinHeight = context.getResources().getDimension(kvp.value, mMinHeight)
-                } else if (kvp.key == "app_region_widthLessThan") {
+                } else if (kvp.key == "region_widthLessThan") {
                     mMaxWidth = context.getResources().getDimension(kvp.value, mMaxWidth)
-                } else if (kvp.key == "app_region_widthMoreThan") {
+                } else if (kvp.key == "region_widthMoreThan") {
                     mMinWidth = context.getResources().getDimension(kvp.value, mMinWidth)
                 } else {
                     Log.v(TAG, "Unknown tag")

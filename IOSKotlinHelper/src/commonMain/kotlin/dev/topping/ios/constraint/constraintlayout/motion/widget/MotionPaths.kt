@@ -614,12 +614,12 @@ class MotionPaths : Comparable<MotionPaths> {
                 }
             }
         }
-        if (view is FloatLayout) {
+        if (view.getParentType() is FloatLayout) {
             val l = v_x
             val t = v_y
             val r = v_x + v_width
             val b = v_y + v_height
-            (view as FloatLayout).layout(l, t, r, b)
+            (view.getParentType() as FloatLayout).layout(l, t, r, b)
             return
         }
         var l = (0.5f + v_x).toInt()
