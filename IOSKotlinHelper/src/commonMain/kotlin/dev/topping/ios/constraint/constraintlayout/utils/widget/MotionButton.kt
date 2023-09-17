@@ -44,7 +44,7 @@ import kotlin.math.min
  *
  *
  */
-class MotionButton(val context: TContext, val attrs: AttributeSet, val self: TView, val selfButton: TButton)
+class MotionButton(val context: TContext, val attrs: AttributeSet, val self: TView)
 {
     private var mRoundPercent = 0f // rounds the corners as a percent
     private var mRound = Float.NaN // rounds the corners in dp if NaN RoundPercent is in effect

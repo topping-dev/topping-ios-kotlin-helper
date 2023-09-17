@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.motion.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TCanvas
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
@@ -24,7 +25,7 @@ import dev.topping.ios.constraint.constraintlayout.widget.ConstraintLayout
 /**
  *
  */
-class MotionHelper(context: TContext, self: TView) : ConstraintHelper(context, self), MotionHelperInterface {
+class MotionHelper(context: TContext, attrs: AttributeSet, self: TView) : ConstraintHelper(context, attrs, self), MotionHelperInterface {
     /**
      *
      * @return

@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 
@@ -25,7 +26,7 @@ import dev.topping.ios.constraint.TView
  *
  *
  */
-abstract class VirtualLayout(myContext: TContext?, self: TView) : ConstraintHelper(myContext, self) {
+abstract class VirtualLayout(myContext: TContext?, attrs: AttributeSet, self: TView) : ConstraintHelper(myContext, attrs, self) {
     private var mApplyVisibilityOnAttach = false
     private var mApplyElevationOnAttach = false
 

@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
@@ -91,7 +92,7 @@ import dev.topping.ios.constraint.core.widgets.HelperWidget
  *
  *
  */
-class Barrier(myContext: TContext?, self: TView) : ConstraintHelper(myContext, self) {
+class Barrier(myContext: TContext?, attrs: AttributeSet, self: TView) : ConstraintHelper(myContext, attrs, self) {
     /**
      * Get the barrier type (`Barrier.LEFT`, `Barrier.TOP`,
      * `Barrier.RIGHT`, `Barrier.BOTTOM`, `Barrier.END`,

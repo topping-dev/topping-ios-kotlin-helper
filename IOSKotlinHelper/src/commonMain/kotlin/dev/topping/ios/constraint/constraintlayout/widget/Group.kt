@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
@@ -54,7 +55,7 @@ import dev.topping.ios.constraint.core.widgets.width
  * define the final visibility state (the group declared last will have the last word).
  *
  */
-class Group(myContext: TContext?, self: TView) : ConstraintHelper(myContext, self) {
+class Group(myContext: TContext?, attrs: AttributeSet, self: TView) : ConstraintHelper(myContext, attrs, self) {
 
     init {
         mUseViewMeasure = false

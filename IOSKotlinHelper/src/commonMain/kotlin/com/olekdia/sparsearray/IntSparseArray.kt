@@ -4,6 +4,7 @@ import kotlin.math.min
 
 val INVALID = -1
 
+@Suppress("UNCHECKED_CAST")
 open class IntSparseArray<E>(
     private var initialCapacity: Int = 10
 ) : MutableMap<Int, E>,

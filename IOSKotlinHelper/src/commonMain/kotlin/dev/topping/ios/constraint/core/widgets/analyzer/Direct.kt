@@ -244,6 +244,8 @@ object Direct {
                     }
                 }
             }
+
+
         }
         if (I_DEBUG) {
             println("\n#### LAST PASS ####")

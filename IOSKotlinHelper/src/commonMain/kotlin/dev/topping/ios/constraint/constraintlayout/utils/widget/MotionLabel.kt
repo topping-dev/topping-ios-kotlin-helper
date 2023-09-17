@@ -14,24 +14,30 @@
 * limitations under the License.
 */
 package dev.topping.ios.constraint.constraintlayout.utils.widget
-
-/**
- * This class is designed to create complex animated single line text in MotionLayout.
- * Its API are designed with animation in mine.
- * for example it uses setTextPanX(float x) where 0 is centered -1 is left +1 is right
- *
- * It supports the following features:
- *
- *  * color outlines
- *  * Textured text
- *  * Blured Textured Text
- *  * Scrolling of Texture in text
- *  * PanX, PanY instead of Gravity
- *
- */
+//
+//import dev.topping.ios.constraint.*
+//import dev.topping.ios.constraint.core.motion.utils.RectF
+//import dev.topping.ios.constraint.shared.graphics.Outline
+//import dev.topping.ios.constraint.shared.graphics.Path
+//import org.jetbrains.skia.Matrix33
+//
+///**
+// * This class is designed to create complex animated single line text in MotionLayout.
+// * Its API are designed with animation in mine.
+// * for example it uses setTextPanX(float x) where 0 is centered -1 is left +1 is right
+// *
+// * It supports the following features:
+// *
+// *  * color outlines
+// *  * Textured text
+// *  * Blured Textured Text
+// *  * Scrolling of Texture in text
+// *  * PanX, PanY instead of Gravity
+// *
+// */
 //class MotionLabel(val context: TContext, val attrs: AttributeSet, val self: TView, val selfButton: TButton) : FloatLayout {
-//    var mPaint: TextPaint = TextPaint()
-//    var mPath: Path? = Path()
+//    var mPaint = context.createPaint()
+//    var mPath = Path()
 //    private var mTextFillColor = 0xFFFF
 //    private var mTextOutlineColor = 0xFFFF
 //    private var mUseOutline = false
@@ -61,7 +67,7 @@ package dev.topping.ios.constraint.constraintlayout.utils.widget
 //    private var mDeltaLeft = 0f
 //    private var mFloatWidth = 0f
 //    private var mFloatHeight = 0f
-//    private var mTextBackground: Drawable? = null
+//    private var mTextBackground: TDrawable? = null
 //    var mOutlinePositionMatrix: Matrix33? = null
 //    private var mTextBackgroundBitmap: Bitmap? = null
 //    private var mTextShader: BitmapShader? = null
@@ -73,88 +79,65 @@ package dev.topping.ios.constraint.constraintlayout.utils.widget
 //    var mPaintCache: TPaint = TPaint()
 //    private var mTextureEffect = 0
 //
-//    constructor(context: TContext) : super(context) {
-//        init(context, null)
-//    }
+//    init {
+//        self.setParentType(this)
 //
-//    constructor(context: TContext, @Nullable attrs: AttributeSet?) : super(context, attrs) {
-//        init(context, attrs)
-//    }
-//
-//    constructor(
-//        context: TContext,
-//        @Nullable attrs: AttributeSet?,
-//        defStyleAttr: Int
-//    ) : super(context, attrs, defStyleAttr) {
-//        init(context, attrs)
-//    }
-//
-//    private fun init(context: TContext, attrs: AttributeSet?) {
 //        setUpTheme(context)
-//        if (attrs != null) {
-//            val a: TypedArray = getContext()
-//                .obtainStyledAttributes(attrs, R.styleable.MotionLabel)
-//            val count: Int = a.getIndexCount()
-//            for (i in 0 until count) {
-//                val attr: Int = a.getIndex(i)
-//                if (attr == R.styleable.MotionLabel_android_text) {
-//                    setText(a.getText(attr))
-//                } else if (attr == R.styleable.MotionLabel_android_fontFamily) {
-//                    mFontFamily = a.getString(attr)
-//                } else if (attr == R.styleable.MotionLabel_scaleFromTextSize) {
-//                    mBaseTextSize = a.getDimensionPixelSize(attr, mBaseTextSize.toInt())
-//                } else if (attr == R.styleable.MotionLabel_android_textSize) {
-//                    mTextSize = a.getDimensionPixelSize(attr, mTextSize.toInt())
-//                } else if (attr == R.styleable.MotionLabel_android_textStyle) {
-//                    mStyleIndex = a.getInt(attr, mStyleIndex)
-//                } else if (attr == R.styleable.MotionLabel_android_typeface) {
-//                    mTypefaceIndex = a.getInt(attr, mTypefaceIndex)
-//                } else if (attr == R.styleable.MotionLabel_android_textColor) {
-//                    mTextFillColor = a.getColor(attr, mTextFillColor)
-//                } else if (attr == R.styleable.MotionLabel_borderRound) {
-//                    mRound = a.getDimension(attr, mRound)
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        round = mRound
-//                    }
-//                } else if (attr == R.styleable.MotionLabel_borderRoundPercent) {
-//                    mRoundPercent = a.getFloat(attr, mRoundPercent)
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        roundPercent = mRoundPercent
-//                    }
-//                } else if (attr == R.styleable.MotionLabel_android_gravity) {
-//                    setGravity(a.getInt(attr, -1))
-//                } else if (attr == R.styleable.MotionLabel_android_autoSizeTextType) {
-//                    mAutoSizeTextType = a.getInt(attr, TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE)
-//                } else if (attr == R.styleable.MotionLabel_textOutlineColor) {
-//                    mTextOutlineColor = a.getInt(attr, mTextOutlineColor)
-//                    mUseOutline = true
-//                } else if (attr == R.styleable.MotionLabel_textOutlineThickness) {
-//                    mTextOutlineThickness = a.getDimension(attr, mTextOutlineThickness)
-//                    mUseOutline = true
-//                } else if (attr == R.styleable.MotionLabel_textBackground) {
-//                    mTextBackground = a.getDrawable(attr)
-//                    mUseOutline = true
-//                } else if (attr == R.styleable.MotionLabel_textBackgroundPanX) {
-//                    mBackgroundPanX = a.getFloat(attr, mBackgroundPanX)
-//                } else if (attr == R.styleable.MotionLabel_textBackgroundPanY) {
-//                    mBackgroundPanY = a.getFloat(attr, mBackgroundPanY)
-//                } else if (attr == R.styleable.MotionLabel_textPanX) {
-//                    mTextPanX = a.getFloat(attr, mTextPanX)
-//                } else if (attr == R.styleable.MotionLabel_textPanY) {
-//                    mTextPanY = a.getFloat(attr, mTextPanY)
-//                } else if (attr == R.styleable.MotionLabel_textBackgroundRotate) {
-//                    mRotate = a.getFloat(attr, mRotate)
-//                } else if (attr == R.styleable.MotionLabel_textBackgroundZoom) {
-//                    mZoom = a.getFloat(attr, mZoom)
-//                } else if (attr == R.styleable.MotionLabel_textureHeight) {
-//                    mTextureHeight = a.getDimension(attr, mTextureHeight)
-//                } else if (attr == R.styleable.MotionLabel_textureWidth) {
-//                    mTextureWidth = a.getDimension(attr, mTextureWidth)
-//                } else if (attr == R.styleable.MotionLabel_textureEffect) {
-//                    mTextureEffect = a.getInt(attr, mTextureEffect)
-//                }
+//        val a = context.getResources()
+//        attrs.forEach { kvp ->
+//            val attr = kvp.value
+//            if (kvp.key == "android_text") {
+//                setText(a.getText(attr))
+//            } else if (kvp.key == "android_fontFamily") {
+//                mFontFamily = a.getString(attr)
+//            } else if (kvp.key == "scaleFromTextSize") {
+//                mBaseTextSize = a.getDimensionPixelSize(attr, mBaseTextSize.toInt())
+//            } else if (kvp.key == "android_textSize") {
+//                mTextSize = a.getDimensionPixelSize(attr, mTextSize.toInt())
+//            } else if (kvp.key == "android_textStyle") {
+//                mStyleIndex = a.getInt(attr, mStyleIndex)
+//            } else if (kvp.key == "android_typeface") {
+//                mTypefaceIndex = a.getInt(attr, mTypefaceIndex)
+//            } else if (kvp.key == "android_textColor") {
+//                mTextFillColor = a.getColor(attr, mTextFillColor)
+//            } else if (kvp.key == "borderRound") {
+//                mRound = a.getDimension(attr, mRound)
+//                round = mRound
+//            } else if (kvp.key == "borderRoundPercent") {
+//                mRoundPercent = a.getFloat(attr, mRoundPercent)
+//                roundPercent = mRoundPercent
+//            } else if (kvp.key == "android_gravity") {
+//                setGravity(a.getInt(attr, -1))
+//            } else if (kvp.key == "android_autoSizeTextType") {
+//                mAutoSizeTextType = a.getInt(attr, TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE)
+//            } else if (kvp.key == "textOutlineColor") {
+//                mTextOutlineColor = a.getInt(attr, mTextOutlineColor)
+//                mUseOutline = true
+//            } else if (kvp.key == "textOutlineThickness") {
+//                mTextOutlineThickness = a.getDimension(attr, mTextOutlineThickness)
+//                mUseOutline = true
+//            } else if (kvp.key == "textBackground") {
+//                mTextBackground = a.getDrawable(attr)
+//                mUseOutline = true
+//            } else if (kvp.key == "textBackgroundPanX") {
+//                mBackgroundPanX = a.getFloat(attr, mBackgroundPanX)
+//            } else if (kvp.key == "textBackgroundPanY") {
+//                mBackgroundPanY = a.getFloat(attr, mBackgroundPanY)
+//            } else if (kvp.key == "textPanX") {
+//                mTextPanX = a.getFloat(attr, mTextPanX)
+//            } else if (kvp.key == "textPanY") {
+//                mTextPanY = a.getFloat(attr, mTextPanY)
+//            } else if (kvp.key == "textBackgroundRotate") {
+//                mRotate = a.getFloat(attr, mRotate)
+//            } else if (kvp.key == "textBackgroundZoom") {
+//                mZoom = a.getFloat(attr, mZoom)
+//            } else if (kvp.key == "textureHeight") {
+//                mTextureHeight = a.getDimension(attr, mTextureHeight)
+//            } else if (kvp.key == "textureWidth") {
+//                mTextureWidth = a.getDimension(attr, mTextureWidth)
+//            } else if (kvp.key == "textureEffect") {
+//                mTextureEffect = a.getInt(attr, mTextureEffect)
 //            }
-//            a.recycle()
 //        }
 //        setupTexture()
 //        setupPath()

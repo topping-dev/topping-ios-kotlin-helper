@@ -269,38 +269,6 @@ class ImageFilterView(val context: TContext, val attrs: AttributeSet, val self: 
                 view.clearColorFilter()
             }
         }
-
-        fun updateMatrix(view: TImageButton) {
-            mColorMatrix.reset()
-            var filter = false
-            if (mSaturation != 1.0f) {
-                saturation(mSaturation)
-                mColorMatrix.set(mMatrix)
-                filter = true
-            }
-            if (mContrast != 1.0f) {
-                mTmpColorMatrix.setScale(mContrast, mContrast, mContrast, 1f)
-                mColorMatrix.postConcat(mTmpColorMatrix)
-                filter = true
-            }
-            if (mWarmth != 1.0f) {
-                warmth(mWarmth)
-                mTmpColorMatrix.set(mMatrix)
-                mColorMatrix.postConcat(mTmpColorMatrix)
-                filter = true
-            }
-            if (mBrightness != 1.0f) {
-                brightness(mBrightness)
-                mTmpColorMatrix.set(mMatrix)
-                mColorMatrix.postConcat(mTmpColorMatrix)
-                filter = true
-            }
-            if (filter) {
-                view.setColorFilter(ColorMatrixColorFilter(mColorMatrix))
-            } else {
-                view.clearColorFilter()
-            }
-        }
     }
 
     private val mImageMatrix = ImageMatrix()

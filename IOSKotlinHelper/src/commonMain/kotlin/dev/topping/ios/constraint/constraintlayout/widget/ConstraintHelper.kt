@@ -45,7 +45,7 @@ import dev.topping.ios.constraint.core.widgets.HelperWidget
 </pre> *
  *
  */
-abstract class ConstraintHelper(val myContext: TContext?, val self: TView) {
+abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSet, val self: TView) {
     /**
      *
      */

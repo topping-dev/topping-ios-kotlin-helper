@@ -1168,7 +1168,7 @@ class MotionScene {
                                     transition!!.addOnClick(context, parser)
                                 }
                             }
-                            STATESET_TAG -> mStateSet = StateSet(context, parser)
+                            STATESET_TAG -> mStateSet = StateSet(context, mutableMapOf(),  parser)
                             CONSTRAINTSET_TAG -> parseConstraintSet(context, parser)
                             INCLUDE_TAG, INCLUDE_TAG_UC -> parseInclude(context, parser)
                             KEYFRAMESET_TAG -> {

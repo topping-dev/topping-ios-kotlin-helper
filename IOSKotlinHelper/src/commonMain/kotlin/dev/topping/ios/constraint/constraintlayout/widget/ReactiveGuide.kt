@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 import dev.topping.ios.constraint.constraintlayout.motion.widget.MotionLayout
@@ -22,7 +23,7 @@ import dev.topping.ios.constraint.constraintlayout.motion.widget.MotionLayout
 /**
  * Utility class representing a reactive Guideline helper object for [ConstraintLayout].
  */
-class ReactiveGuide(val context: TContext?, val self: TView) : SharedValues.SharedValuesListener {
+class ReactiveGuide(val context: TContext?, val attrs: AttributeSet, val self: TView) : SharedValues.SharedValuesListener {
     private var mAttributeId = ""
     var isAnimatingChange = false
         private set

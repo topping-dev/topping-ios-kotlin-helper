@@ -69,7 +69,7 @@ import kotlin.math.min
 </tr> *
 </table> *
  */
-class ImageFilterButton(val context: TContext, val attrs: AttributeSet, val self: TView, val selfImageButton: TImageButton) {
+class ImageFilterButton(val context: TContext, val attrs: AttributeSet, val self: TView, val selfImageButton: TImageView) {
     private val mImageMatrix: ImageFilterView.ImageMatrix = ImageFilterView.ImageMatrix()
     private var mCrossfade = 0f
     private var mRoundPercent = 0f // rounds the corners as a percent
@@ -86,14 +86,14 @@ class ImageFilterButton(val context: TContext, val attrs: AttributeSet, val self
     init {
         self.setParentType(this)
         self.setPadding(0, 0, 0, 0)
-        selfImageButton.swizzleFunction("setImageDrawable") { sup, params ->
+        self.swizzleFunction("setImageDrawable") { sup, params ->
             val args = params as Array<Any?>
-            setImageDrawable(sup, args[0] as TDrawable?)
+            setImageDrawable(sup as TImageView?, args[0] as TDrawable?)
             0
         }
-        selfImageButton.swizzleFunction("setImageResource") { sup, params ->
+        self.swizzleFunction("setImageResource") { sup, params ->
             val args = params as Array<Any?>
-            setImageResource(sup, args[0] as String)
+            setImageResource(sup as TImageView?, args[0] as String)
             0
         }
         self.swizzleFunction("layout") { sup, params ->
@@ -247,7 +247,7 @@ class ImageFilterButton(val context: TContext, val attrs: AttributeSet, val self
             updateViewMatrix()
         }
 
-    fun setImageDrawable(sup: TImageButton?, drawable: TDrawable?) {
+    fun setImageDrawable(sup: TImageView?, drawable: TDrawable?) {
         if (mAltDrawable != null && drawable != null) {
             mDrawable = drawable.mutate()
             mLayers!![0] = mDrawable
@@ -260,7 +260,7 @@ class ImageFilterButton(val context: TContext, val attrs: AttributeSet, val self
         }
     }
 
-    fun setImageResource(sup: TImageButton?, resId: String) {
+    fun setImageResource(sup: TImageView?, resId: String) {
         if (mAltDrawable != null) {
             mDrawable = context.getResources().getDrawable(resId)!!.mutate()
             mLayers!![0] = mDrawable

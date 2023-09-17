@@ -2,6 +2,7 @@ package com.olekdia.sparsearray
 
 import kotlin.math.min
 
+@Suppress("UNCHECKED_CAST")
 open class LongSparseArray<E> constructor(
     private var initialCapacity: Int = 10
 ) : MutableMap<Long, E>,

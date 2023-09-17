@@ -64,11 +64,9 @@ enum class ScaleType(val nativeInt: Int) {
 interface TImageView {
     fun setColorFilter(colorMatrixColorFilter: ColorMatrixColorFilter)
     fun clearColorFilter()
-    fun setScaleType(fitCenter: ScaleType)
+    fun setScaleType(scaleType: ScaleType)
     fun getDrawable(): TDrawable?
     fun setImageMatrix(imageMatrix: Matrix33)
-    fun setImageDrawable(frawable: TDrawable?)
-}
-
-interface TButton {
+    fun setImageDrawable(drawable: TDrawable?)
+    fun setImageResource(resId: String)
 }

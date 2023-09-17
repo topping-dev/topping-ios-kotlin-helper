@@ -355,7 +355,7 @@ class ConstraintSet {
         var circleAngle = 0f
         var editorAbsoluteX = UNSET
         var editorAbsoluteY = UNSET
-        var orientation = UNSET
+        var orientation = ConstraintWidget.VERTICAL
         var leftMargin = 0
         var rightMargin = 0
         var topMargin = 0
@@ -1785,7 +1785,7 @@ class ConstraintSet {
         for (id in used) {
             val constraint = mConstraints[id] ?: continue
             if (constraint.layout.mHelperType == BARRIER_TYPE) {
-                val barrier = Barrier(constraintLayout.context, constraintLayout.context.createView())
+                val barrier = Barrier(constraintLayout.context, mutableMapOf(), constraintLayout.context.createView())
                 barrier.self.setId(id)
                 if (constraint.layout.mReferenceIds != null) {
                     barrier.referencedIds = (constraint.layout.mReferenceIds)
@@ -1805,7 +1805,7 @@ class ConstraintSet {
                 constraintLayout.self.addView(barrier.self, param)
             }
             if (constraint.layout.mIsGuideline) {
-                val g = Guideline(constraintLayout.context, constraintLayout.context.createView())
+                val g = Guideline(constraintLayout.context, mutableMapOf(), constraintLayout.context.createView())
                 g.self.setId(id)
                 val param: ConstraintLayout.LayoutParams =
                     constraintLayout.generateDefaultLayoutParams()

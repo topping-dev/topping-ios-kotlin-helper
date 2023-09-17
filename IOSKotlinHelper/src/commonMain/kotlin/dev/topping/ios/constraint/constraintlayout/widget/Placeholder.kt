@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
@@ -39,7 +40,7 @@ import dev.topping.ios.constraint.core.widgets.width
  * is simply constrained in the layout like any other view).
  *
  */
-class Placeholder(val context: TContext?, val self: TView) {
+class Placeholder(val context: TContext?, val attrs: AttributeSet, val self: TView) {
     private var mContentId = ""
     private var mContent: TView? = null
     /**

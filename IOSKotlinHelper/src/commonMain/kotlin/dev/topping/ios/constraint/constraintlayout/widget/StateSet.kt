@@ -23,7 +23,7 @@ import nl.adaptivity.xmlutil.localPart
 /**
  *
  */
-class StateSet(val context: TContext, val parser: XmlBufferedReader) {
+class StateSet(val context: TContext, val attrs: AttributeSet, val parser: XmlBufferedReader) {
     var mDefaultState = ""
     var mCurrentStateId = "" // default
     var mCurrentConstraintNumber = -1 // default

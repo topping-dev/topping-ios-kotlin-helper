@@ -2568,7 +2568,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
          * Used at design time for a vertically unconstrained child.
          */
         var editorAbsoluteY = UNSET
-        var orientation = UNSET
+        var orientation = ConstraintWidget.VERTICAL
 
         /**
          * Specify if the horizontal dimension is constrained in

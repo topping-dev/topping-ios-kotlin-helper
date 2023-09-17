@@ -15,6 +15,7 @@
  */
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import dev.topping.ios.constraint.AttributeSet
 import dev.topping.ios.constraint.TContext
 import dev.topping.ios.constraint.TView
 
@@ -70,7 +71,7 @@ import dev.topping.ios.constraint.TView
  *
  *
  */
-class Guideline(val context: TContext, val self: TView) {
+class Guideline(val context: TContext, val attrs: AttributeSet, val self: TView) {
     private var mFilterRedundantCalls = true
 
     init {
@@ -83,7 +84,7 @@ class Guideline(val context: TContext, val self: TView) {
         }
         self.swizzleFunction("onMeasure") { sup, params ->
             val args = params as Array<Any>
-            setVisibility(sup, args[0] as Int)
+            onMeasure(sup, args[0] as Int, args[1] as Int)
             0
         }
     }
