@@ -3623,6 +3623,8 @@ class MotionEvent private constructor() {
         private var gSharedTempPointerIndexMap: IntArray = intArrayOf()
         private fun ensureSharedTempPointerCapacity(desiredCapacity: Int) {
             var capacity: Int = gSharedTempPointerCoords.size
+            if(capacity == 0)
+                capacity++
             while (capacity < desiredCapacity) {
                 capacity *= 2
             }

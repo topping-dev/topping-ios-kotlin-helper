@@ -54,7 +54,7 @@ class BitSet32 {
             clearBit(Pointer(value), n)
             return n
         }
-        inline fun getIndexOfBit(value: UInt, n: UInt): UInt { return (value and (0xffffffffU shr n.toInt()).inv()) }
+        inline fun getIndexOfBit(value: UInt, n: UInt): UInt { return (value and (0xffffffffU shr n.toInt()).inv()).countOneBits().toUInt() }
     }
 
     inline fun clear() { clear(value) }
