@@ -183,17 +183,21 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
                     }
                 }
             } else if (kvp.key == "onStateTransition") {
-                stateTransition = context.getResources().getInt(kvp.value, stateTransition)
+                stateTransition = context.getResources().getInt(kvp.key, kvp.value, stateTransition)
             } else if (kvp.key == "transitionDisable") {
                 mDisabled = context.getResources().getBoolean(kvp.value, mDisabled)
             } else if (kvp.key == "pathMotionArc") {
-                mPathMotionArc = context.getResources().getInt(kvp.value, mPathMotionArc)
+                mPathMotionArc = context.getResources().getInt(kvp.key, kvp.value, mPathMotionArc)
             } else if (kvp.key == "duration") {
-                mDuration = context.getResources().getInt(kvp.value, mDuration)
+                mDuration = context.getResources().getInt(kvp.key, kvp.value, mDuration)
             } else if (kvp.key == "upDuration") {
-                mUpDuration = context.getResources().getInt(kvp.value, mUpDuration)
+                mUpDuration = context.getResources().getInt(kvp.key, kvp.value, mUpDuration)
             } else if (kvp.key == "viewTransitionMode") {
-                mViewTransitionMode = context.getResources().getInt(kvp.value, mViewTransitionMode)
+                mViewTransitionMode = context.getResources().getInt(
+                    kvp.key,
+                    kvp.value,
+                    mViewTransitionMode
+                )
             } else if (kvp.key == "motionInterpolator") {
                 val type = context.getResources().getResourceType(kvp.value)
                 if (type == TypedValue.TYPE_REFERENCE) {
@@ -215,7 +219,11 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
                         mDefaultInterpolator = SPLINE_STRING
                     }
                 } else {
-                    mDefaultInterpolator = context.getResources().getInt(kvp.value, mDefaultInterpolator)
+                    mDefaultInterpolator = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        mDefaultInterpolator
+                    )
                 }
             } else if (kvp.key == "setsTag") {
                 mSetsTag = context.getResources().getResourceId(kvp.value, mSetsTag)
@@ -228,7 +236,7 @@ class ViewTransition internal constructor(context: TContext, parser: XmlBuffered
             } else if (kvp.key == "SharedValueId") {
                 sharedValueID = context.getResources().getResourceId(kvp.value, mIfTagNotSet)
             } else if (kvp.key == "SharedValue") {
-                sharedValue = context.getResources().getInt(kvp.value, sharedValue)
+                sharedValue = context.getResources().getInt(kvp.key, kvp.value, sharedValue)
             }
         }
     }

@@ -41,7 +41,11 @@ class AnticipateOvershootInterpolator : Interpolator {
     }
 
     constructor(res: TResources, attrs: MutableMap<String, String>) {
-        mTension = res.getFloat(attrs["tension"] ?: "", 2.0f) * res.getFloat(attrs["extraTension"] ?: "", 1.5f)
+        mTension = res.getFloat(null, attrs["tension"] ?: "", 2.0f) * res.getFloat(
+            null,
+            attrs["extraTension"] ?: "",
+            1.5f
+        )
     }
 
     override fun getInterpolation(input: Float): Float {

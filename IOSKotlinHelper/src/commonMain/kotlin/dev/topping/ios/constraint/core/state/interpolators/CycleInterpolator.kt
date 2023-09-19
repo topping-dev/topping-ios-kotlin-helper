@@ -13,7 +13,7 @@ class CycleInterpolator : Interpolator {
     }
 
     constructor(res: TResources, attrs: MutableMap<String, String>) {
-        mCycles = res.getFloat(attrs["cycles"] ?: "", 1.0f)
+        mCycles = res.getFloat(null, attrs["cycles"] ?: "", 1.0f)
     }
 
     override fun getInterpolation(input: Float): Float {

@@ -393,10 +393,10 @@ class ConstraintAttribute {
                     value = context.getResources().getDimension(kvp.value, 0f)
                 } else if (kvp.key == "customFloatValue") {
                     type = AttributeType.FLOAT_TYPE
-                    value = context.getResources().getFloat(kvp.value, Float.NaN)
+                    value = context.getResources().getFloat(kvp.key, kvp.value, Float.NaN)
                 } else if (kvp.key == "customIntegerValue") {
                     type = AttributeType.INT_TYPE
-                    value = context.getResources().getInt(kvp.value, -1)
+                    value = context.getResources().getInt(kvp.key, kvp.value, -1)
                 } else if (kvp.key == "customStringValue") {
                     type = AttributeType.STRING_TYPE
                     value = context.getResources().getString(kvp.key, kvp.value)

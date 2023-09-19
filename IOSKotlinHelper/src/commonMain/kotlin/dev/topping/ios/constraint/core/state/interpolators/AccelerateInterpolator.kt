@@ -30,7 +30,7 @@ class AccelerateInterpolator : Interpolator {
     }
 
     constructor(res: TResources, attrs: MutableMap<String, String>) {
-        mFactor = res.getFloat(attrs["factor"] ?: "", 1.0f)
+        mFactor = res.getFloat(null, attrs["factor"] ?: "", 1.0f)
         mDoubleFactor = mFactor * 2.0
     }
 

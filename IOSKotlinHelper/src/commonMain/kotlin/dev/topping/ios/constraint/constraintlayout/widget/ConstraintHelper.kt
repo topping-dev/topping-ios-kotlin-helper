@@ -45,7 +45,7 @@ import dev.topping.ios.constraint.core.widgets.HelperWidget
 </pre> *
  *
  */
-abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSet, val self: TView) {
+abstract class ConstraintHelper(val context: TContext, val attrs: AttributeSet, val self: TView) {
     /**
      *
      */
@@ -84,12 +84,21 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
 
     init {
         self.setParentType(this)
-        mReferenceIds = self.getObjCProperty("constraint_referenced_ids") as String?
-        setIds(mReferenceIds)
-        mReferenceTags = self.getObjCProperty("constraint_referenced_tags") as String?
-        setReferenceTags(mReferenceTags)
+        attrs.forEach { kvp ->
+            if(kvp.key == "constraint_referenced_ids") {
+                mReferenceIds = context.getResources().getString(kvp.key, kvp.value)
+                setIds(mReferenceIds)
+            } else if(kvp.key == "constraint_referenced_tags") {
+                mReferenceTags = context.getResources().getString(kvp.key, kvp.value)
+                setReferenceTags(mReferenceTags)
+            }
+        }
         self.swizzleFunction("onAttachedToWindow") { sup, params ->
             onAttachedToWindow(sup)
+            0
+        }
+        self.swizzleFunction("onDetachedFromWindow") { sup, params ->
+            onDetachedFromWindow(sup)
             0
         }
         self.swizzleFunction("onMeasure") { sup, params ->
@@ -114,6 +123,10 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
         }
     }
 
+    protected open fun onDetachedFromWindow(sup: TView?) {
+        sup?.onDetachedFromWindow()
+    }
+
     /**
      * Add a view to the helper. The referenced view need to be a child of the helper's parent.
      * The view also need to have its id set in order to be added.
@@ -121,7 +134,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * @param view
      */
     fun addView(view: TView) {
-        if (view === this) {
+        if (view.getParentType() == this) {
             return
         }
         if (view.getId() == "") {
@@ -143,7 +156,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * @param view
      * @return index of view removed
      */
-    fun removeView(view: TView): Int {
+    open fun removeView(view: TView): Int {
         var index = -1
         val id: String = view.getId()
         if (id == "") {
@@ -198,7 +211,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
     /**
      *
      */
-    fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    open fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (mUseViewMeasure) {
             sup?.onMeasure(widthMeasureSpec, heightMeasureSpec)
         } else {
@@ -228,9 +241,6 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
         if (idString == null || idString.isEmpty()) {
             return
         }
-        if (myContext == null) {
-            return
-        }
         idString = idString.trim()
         val rscId = findId(idString)
         if (rscId != "") {
@@ -248,9 +258,6 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
     private fun addTag(tagString: String) {
         var tagString: String? = tagString
         if (tagString == null || tagString.isEmpty()) {
-            return
-        }
-        if (myContext == null) {
             return
         }
         tagString = tagString.trim()
@@ -315,12 +322,12 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
                 // Do nothing
             }
         }*/
-        if (rscId == "" && myContext != null) {
+        if (rscId == "") {
             // this will first try to parse the string id as a number (!) in ResourcesImpl, so
             // let's try that last...
-            rscId = myContext.getResources().getIdentifier(
+            rscId = context.getResources().getIdentifier(
                 referenceId, "id",
-                myContext.getPackageName()
+                context.getPackageName()
             )
         }
         return rscId
@@ -335,10 +342,10 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * @return
      */
     private fun findId(container: ConstraintLayout?, idString: String?): String {
-        if (idString == null || container == null || myContext == null) {
+        if (idString == null || container == null) {
             return ""
         }
-        val resources: TResources = myContext.getResources() ?: return ""
+        val resources: TResources = context.getResources() ?: return ""
         val count: Int = container.self.getChildCount()
         for (j in 0 until count) {
             val child: TView = container.self.getChildAt(j)
@@ -431,7 +438,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
     /**
      *
      */
-    open fun applyLayoutFeaturesInConstraintSet(container: ConstraintLayout?) {}
+    open fun applyLayoutFeaturesInConstraintSet(container: ConstraintLayout) {}
 
     /**
      *
@@ -475,7 +482,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * @param helper
      * @param map
      */
-    fun updatePreLayout(
+    open fun updatePreLayout(
         container: ConstraintWidgetContainer?,
         helper: Helper,
         map: MutableMap<String, ConstraintWidget>
@@ -529,7 +536,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * called before the draw
      * @param container
      */
-    fun updatePreDraw(container: ConstraintLayout?) {
+    open fun updatePreDraw(container: ConstraintLayout?) {
         // Do nothing
     }
 
@@ -596,7 +603,7 @@ abstract class ConstraintHelper(val myContext: TContext?, val attrs: AttributeSe
      * @param widget
      * @param isRtl
      */
-    fun resolveRtl(widget: ConstraintWidget?, isRtl: Boolean) {
+    open fun resolveRtl(widget: ConstraintWidget, isRtl: Boolean) {
         // nothing here
     }
 

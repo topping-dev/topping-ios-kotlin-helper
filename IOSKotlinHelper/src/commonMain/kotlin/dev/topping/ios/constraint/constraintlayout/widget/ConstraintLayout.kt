@@ -674,7 +674,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
             } else if (kvp.key == "android_maxHeight") {
                 mMaxHeight = a.getDimensionPixelOffset(attr, mMaxHeight)
             } else if (kvp.key == "layout_optimizationLevel") {
-                mOptimizationLevel = a.getInt(attr, mOptimizationLevel)
+                mOptimizationLevel = a.getInt(kvp.key, attr, mOptimizationLevel)
             } else if (kvp.key == "layoutDescription") {
                 val id = a.getResourceId(attr, "-1")
                 if (id != "-1") {
@@ -1294,6 +1294,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
         for (i in 0 until count) {
             val child: TView = self.getChildAt(i)
             val widget: ConstraintWidget = getViewWidget(child) ?: continue
+println(child.getId() + "----" + widget.getDebugName())
             val layoutParams = child.getLayoutParams() as LayoutParams
             mLayoutWidget.add(widget)
             applyConstraintsFromLayoutParams(
@@ -1568,7 +1569,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                     onViewAdded(null, view)
                 }
             }
-            if (view == this) {
+            if (view?.getParentType() == this) {
                 return mLayoutWidget
             }
             if (view == null) null else (view.getLayoutParams() as LayoutParams).mWidget
@@ -1580,7 +1581,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
      * @return
      */
     fun getViewWidget(view: TView?): ConstraintWidget? {
-        if (view == this) {
+        if (view?.getParentType() == this) {
             return mLayoutWidget
         }
         if (view != null) {
@@ -3177,7 +3178,11 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         mHeightSet = true
                     }
                     Table.LAYOUT_WRAP_BEHAVIOR_IN_PARENT -> {
-                        wrapBehaviorInParent = c.getResources().getInt(kvp.value, wrapBehaviorInParent)
+                        wrapBehaviorInParent = c.getResources().getInt(
+                                kvp.key,
+                                kvp.value,
+                                wrapBehaviorInParent
+                        )
                     }
                     Table.LAYOUT_CONSTRAINT_LEFT_TO_LEFT_OF -> {
                         leftToLeft = c.getResources().getResourceId(kvp.value, leftToLeft)
@@ -3255,7 +3260,7 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         circleRadius = c.getResources().getDimensionPixelSize(kvp.value, circleRadius)
                     }
                     Table.LAYOUT_CONSTRAINT_CIRCLE_ANGLE -> {
-                        circleAngle = c.getResources().getFloat(kvp.value, circleAngle) % 360
+                        circleAngle = c.getResources().getFloat(kvp.key, kvp.value, circleAngle) % 360
                         if (circleAngle < 0) {
                             circleAngle = (360 - circleAngle) % 360
                         }
@@ -3273,13 +3278,13 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         guideEnd = c.getResources().getDimensionPixelOffset(kvp.value, guideEnd)
                     }
                     Table.LAYOUT_CONSTRAINT_GUIDE_PERCENT -> {
-                        guidePercent = c.getResources().getFloat(kvp.value, guidePercent)
+                        guidePercent = c.getResources().getFloat(kvp.key, kvp.value, guidePercent)
                     }
                     Table.GUIDELINE_USE_RTL -> {
                         guidelineUseRtl = c.getResources().getBoolean(kvp.value, guidelineUseRtl)
                     }
                     Table.ANDROID_ORIENTATION -> {
-                        orientation = c.getResources().getInt(kvp.value, orientation)
+                        orientation = c.getResources().getInt(kvp.key, kvp.value, orientation)
                     }
                     Table.LAYOUT_CONSTRAINT_START_TO_END_OF -> {
                         startToEnd = a.getResourceId(attr, startToEnd)
@@ -3330,25 +3335,25 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         baselineMargin = a.getDimensionPixelSize(attr, baselineMargin)
                     }
                     Table.LAYOUT_CONSTRAINT_HORIZONTAL_BIAS -> {
-                        horizontalBias = a.getFloat(attr, horizontalBias)
+                        horizontalBias = a.getFloat(kvp.key, attr, horizontalBias)
                     }
                     Table.LAYOUT_CONSTRAINT_VERTICAL_BIAS -> {
-                        verticalBias = a.getFloat(attr, verticalBias)
+                        verticalBias = a.getFloat(kvp.key, attr, verticalBias)
                     }
                     Table.LAYOUT_CONSTRAINT_DIMENSION_RATIO -> {
                         ConstraintSet.parseDimensionRatioString(this, a.getString(kvp.key, attr))
                     }
                     Table.LAYOUT_CONSTRAINT_HORIZONTAL_WEIGHT -> {
-                        horizontalWeight = a.getFloat(attr, horizontalWeight)
+                        horizontalWeight = a.getFloat(kvp.key, attr, horizontalWeight)
                     }
                     Table.LAYOUT_CONSTRAINT_VERTICAL_WEIGHT -> {
-                        verticalWeight = a.getFloat(attr, verticalWeight)
+                        verticalWeight = a.getFloat(kvp.key, attr, verticalWeight)
                     }
                     Table.LAYOUT_CONSTRAINT_HORIZONTAL_CHAINSTYLE -> {
-                        horizontalChainStyle = a.getInt(attr, CHAIN_SPREAD)
+                        horizontalChainStyle = a.getInt(kvp.key, attr, CHAIN_SPREAD)
                     }
                     Table.LAYOUT_CONSTRAINT_VERTICAL_CHAINSTYLE -> {
-                        verticalChainStyle = a.getInt(attr, CHAIN_SPREAD)
+                        verticalChainStyle = a.getInt(kvp.key, attr, CHAIN_SPREAD)
                     }
                     Table.LAYOUT_CONSTRAINED_WIDTH -> {
                         constrainedWidth = a.getBoolean(attr, constrainedWidth)
@@ -3357,7 +3362,11 @@ open class ConstraintLayout(val context: TContext, val attrs: AttributeSet, val 
                         constrainedHeight = a.getBoolean(attr, constrainedHeight)
                     }
                     Table.LAYOUT_CONSTRAINT_WIDTH_DEFAULT -> {
-                        matchConstraintDefaultWidth = a.getInt(attr, MATCH_CONSTRAINT_SPREAD)
+                        matchConstraintDefaultWidth = a.getInt(
+                                kvp.key,
+                                attr,
+                                MATCH_CONSTRAINT_SPREAD
+                        )
                         if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_WRAP) {
                             Log.e(
                                 TAG, """layout_constraintWidth_default="wrap" is deprecated.
@@ -3366,7 +3375,11 @@ Use layout_width="WRAP_CONTENT" and layout_constrainedWidth="true" instead."""
                         }
                     }
                     Table.LAYOUT_CONSTRAINT_HEIGHT_DEFAULT -> {
-                        matchConstraintDefaultHeight = a.getInt(attr, MATCH_CONSTRAINT_SPREAD)
+                        matchConstraintDefaultHeight = a.getInt(
+                                kvp.key,
+                                attr,
+                                MATCH_CONSTRAINT_SPREAD
+                        )
                         if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_WRAP) {
                             Log.e(
                                 TAG, """layout_constraintHeight_default="wrap" is deprecated.
@@ -3381,7 +3394,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                                 matchConstraintMinWidth
                             )
                         } catch (e: Exception) {
-                            val value: Int = a.getInt(attr, matchConstraintMinWidth)
+                            val value: Int = a.getInt(kvp.key, attr, matchConstraintMinWidth)
                             if (value == WRAP_CONTENT) {
                                 matchConstraintMinWidth = WRAP_CONTENT
                             }
@@ -3394,7 +3407,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                                 matchConstraintMaxWidth
                             )
                         } catch (e: Exception) {
-                            val value: Int = a.getInt(attr, matchConstraintMaxWidth)
+                            val value: Int = a.getInt(kvp.key, attr, matchConstraintMaxWidth)
                             if (value == WRAP_CONTENT) {
                                 matchConstraintMaxWidth = WRAP_CONTENT
                             }
@@ -3403,9 +3416,10 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                     Table.LAYOUT_CONSTRAINT_WIDTH_PERCENT -> {
                         matchConstraintPercentWidth = max(
                             0f, a.getFloat(
-                                attr,
-                                matchConstraintPercentWidth
-                            )
+                                        kvp.key,
+                                        attr,
+                                        matchConstraintPercentWidth
+                                )
                         ).toFloat()
                         matchConstraintDefaultWidth = MATCH_CONSTRAINT_PERCENT
                     }
@@ -3416,7 +3430,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                                 matchConstraintMinHeight
                             )
                         } catch (e: Exception) {
-                            val value: Int = a.getInt(attr, matchConstraintMinHeight)
+                            val value: Int = a.getInt(kvp.key, attr, matchConstraintMinHeight)
                             if (value == WRAP_CONTENT) {
                                 matchConstraintMinHeight = WRAP_CONTENT
                             }
@@ -3429,7 +3443,7 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                                 matchConstraintMaxHeight
                             )
                         } catch (e: Exception) {
-                            val value: Int = a.getInt(attr, matchConstraintMaxHeight)
+                            val value: Int = a.getInt(kvp.key, attr, matchConstraintMaxHeight)
                             if (value == WRAP_CONTENT) {
                                 matchConstraintMaxHeight = WRAP_CONTENT
                             }
@@ -3438,9 +3452,10 @@ Use layout_height="WRAP_CONTENT" and layout_constrainedHeight="true" instead."""
                     Table.LAYOUT_CONSTRAINT_HEIGHT_PERCENT -> {
                         matchConstraintPercentHeight = max(
                             0f, a.getFloat(
-                                attr,
-                                matchConstraintPercentHeight
-                            )
+                                        kvp.key,
+                                        attr,
+                                        matchConstraintPercentHeight
+                                )
                         ).toFloat()
                         matchConstraintDefaultHeight = MATCH_CONSTRAINT_PERCENT
                     }

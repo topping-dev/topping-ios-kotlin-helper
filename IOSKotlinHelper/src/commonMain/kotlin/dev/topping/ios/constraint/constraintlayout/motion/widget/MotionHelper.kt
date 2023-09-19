@@ -25,24 +25,33 @@ import dev.topping.ios.constraint.constraintlayout.widget.ConstraintLayout
 /**
  *
  */
-class MotionHelper(context: TContext, attrs: AttributeSet, self: TView) : ConstraintHelper(context, attrs, self), MotionHelperInterface {
+open class MotionHelper(context: TContext, attrs: AttributeSet, self: TView) : ConstraintHelper(context, attrs, self), MotionHelperInterface {
     /**
      *
      * @return
      */
     override var isUsedOnShow = false
-        private set
+        set
 
     /**
      *
      * @return
      */
     override var isUseOnHide = false
-        private set
+        set
     private var mProgress = 0f
     protected var views: Array<TView?>? = null
 
     init {
+        val a = context.getResources()
+        attrs.forEach { kvp ->
+            val attr = kvp.value
+            if (kvp.key == "onShow") {
+                isUsedOnShow = a.getBoolean(attr, isUsedOnShow)
+            } else if (kvp.key == "onHide") {
+                isUseOnHide = a.getBoolean(attr, isUseOnHide)
+            }
+        }
         isUsedOnShow = self.getObjCProperty("onShow") as Boolean
         isUseOnHide = self.getObjCProperty("onHide") as Boolean
     }

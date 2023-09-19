@@ -1,5 +1,6 @@
 package dev.topping.ios.constraint
 
+import dev.topping.ios.constraint.TView.Companion.LAYOUT_DIRECTION_LTR
 import dev.topping.ios.constraint.core.motion.utils.Rect
 import dev.topping.ios.constraint.core.state.Interpolator
 import dev.topping.ios.constraint.shared.graphics.AndroidMatrix33
@@ -114,6 +115,11 @@ open class ViewGroup
         var width = 0
         var height = 0
 
+        constructor() {
+            this.width = WRAP_CONTENT
+            this.height = WRAP_CONTENT
+        }
+
         constructor(width: Int, height: Int) {
             this.width = width
             this.height = height
@@ -156,7 +162,11 @@ open class MarginLayoutParams : ViewGroup.LayoutParams {
         mMarginFlags = mMarginFlags and RTL_COMPATIBILITY_MODE_MASK.inv()
     }
 
-    constructor(c: TContext, attrs: AttributeSet) : super(TView.WRAP_CONTENT, TView.WRAP_CONTENT) {
+    constructor(c: TContext, attrs: AttributeSet) : super() {
+
+        width = c.getResources().getLayoutDimension(attrs["layout_width"] ?: "", WRAP_CONTENT)
+        width = c.getResources().getLayoutDimension(attrs["layout_height"] ?: "", WRAP_CONTENT)
+
         val margin = c.getResources().getDimensionPixelSize(attrs["layout_margin"] ?: "", -1)
         if(margin != -1) {
             leftMargin = margin
@@ -172,37 +182,40 @@ open class MarginLayoutParams : ViewGroup.LayoutParams {
                 startMargin = horizontalMargin
             }
             else {
-                val leftMargin =
-                    c.getResources().getDimensionPixelSize(attrs["layout_marginLeft"] ?: "", -1)
-                if (leftMargin >= 0)
-                    this.leftMargin = leftMargin
+                leftMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginLeft"] ?: "", UNDEFINED_MARGIN)
+                if (leftMargin == UNDEFINED_MARGIN) {
+                    mMarginFlags = mMarginFlags or LEFT_MARGIN_UNDEFINED_MASK
+                    leftMargin = DEFAULT_MARGIN_RESOLVED
+                }
 
-                val rightMargin =
-                    c.getResources().getDimensionPixelSize(attrs["layout_marginRight"] ?: "", -1)
-                if (rightMargin >= 0)
-                    this.rightMargin = rightMargin
+                rightMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginRight"] ?: "", -1)
+                if (rightMargin == UNDEFINED_MARGIN) {
+                    mMarginFlags = mMarginFlags or RIGHT_MARGIN_UNDEFINED_MASK
+                    rightMargin = DEFAULT_MARGIN_RESOLVED
+                }
             }
 
-            val startMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginStart"] ?: "", -1)
-            if(startMargin >= 0)
-                this.startMargin = startMargin
-
-            val endMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginEnd"] ?: "", -1)
-            if(endMargin >= 0)
-                this.endMargin = endMargin
+            startMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginStart"] ?: "", DEFAULT_MARGIN_RELATIVE)
+            endMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginEnd"] ?: "", DEFAULT_MARGIN_RELATIVE)
 
             if (verticalMargin >= 0) {
                 topMargin = verticalMargin
                 bottomMargin = verticalMargin
             } else {
-                topMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginTop"] ?: "", 0)
-                bottomMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginBottom"] ?: "", 0);
+                topMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginTop"] ?: "", DEFAULT_MARGIN_RESOLVED)
+                bottomMargin = c.getResources().getDimensionPixelSize(attrs["layout_marginBottom"] ?: "", DEFAULT_MARGIN_RESOLVED);
             }
 
+            if (isMarginRelative()) {
+                mMarginFlags = mMarginFlags or NEED_RESOLUTION_MASK
+            }
         }
+
+        // Layout direction is LTR by default
+        mMarginFlags = mMarginFlags or LAYOUT_DIRECTION_LTR
     }
 
-    constructor(source: MarginLayoutParams) : super(source.width, source.height) {
+    constructor(source: MarginLayoutParams) {
         leftMargin = source.leftMargin
         topMargin = source.topMargin
         rightMargin = source.rightMargin
@@ -431,8 +444,8 @@ interface TResources {
     fun getResourceType(id: String): Int
     fun getResourceId(id: String, def: String): String
     fun getDisplayMetrics(): TDisplayMetrics
-    fun getInt(value: String, def: Int): Int
-    fun getFloat(value: String, def: Float): Float
+    fun getInt(key: String?, value: String, def: Int): Int
+    fun getFloat(key: String?, value: String, def: Float): Float
     fun getDimension(value: String, def: Float): Float
     fun getString(key: String?, value: String): String
     fun getType(value: String): String
@@ -590,6 +603,7 @@ interface TView {
     fun makeMeasureSpec(measureSpec: Int, type: Int): Int
     fun layout(l: Int, t: Int, r: Int, b: Int)
     fun onAttachedToWindow()
+    fun onDetachedFromWindow()
     fun setLayoutParams(params: ViewGroup.LayoutParams)
     fun getViewById(id: String): TView?
     fun getAlpha(): Float
@@ -639,6 +653,8 @@ interface TView {
     fun getPaddingEnd(): Int
     fun resolveSizeAndState(size: Int, measureSpec: Int, childState: Int): Int
     fun addView(view: TView, param: ViewGroup.LayoutParams)
+    fun generateViewId(): String
+    fun removeView(view: TView)
 }
 
 val MATCH_PARENT = -1

@@ -92,7 +92,7 @@ import dev.topping.ios.constraint.core.widgets.HelperWidget
  *
  *
  */
-class Barrier(myContext: TContext?, attrs: AttributeSet, self: TView) : ConstraintHelper(myContext, attrs, self) {
+class Barrier(context: TContext, attrs: AttributeSet, self: TView) : ConstraintHelper(context, attrs, self) {
     /**
      * Get the barrier type (`Barrier.LEFT`, `Barrier.TOP`,
      * `Barrier.RIGHT`, `Barrier.BOTTOM`, `Barrier.END`,
@@ -111,9 +111,15 @@ class Barrier(myContext: TContext?, attrs: AttributeSet, self: TView) : Constrai
         self.setParentType(this)
         self.setVisibility(TView.GONE)
         mBarrier = dev.topping.ios.constraint.core.widgets.Barrier()
-        type = self.getObjCProperty("layout_barrierDirection") as Int
-        mBarrier.allowsGoneWidget = self.getObjCProperty("layout_barrierAllowsGoneWidgets") as Boolean? ?: false
-        val margin: Float = self.dpToPixel(self.getObjCProperty("layout_barrierMargin") as Float? ?: 0f)
+        attrs.forEach { kvp ->
+            if(kvp.key == "barrierDirection") {
+                type = context.getResources().getInt(kvp.key, kvp.value, type)
+            } else if(kvp.key == "barrierAllowsGoneWidgets") {
+                mBarrier.allowsGoneWidget = context.getResources().getBoolean(kvp.value, mBarrier.allowsGoneWidget)
+            } else if(kvp.key == "barrierAllowsGoneWidgets") {
+                mBarrier.margin = context.getResources().getDimensionPixelSize(kvp.value, mBarrier.margin)
+            }
+        }
         mHelperWidget = mBarrier
         validateParams()
     }
@@ -137,6 +143,10 @@ class Barrier(myContext: TContext?, attrs: AttributeSet, self: TView) : Constrai
         if(widget is dev.topping.ios.constraint.core.widgets.Barrier) {
             widget.barrierType = mResolvedType
         }
+    }
+
+    override fun resolveRtl(widget: ConstraintWidget, isRtl: Boolean) {
+        updateType(widget, type, isRtl)
     }
 
     /**

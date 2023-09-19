@@ -62,30 +62,30 @@ class Constraints(val self: TView) {
             attrs.forEach { kvp ->
                 val attr = kvp.value
                 if (kvp.key == "android_alpha") {
-                    alpha = a.getFloat(attr, alpha)
+                    alpha = a.getFloat(kvp.key, attr, alpha)
                 } else if (kvp.key == "android_elevation") {
-                    elevation = a.getFloat(attr, elevation)
+                    elevation = a.getFloat(kvp.key, attr, elevation)
                     applyElevation = true
                 } else if (kvp.key == "android_rotationX") {
-                    rotationX = a.getFloat(attr, rotationX)
+                    rotationX = a.getFloat(kvp.key, attr, rotationX)
                 } else if (kvp.key == "android_rotationY") {
-                    rotationY = a.getFloat(attr, rotationY)
+                    rotationY = a.getFloat(kvp.key, attr, rotationY)
                 } else if (kvp.key == "android_rotation") {
-                    rotation = a.getFloat(attr, rotation)
+                    rotation = a.getFloat(kvp.key, attr, rotation)
                 } else if (kvp.key == "android_scaleX") {
-                    scaleX = a.getFloat(attr, scaleX)
+                    scaleX = a.getFloat(kvp.key, attr, scaleX)
                 } else if (kvp.key == "android_scaleY") {
-                    scaleY = a.getFloat(attr, scaleY)
+                    scaleY = a.getFloat(kvp.key, attr, scaleY)
                 } else if (kvp.key == "android_transformPivotX") {
-                    transformPivotX = a.getFloat(attr, transformPivotX)
+                    transformPivotX = a.getFloat(kvp.key, attr, transformPivotX)
                 } else if (kvp.key == "android_transformPivotY") {
-                    transformPivotY = a.getFloat(attr, transformPivotY)
+                    transformPivotY = a.getFloat(kvp.key, attr, transformPivotY)
                 } else if (kvp.key == "android_translationX") {
-                    translationX = a.getFloat(attr, translationX)
+                    translationX = a.getFloat(kvp.key, attr, translationX)
                 } else if (kvp.key == "android_translationY") {
-                    translationY = a.getFloat(attr, translationY)
+                    translationY = a.getFloat(kvp.key, attr, translationY)
                 } else if (kvp.key == "android_translationZ") {
-                    translationZ = a.getFloat(attr, translationZ)
+                    translationZ = a.getFloat(kvp.key, attr, translationZ)
                 }
             }
         }

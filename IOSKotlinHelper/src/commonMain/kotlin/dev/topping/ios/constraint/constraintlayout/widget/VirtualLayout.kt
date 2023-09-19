@@ -26,13 +26,18 @@ import dev.topping.ios.constraint.TView
  *
  *
  */
-abstract class VirtualLayout(myContext: TContext?, attrs: AttributeSet, self: TView) : ConstraintHelper(myContext, attrs, self) {
+abstract class VirtualLayout(context: TContext, attrs: AttributeSet, self: TView) : ConstraintHelper(context, attrs, self) {
     private var mApplyVisibilityOnAttach = false
     private var mApplyElevationOnAttach = false
 
     init {
-        mApplyElevationOnAttach = self.getObjCProperty("layout_android_visibility") as Boolean? ?: false
-        mApplyElevationOnAttach = self.getObjCProperty("layout_android_elevation") as Boolean? ?: false
+        attrs.forEach { kvp ->
+            if (kvp.key == "android_visibility") {
+                mApplyVisibilityOnAttach = true;
+            } else if (kvp.key == "android_elevation") {
+                mApplyElevationOnAttach = true;
+            }
+        }
         self.swizzleFunction("setVisibility")  { sup, params ->
             val args = params as Array<Any>
             setVisibility(sup, args[0] as Int)
@@ -45,7 +50,7 @@ abstract class VirtualLayout(myContext: TContext?, attrs: AttributeSet, self: TV
         }
     }
 
-    fun onMeasure(
+    open fun onMeasure(
         layout: dev.topping.ios.constraint.core.widgets.VirtualLayout?,
         widthMeasureSpec: Int,
         heightMeasureSpec: Int
@@ -103,7 +108,7 @@ abstract class VirtualLayout(myContext: TContext?, attrs: AttributeSet, self: TV
      *
      * @param container
      */
-    override fun applyLayoutFeaturesInConstraintSet(container: ConstraintLayout?) {
+    override fun applyLayoutFeaturesInConstraintSet(container: ConstraintLayout) {
         applyLayoutFeatures(container!!)
     }
 }

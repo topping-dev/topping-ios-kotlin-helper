@@ -20,6 +20,10 @@ import dev.topping.ios.constraint.constraintlayout.motion.utils.ViewSpline
 import dev.topping.ios.constraint.constraintlayout.widget.ConstraintAttribute
 import dev.topping.ios.constraint.core.motion.utils.SplineSet
 
+fun KeyAttributes.setFramePosition(value: Int) {
+    mFramePosition = value
+}
+
 /**
  * Defines container for a key frame of for storing KeyAttributes.
  * KeyAttributes change post layout values of a view.
@@ -312,15 +316,47 @@ class KeyAttributes : Key() {
                             }
                         }
                     }
-                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
-                    ANDROID_ALPHA -> c.mAlpha = context.getResources().getFloat(kvp.value, c.mAlpha)
+                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mFramePosition
+                    )
+                    ANDROID_ALPHA -> c.mAlpha = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mAlpha
+                    )
                     ANDROID_ELEVATION -> c.mElevation = context.getResources().getDimension(kvp.value, c.mElevation)
-                    ANDROID_ROTATION -> c.mRotation = context.getResources().getFloat(kvp.value, c.mRotation)
-                    CURVE_FIT -> c.curveFit = context.getResources().getInt(kvp.value, c.curveFit)
-                    ANDROID_SCALE_X -> c.mScaleX = context.getResources().getFloat(kvp.value, c.mScaleX)
-                    ANDROID_SCALE_Y -> c.mScaleY = context.getResources().getFloat(kvp.value, c.mScaleY)
-                    ANDROID_ROTATION_X -> c.mRotationX = context.getResources().getFloat(kvp.value, c.mRotationX)
-                    ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(kvp.value, c.mRotationY)
+                    ANDROID_ROTATION -> c.mRotation = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotation
+                    )
+                    CURVE_FIT -> c.curveFit = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.curveFit
+                    )
+                    ANDROID_SCALE_X -> c.mScaleX = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mScaleX
+                    )
+                    ANDROID_SCALE_Y -> c.mScaleY = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mScaleY
+                    )
+                    ANDROID_ROTATION_X -> c.mRotationX = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotationX
+                    )
+                    ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotationY
+                    )
                     ANDROID_PIVOT_X -> c.mPivotX = context.getResources().getDimension(kvp.value, c.mPivotX)
                     ANDROID_PIVOT_Y -> c.mPivotY = context.getResources().getDimension(kvp.value, c.mPivotY)
                     TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(
@@ -328,11 +364,15 @@ class KeyAttributes : Key() {
                         kvp.value
                     )
                     TRANSITION_PATH_ROTATE -> c.mTransitionPathRotate =
-                        context.getResources().getFloat(kvp.value, c.mTransitionPathRotate)
+                        context.getResources().getFloat(kvp.key, kvp.value, c.mTransitionPathRotate)
                     ANDROID_TRANSLATION_X -> c.mTranslationX = context.getResources().getDimension(kvp.value, c.mTranslationX)
                     ANDROID_TRANSLATION_Y -> c.mTranslationY = context.getResources().getDimension(kvp.value, c.mTranslationY)
                     ANDROID_TRANSLATION_Z -> c.mTranslationZ = context.getResources().getDimension(kvp.value, c.mTranslationZ)
-                    PROGRESS -> c.mProgress = context.getResources().getFloat(kvp.value, c.mProgress)
+                    PROGRESS -> c.mProgress = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mProgress
+                    )
                     else -> Log.e(
                         NAME, "unused attribute $kvp.value"
                     )

@@ -59,7 +59,7 @@ class MotionButton(val context: TContext, val attrs: AttributeSet, val self: TVi
             if (kvp.key == "round") {
                 round = context.getResources().getDimension(kvp.value, 0f)
             } else if (kvp.key == "roundPercent") {
-                roundPercent = context.getResources().getFloat(kvp.value, 0f)
+                roundPercent = context.getResources().getFloat(kvp.key, kvp.value, 0f)
             }
         }
     }

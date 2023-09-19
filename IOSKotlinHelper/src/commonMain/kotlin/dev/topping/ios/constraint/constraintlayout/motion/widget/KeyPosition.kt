@@ -21,6 +21,11 @@ import dev.topping.ios.constraint.core.motion.utils.Easing
 import dev.topping.ios.constraint.core.motion.utils.RectF
 import kotlin.math.*
 
+
+fun KeyPosition.setFramePosition(value: Int) {
+    mFramePosition = value
+}
+
 /**
  * Provide the passive data structure to get KeyPosition information form XML
  *
@@ -385,24 +390,68 @@ class KeyPosition : KeyPositionBase() {
                             }
                         }
                     }
-                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
+                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mFramePosition
+                    )
                     TRANSITION_EASING -> if (context.getResources().getType(kvp.value) == "string") {
                         c.mTransitionEasing = context.getResources().getString(kvp.key, kvp.value)
                     } else {
-                        c.mTransitionEasing = Easing.NAMED_EASING.get(context.getResources().getInt(kvp.value, 0))
+                        c.mTransitionEasing = Easing.NAMED_EASING.get(context.getResources().getInt(
+                            kvp.key,
+                            kvp.value,
+                            0
+                        ))
                     }
-                    PATH_MOTION_ARC -> c.mPathMotionArc = context.getResources().getInt(kvp.value, c.mPathMotionArc)
-                    CURVE_FIT -> c.mCurveFit = context.getResources().getInt(kvp.value, c.mCurveFit)
-                    DRAW_PATH -> c.mDrawPath = context.getResources().getInt(kvp.value, c.mDrawPath)
-                    PERCENT_X -> c.mPercentX = context.getResources().getFloat(kvp.value, c.mPercentX)
-                    PERCENT_Y -> c.mPercentY = context.getResources().getFloat(kvp.value, c.mPercentY)
+                    PATH_MOTION_ARC -> c.mPathMotionArc = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mPathMotionArc
+                    )
+                    CURVE_FIT -> c.mCurveFit = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mCurveFit
+                    )
+                    DRAW_PATH -> c.mDrawPath = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mDrawPath
+                    )
+                    PERCENT_X -> c.mPercentX = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mPercentX
+                    )
+                    PERCENT_Y -> c.mPercentY = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mPercentY
+                    )
                     SIZE_PERCENT -> {
-                        c.mPercentWidth = context.getResources().getFloat(kvp.value, c.mPercentWidth)
+                        c.mPercentWidth = context.getResources().getFloat(
+                            kvp.key,
+                            kvp.value,
+                            c.mPercentWidth
+                        )
                         c.mPercentHeight = c.mPercentWidth
                     }
-                    PERCENT_WIDTH -> c.mPercentWidth = context.getResources().getFloat(kvp.value, c.mPercentWidth)
-                    PERCENT_HEIGHT -> c.mPercentHeight = context.getResources().getFloat(kvp.value, c.mPercentHeight)
-                    TYPE -> c.mPositionType = context.getResources().getInt(kvp.value, c.mPositionType)
+                    PERCENT_WIDTH -> c.mPercentWidth = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mPercentWidth
+                    )
+                    PERCENT_HEIGHT -> c.mPercentHeight = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mPercentHeight
+                    )
+                    TYPE -> c.mPositionType = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mPositionType
+                    )
                     else -> Log.e(TAG, "unused attribute " + sAttrMap.get(kvp.value))
                 }
             }

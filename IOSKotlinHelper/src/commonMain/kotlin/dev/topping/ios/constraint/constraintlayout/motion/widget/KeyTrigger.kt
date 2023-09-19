@@ -329,7 +329,11 @@ class KeyTrigger : Key() {
                 val intValue = sAttrMap[kvp.key]
                 when(intValue) {
                     FRAME_POS -> {
-                        c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
+                        c.mFramePosition = context.getResources().getInt(
+                            kvp.key,
+                            kvp.value,
+                            c.mFramePosition
+                        )
                         c.mFireThreshold = (c.mFramePosition + .5f) / 100f
                     }
                     TARGET_ID -> {
@@ -356,7 +360,11 @@ class KeyTrigger : Key() {
                         kvp.value
                     )
                     CROSS -> c.mCross = context.getResources().getString(kvp.key, kvp.value)
-                    TRIGGER_SLACK -> c.mTriggerSlack = context.getResources().getFloat(kvp.value, c.mTriggerSlack)
+                    TRIGGER_SLACK -> c.mTriggerSlack = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mTriggerSlack
+                    )
                     TRIGGER_ID -> c.mTriggerID = context.getResources().getResourceId(kvp.value, c.mTriggerID)
                     COLLISION -> c.mTriggerCollisionId = context.getResources().getResourceId(kvp.value, c.mTriggerCollisionId)
                     POST_LAYOUT -> c.mPostLayout = context.getResources().getBoolean(kvp.value, c.mPostLayout)

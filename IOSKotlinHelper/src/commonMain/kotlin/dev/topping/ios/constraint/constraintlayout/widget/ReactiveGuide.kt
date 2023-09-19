@@ -23,7 +23,7 @@ import dev.topping.ios.constraint.constraintlayout.motion.widget.MotionLayout
 /**
  * Utility class representing a reactive Guideline helper object for [ConstraintLayout].
  */
-class ReactiveGuide(val context: TContext?, val attrs: AttributeSet, val self: TView) : SharedValues.SharedValuesListener {
+class ReactiveGuide(val context: TContext, val attrs: AttributeSet, val self: TView) : SharedValues.SharedValuesListener {
     private var mAttributeId = ""
     var isAnimatingChange = false
         private set
@@ -33,10 +33,19 @@ class ReactiveGuide(val context: TContext?, val attrs: AttributeSet, val self: T
     init {
         self.setParentType(this)
         self.setVisibility(TView.GONE)
-        mAttributeId = self.getObjCProperty("reactiveGuide_valueId") as String
-        isAnimatingChange = self.getObjCProperty("reactiveGuide_animateChange") as Boolean
-        applyToConstraintSetId = self.getObjCProperty("reactiveGuide_applyToConstraintSet") as String
-        mApplyToAllConstraintSets = self.getObjCProperty("reactiveGuide_applyToAllConstraintSets") as Boolean
+        val a = context.getResources()
+        attrs.forEach { kvp ->
+            val attr = kvp.value
+            if (kvp.key == "reactiveGuide_valueId") {
+                mAttributeId = a.getResourceId(attr, mAttributeId)
+            } else if (kvp.key == "reactiveGuide_animateChange") {
+                isAnimatingChange = a.getBoolean(attr, isAnimatingChange)
+            } else if (kvp.key == "reactiveGuide_applyToConstraintSet") {
+                applyToConstraintSetId = a.getResourceId(attr, applyToConstraintSetId)
+            } else if (kvp.key == "reactiveGuide_applyToAllConstraintSets") {
+                mApplyToAllConstraintSets = a.getBoolean(attr, mApplyToAllConstraintSets)
+            }
+        }
         if (mAttributeId != "") {
             val sharedValues: SharedValues = ConstraintLayout.sharedValues
             sharedValues.addListener(mAttributeId, this)

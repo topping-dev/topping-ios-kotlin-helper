@@ -1167,32 +1167,34 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         }
         IS_IN_EDIT_MODE = self.isInEditMode()
         var apply = true
-        if (attrs != null) {
-            attrs!!.forEach { a ->
-                if(a.key == "layoutDescription") {
-                    val id = context.getResources().getResourceId(a.value, UNSET_ID)
-                    mScene = MotionScene(context, this, id)
-                } else if(a.key == "currentState") {
-                    currentState = context.getResources().getResourceId(a.value, currentState)
-                } else if(a.key == "motionProgress") {
-                    targetPosition = context.getResources().getFloat(a.value, targetPosition)
-                    mInTransition = true
-                } else if(a.key == "applyMotionScene") {
-                    apply = context.getResources().getBoolean(a.value, apply)
-                } else if(a.key == "showPaths") {
-                    if (mDebugPath == 0) { // favor motionDebug
-                        mDebugPath = if (context.getResources().getBoolean(a.value, false)) DEBUG_SHOW_PATH else 0
-                    }
-                } else if(a.key == "motionDebug") {
-                    mDebugPath = context.getResources().getInt(a.value, mDebugPath)
+        attrs.forEach { kvp ->
+            if(kvp.key == "layoutDescription") {
+                val id = context.getResources().getResourceId(kvp.value, UNSET_ID)
+                mScene = MotionScene(context, this, id)
+            } else if(kvp.key == "currentState") {
+                currentState = context.getResources().getResourceId(kvp.value, currentState)
+            } else if(kvp.key == "motionProgress") {
+                targetPosition = context.getResources().getFloat(
+                    kvp.key,
+                    kvp.value,
+                    targetPosition
+                )
+                mInTransition = true
+            } else if(kvp.key == "applyMotionScene") {
+                apply = context.getResources().getBoolean(kvp.value, apply)
+            } else if(kvp.key == "showPaths") {
+                if (mDebugPath == 0) { // favor motionDebug
+                    mDebugPath = if (context.getResources().getBoolean(kvp.value, false)) DEBUG_SHOW_PATH else 0
                 }
+            } else if(kvp.key == "motionDebug") {
+                mDebugPath = context.getResources().getInt(kvp.key, kvp.value, mDebugPath)
             }
-            if (mScene == null) {
-                Log.e(TAG, "WARNING NO app:layoutDescription tag")
-            }
-            if (!apply) {
-                mScene = null
-            }
+        }
+        if (mScene == null) {
+            Log.e(TAG, "WARNING NO app:layoutDescription tag")
+        }
+        if (!apply) {
+            mScene = null
         }
         if (mDebugPath != 0) {
             checkStructure()

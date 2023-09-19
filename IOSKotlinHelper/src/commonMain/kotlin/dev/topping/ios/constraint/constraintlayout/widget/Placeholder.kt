@@ -40,7 +40,7 @@ import dev.topping.ios.constraint.core.widgets.width
  * is simply constrained in the layout like any other view).
  *
  */
-class Placeholder(val context: TContext?, val attrs: AttributeSet, val self: TView) {
+class Placeholder(val context: TContext, val attrs: AttributeSet, val self: TView) {
     private var mContentId = ""
     private var mContent: TView? = null
     /**
@@ -58,8 +58,13 @@ class Placeholder(val context: TContext?, val attrs: AttributeSet, val self: TVi
 
     init {
         self.setParentType(this)
-        mContentId = self.getObjCProperty("placeholder_content") as String? ?: ""
-        emptyVisibility = self.getObjCProperty("placeholder_content") as Int? ?: TView.INVISIBLE
+        attrs.forEach { kvp ->
+            if(kvp.key == "placeholder_content") {
+                mContentId = context.getResources().getString(kvp.key, kvp.value)
+            } else if(kvp.key == "placeholder_content") {
+                emptyVisibility = context.getResources().getInt(kvp.key, kvp.key, TView.INVISIBLE)
+            }
+        }
         self.setVisibility(emptyVisibility)
     }
 

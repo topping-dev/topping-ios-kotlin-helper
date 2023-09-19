@@ -504,16 +504,16 @@ class ConstraintSet {
                         a.getDimensionPixelOffset(attr, editorAbsoluteY)
                     GUIDE_BEGIN -> guideBegin = a.getDimensionPixelOffset(attr, guideBegin)
                     GUIDE_END -> guideEnd = a.getDimensionPixelOffset(attr, guideEnd)
-                    GUIDE_PERCENT -> guidePercent = a.getFloat(attr, guidePercent)
+                    GUIDE_PERCENT -> guidePercent = a.getFloat(kvp.key, attr, guidePercent)
                     GUIDE_USE_RTL -> guidelineUseRtl = a.getBoolean(attr, guidelineUseRtl)
-                    ORIENTATION -> orientation = a.getInt(attr, orientation)
+                    ORIENTATION -> orientation = a.getInt(kvp.key, attr, orientation)
                     START_TO_END -> startToEnd = lookupID(a, kvp.key, attr, startToEnd)
                     START_TO_START -> startToStart = lookupID(a, kvp.key, attr, startToStart)
                     END_TO_START -> endToStart = lookupID(a, kvp.key, attr, endToStart)
                     END_TO_END -> endToEnd = lookupID(a, kvp.key, attr, endToEnd)
                     CIRCLE -> circleConstraint = lookupID(a, kvp.key, attr, circleConstraint)
                     CIRCLE_RADIUS -> circleRadius = a.getDimensionPixelSize(attr, circleRadius)
-                    CIRCLE_ANGLE -> circleAngle = a.getFloat(attr, circleAngle)
+                    CIRCLE_ANGLE -> circleAngle = a.getFloat(kvp.key, attr, circleAngle)
                     GONE_LEFT_MARGIN -> goneLeftMargin =
                         a.getDimensionPixelSize(attr, goneLeftMargin)
                     GONE_TOP_MARGIN -> goneTopMargin = a.getDimensionPixelSize(attr, goneTopMargin)
@@ -526,8 +526,8 @@ class ConstraintSet {
                     GONE_END_MARGIN -> goneEndMargin = a.getDimensionPixelSize(attr, goneEndMargin)
                     GONE_BASELINE_MARGIN -> goneBaselineMargin =
                         a.getDimensionPixelSize(attr, goneBaselineMargin)
-                    HORIZONTAL_BIAS -> horizontalBias = a.getFloat(attr, horizontalBias)
-                    VERTICAL_BIAS -> verticalBias = a.getFloat(attr, verticalBias)
+                    HORIZONTAL_BIAS -> horizontalBias = a.getFloat(kvp.key, attr, horizontalBias)
+                    VERTICAL_BIAS -> verticalBias = a.getFloat(kvp.key, attr, verticalBias)
                     LEFT_MARGIN -> leftMargin = a.getDimensionPixelSize(attr, leftMargin)
                     RIGHT_MARGIN -> rightMargin = a.getDimensionPixelSize(attr, rightMargin)
                     START_MARGIN -> startMargin = a.getDimensionPixelSize(attr, startMargin)
@@ -552,27 +552,43 @@ class ConstraintSet {
                         attr,
                         VERTICAL
                     )
-                    WIDTH_DEFAULT -> widthDefault = a.getInt(attr, widthDefault)
-                    HEIGHT_DEFAULT -> heightDefault = a.getInt(attr, heightDefault)
-                    VERTICAL_WEIGHT -> verticalWeight = a.getFloat(attr, verticalWeight)
-                    HORIZONTAL_WEIGHT -> horizontalWeight = a.getFloat(attr, horizontalWeight)
-                    VERTICAL_STYLE -> verticalChainStyle = a.getInt(attr, verticalChainStyle)
-                    HORIZONTAL_STYLE -> horizontalChainStyle = a.getInt(attr, horizontalChainStyle)
+                    WIDTH_DEFAULT -> widthDefault = a.getInt(kvp.key, attr, widthDefault)
+                    HEIGHT_DEFAULT -> heightDefault = a.getInt(kvp.key, attr, heightDefault)
+                    VERTICAL_WEIGHT -> verticalWeight = a.getFloat(kvp.key, attr, verticalWeight)
+                    HORIZONTAL_WEIGHT -> horizontalWeight = a.getFloat(
+                        kvp.key,
+                        attr,
+                        horizontalWeight
+                    )
+                    VERTICAL_STYLE -> verticalChainStyle = a.getInt(
+                        kvp.key,
+                        attr,
+                        verticalChainStyle
+                    )
+                    HORIZONTAL_STYLE -> horizontalChainStyle = a.getInt(
+                        kvp.key,
+                        attr,
+                        horizontalChainStyle
+                    )
                     DIMENSION_RATIO -> dimensionRatio = a.getString(kvp.key, attr)
                     HEIGHT_MAX -> heightMax = a.getDimensionPixelSize(attr, heightMax)
                     WIDTH_MAX -> widthMax = a.getDimensionPixelSize(attr, widthMax)
                     HEIGHT_MIN -> heightMin = a.getDimensionPixelSize(attr, heightMin)
                     WIDTH_MIN -> widthMin = a.getDimensionPixelSize(attr, widthMin)
-                    WIDTH_PERCENT -> widthPercent = a.getFloat(attr, 1f)
-                    HEIGHT_PERCENT -> heightPercent = a.getFloat(attr, 1f)
+                    WIDTH_PERCENT -> widthPercent = a.getFloat(kvp.key, attr, 1f)
+                    HEIGHT_PERCENT -> heightPercent = a.getFloat(kvp.key, attr, 1f)
                     CONSTRAINED_WIDTH -> constrainedWidth = a.getBoolean(attr, constrainedWidth)
                     CONSTRAINED_HEIGHT -> constrainedHeight = a.getBoolean(attr, constrainedHeight)
                     CHAIN_USE_RTL -> Log.e(
                         TAG,
                         "CURRENTLY UNSUPPORTED"
                     ) // TODO add support or remove
-                    BARRIER_DIRECTION -> mBarrierDirection = a.getInt(attr, mBarrierDirection)
-                    LAYOUT_WRAP_BEHAVIOR -> mWrapBehavior = a.getInt(attr, mWrapBehavior)
+                    BARRIER_DIRECTION -> mBarrierDirection = a.getInt(
+                        kvp.key,
+                        attr,
+                        mBarrierDirection
+                    )
+                    LAYOUT_WRAP_BEHAVIOR -> mWrapBehavior = a.getInt(kvp.key, attr, mWrapBehavior)
                     BARRIER_MARGIN -> mBarrierMargin = a.getDimensionPixelSize(attr, mBarrierMargin)
                     CONSTRAINT_REFERENCED_IDS -> mReferenceIdString = a.getString(kvp.key, attr)
                     BARRIER_ALLOWS_GONE_WIDGETS -> mBarrierAllowsGoneWidgets =
@@ -937,11 +953,11 @@ class ConstraintSet {
                 val a = context.getResources()
                 val attr = kvp.value
                 when (sMapToConstant.get(attr)) {
-                    ROTATION -> rotation = a.getFloat(attr, rotation)
-                    ROTATION_X -> rotationX = a.getFloat(attr, rotationX)
-                    ROTATION_Y -> rotationY = a.getFloat(attr, rotationY)
-                    SCALE_X -> scaleX = a.getFloat(attr, scaleX)
-                    SCALE_Y -> scaleY = a.getFloat(attr, scaleY)
+                    ROTATION -> rotation = a.getFloat(kvp.key, attr, rotation)
+                    ROTATION_X -> rotationX = a.getFloat(kvp.key, attr, rotationX)
+                    ROTATION_Y -> rotationY = a.getFloat(kvp.key, attr, rotationY)
+                    SCALE_X -> scaleX = a.getFloat(kvp.key, attr, scaleX)
+                    SCALE_Y -> scaleY = a.getFloat(kvp.key, attr, scaleY)
                     TRANSFORM_PIVOT_X -> transformPivotX = a.getDimension(attr, transformPivotX)
                     TRANSFORM_PIVOT_Y -> transformPivotY = a.getDimension(attr, transformPivotY)
                     TRANSFORM_PIVOT_TARGET -> transformPivotTarget = lookupID(
@@ -1030,14 +1046,14 @@ class ConstraintSet {
                 val a = context.getResources()
                 val attr = kvp.value
                 if (attr == "android_alpha") {
-                    alpha = a.getFloat(attr, alpha)
+                    alpha = a.getFloat(kvp.key, attr, alpha)
                 } else if (attr == "android_visibility") {
-                    visibility = a.getInt(attr, visibility)
+                    visibility = a.getInt(kvp.key, attr, visibility)
                     visibility = VISIBILITY_FLAGS[visibility]
                 } else if (attr == "visibilityMode") {
-                    mVisibilityMode = a.getInt(attr, mVisibilityMode)
+                    mVisibilityMode = a.getInt(kvp.key, attr, mVisibilityMode)
                 } else if (attr == "motionProgress") {
-                    mProgress = a.getFloat(attr, mProgress)
+                    mProgress = a.getFloat(kvp.key, attr, mProgress)
                 }
             }
         }
@@ -1083,26 +1099,26 @@ class ConstraintSet {
                 val a = context.getResources()
                 val attr = kvp.value
                 when (sMapToConstant.get(attr)) {
-                    TRANSITION_PATH_ROTATE -> mPathRotate = a.getFloat(attr, mPathRotate)
-                    PATH_MOTION_ARC -> mPathMotionArc = a.getInt(attr, mPathMotionArc)
+                    TRANSITION_PATH_ROTATE -> mPathRotate = a.getFloat(kvp.key, attr, mPathRotate)
+                    PATH_MOTION_ARC -> mPathMotionArc = a.getInt(kvp.key, attr, mPathMotionArc)
                     TRANSITION_EASING -> {
                         val type = a.getResourceType(attr)
                         mTransitionEasing = if (type == TypedValue.TYPE_STRING) {
                             a.getString(kvp.key, attr)
                         } else {
-                            Easing.NAMED_EASING.get(a.getInt(attr, 0))
+                            Easing.NAMED_EASING.get(a.getInt(kvp.key, attr, 0))
                         }
                     }
-                    MOTION_DRAW_PATH -> mDrawPath = a.getInt(attr, 0)
+                    MOTION_DRAW_PATH -> mDrawPath = a.getInt(kvp.key, attr, 0)
                     ANIMATE_RELATIVE_TO -> mAnimateRelativeTo =
                         lookupID(a, kvp.key, attr, mAnimateRelativeTo)
                     ANIMATE_CIRCLE_ANGLE_TO -> mAnimateCircleAngleTo =
-                        a.getInt(attr, mAnimateCircleAngleTo)
-                    MOTION_STAGGER -> mMotionStagger = a.getFloat(attr, mMotionStagger)
+                        a.getInt(kvp.key, attr, mAnimateCircleAngleTo)
+                    MOTION_STAGGER -> mMotionStagger = a.getFloat(kvp.key, attr, mMotionStagger)
                     QUANTIZE_MOTION_STEPS -> mQuantizeMotionSteps =
-                        a.getInt(attr, mQuantizeMotionSteps)
+                        a.getInt(kvp.key, attr, mQuantizeMotionSteps)
                     QUANTIZE_MOTION_PHASE -> mQuantizeMotionPhase =
-                        a.getFloat(attr, mQuantizeMotionPhase)
+                        a.getFloat(kvp.key, attr, mQuantizeMotionPhase)
                     QUANTIZE_MOTION_INTERPOLATOR -> {
                         val type = a.getResourceType(attr)
                         if (type == TypedValue.TYPE_REFERENCE) {
@@ -1119,7 +1135,7 @@ class ConstraintSet {
                                 mQuantizeInterpolatorType = SPLINE_STRING
                             }
                         } else {
-                            mQuantizeInterpolatorType = a.getInt(attr, -1)
+                            mQuantizeInterpolatorType = a.getInt(kvp.key, attr, -1)
                         }
                     }
                 }
@@ -3692,8 +3708,12 @@ class ConstraintSet {
                 GUIDE_BEGIN -> c.layout.guideBegin =
                     a.getDimensionPixelOffset(attr, c.layout.guideBegin)
                 GUIDE_END -> c.layout.guideEnd = a.getDimensionPixelOffset(attr, c.layout.guideEnd)
-                GUIDE_PERCENT -> c.layout.guidePercent = a.getFloat(attr, c.layout.guidePercent)
-                ORIENTATION -> c.layout.orientation = a.getInt(attr, c.layout.orientation)
+                GUIDE_PERCENT -> c.layout.guidePercent = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.layout.guidePercent
+                )
+                ORIENTATION -> c.layout.orientation = a.getInt(kvp.key, attr, c.layout.orientation)
                 START_TO_END -> c.layout.startToEnd = lookupID(
                     a,
                     kvp.key,
@@ -3721,7 +3741,11 @@ class ConstraintSet {
                 )
                 CIRCLE_RADIUS -> c.layout.circleRadius =
                     a.getDimensionPixelSize(attr, c.layout.circleRadius)
-                CIRCLE_ANGLE -> c.layout.circleAngle = a.getFloat(attr, c.layout.circleAngle)
+                CIRCLE_ANGLE -> c.layout.circleAngle = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.layout.circleAngle
+                )
                 GONE_LEFT_MARGIN -> c.layout.goneLeftMargin = a.getDimensionPixelSize(
                     attr,
                     c.layout.goneLeftMargin
@@ -3745,8 +3769,12 @@ class ConstraintSet {
                     c.layout.goneBaselineMargin
                 )
                 HORIZONTAL_BIAS -> c.layout.horizontalBias =
-                    a.getFloat(attr, c.layout.horizontalBias)
-                VERTICAL_BIAS -> c.layout.verticalBias = a.getFloat(attr, c.layout.verticalBias)
+                    a.getFloat(kvp.key, attr, c.layout.horizontalBias)
+                VERTICAL_BIAS -> c.layout.verticalBias = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.layout.verticalBias
+                )
                 LEFT_MARGIN -> c.layout.leftMargin =
                     a.getDimensionPixelSize(attr, c.layout.leftMargin)
                 RIGHT_MARGIN -> c.layout.rightMargin =
@@ -3777,9 +3805,17 @@ class ConstraintSet {
                     VERTICAL
                 )
                 LAYOUT_WRAP_BEHAVIOR -> c.layout.mWrapBehavior =
-                    a.getInt(attr, c.layout.mWrapBehavior)
-                WIDTH_DEFAULT -> c.layout.widthDefault = a.getInt(attr, c.layout.widthDefault)
-                HEIGHT_DEFAULT -> c.layout.heightDefault = a.getInt(attr, c.layout.heightDefault)
+                    a.getInt(kvp.key, attr, c.layout.mWrapBehavior)
+                WIDTH_DEFAULT -> c.layout.widthDefault = a.getInt(
+                    kvp.key,
+                    attr,
+                    c.layout.widthDefault
+                )
+                HEIGHT_DEFAULT -> c.layout.heightDefault = a.getInt(
+                    kvp.key,
+                    attr,
+                    c.layout.heightDefault
+                )
                 HEIGHT_MAX -> c.layout.heightMax = a.getDimensionPixelSize(attr, c.layout.heightMax)
                 WIDTH_MAX -> c.layout.widthMax = a.getDimensionPixelSize(attr, c.layout.widthMax)
                 HEIGHT_MIN -> c.layout.heightMin = a.getDimensionPixelSize(attr, c.layout.heightMin)
@@ -3789,21 +3825,29 @@ class ConstraintSet {
                 CONSTRAINED_HEIGHT -> c.layout.constrainedHeight =
                     a.getBoolean(attr, c.layout.constrainedHeight)
                 LAYOUT_VISIBILITY -> {
-                    c.propertySet.visibility = a.getInt(attr, c.propertySet.visibility)
+                    c.propertySet.visibility = a.getInt(kvp.key, attr, c.propertySet.visibility)
                     c.propertySet.visibility = VISIBILITY_FLAGS[c.propertySet.visibility]
                 }
                 VISIBILITY_MODE -> c.propertySet.mVisibilityMode =
-                    a.getInt(attr, c.propertySet.mVisibilityMode)
-                ALPHA -> c.propertySet.alpha = a.getFloat(attr, c.propertySet.alpha)
+                    a.getInt(kvp.key, attr, c.propertySet.mVisibilityMode)
+                ALPHA -> c.propertySet.alpha = a.getFloat(kvp.key, attr, c.propertySet.alpha)
                 ELEVATION -> {
                     c.transform.applyElevation = true
                     c.transform.elevation = a.getDimension(attr, c.transform.elevation)
                 }
-                ROTATION -> c.transform.rotation = a.getFloat(attr, c.transform.rotation)
-                ROTATION_X -> c.transform.rotationX = a.getFloat(attr, c.transform.rotationX)
-                ROTATION_Y -> c.transform.rotationY = a.getFloat(attr, c.transform.rotationY)
-                SCALE_X -> c.transform.scaleX = a.getFloat(attr, c.transform.scaleX)
-                SCALE_Y -> c.transform.scaleY = a.getFloat(attr, c.transform.scaleY)
+                ROTATION -> c.transform.rotation = a.getFloat(kvp.key, attr, c.transform.rotation)
+                ROTATION_X -> c.transform.rotationX = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.transform.rotationX
+                )
+                ROTATION_Y -> c.transform.rotationY = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.transform.rotationY
+                )
+                SCALE_X -> c.transform.scaleX = a.getFloat(kvp.key, attr, c.transform.scaleX)
+                SCALE_Y -> c.transform.scaleY = a.getFloat(kvp.key, attr, c.transform.scaleY)
                 TRANSFORM_PIVOT_X -> c.transform.transformPivotX =
                     a.getDimension(attr, c.transform.transformPivotX)
                 TRANSFORM_PIVOT_Y -> c.transform.transformPivotY =
@@ -3818,41 +3862,54 @@ class ConstraintSet {
                 TRANSFORM_PIVOT_TARGET -> c.transform.transformPivotTarget =
                     lookupID(a, kvp.key, attr, c.transform.transformPivotTarget)
                 VERTICAL_WEIGHT -> c.layout.verticalWeight =
-                    a.getFloat(attr, c.layout.verticalWeight)
+                    a.getFloat(kvp.key, attr, c.layout.verticalWeight)
                 HORIZONTAL_WEIGHT -> c.layout.horizontalWeight =
-                    a.getFloat(attr, c.layout.horizontalWeight)
+                    a.getFloat(kvp.key, attr, c.layout.horizontalWeight)
                 VERTICAL_STYLE -> c.layout.verticalChainStyle =
-                    a.getInt(attr, c.layout.verticalChainStyle)
+                    a.getInt(kvp.key, attr, c.layout.verticalChainStyle)
                 HORIZONTAL_STYLE -> c.layout.horizontalChainStyle =
-                    a.getInt(attr, c.layout.horizontalChainStyle)
+                    a.getInt(kvp.key, attr, c.layout.horizontalChainStyle)
                 VIEW_ID -> c.mViewId = a.getResourceId(attr, c.mViewId)
                 DIMENSION_RATIO -> c.layout.dimensionRatio = a.getString(kvp.key, attr)
-                WIDTH_PERCENT -> c.layout.widthPercent = a.getFloat(attr, 1f)
-                HEIGHT_PERCENT -> c.layout.heightPercent = a.getFloat(attr, 1f)
-                PROGRESS -> c.propertySet.mProgress = a.getFloat(attr, c.propertySet.mProgress)
+                WIDTH_PERCENT -> c.layout.widthPercent = a.getFloat(kvp.key, attr, 1f)
+                HEIGHT_PERCENT -> c.layout.heightPercent = a.getFloat(kvp.key, attr, 1f)
+                PROGRESS -> c.propertySet.mProgress = a.getFloat(
+                    kvp.key,
+                    attr,
+                    c.propertySet.mProgress
+                )
                 ANIMATE_RELATIVE_TO -> c.motion.mAnimateRelativeTo =
                     lookupID(a, kvp.key, attr, c.motion.mAnimateRelativeTo)
                 ANIMATE_CIRCLE_ANGLE_TO -> c.motion.mAnimateCircleAngleTo =
-                    a.getInt(attr, c.motion.mAnimateCircleAngleTo)
+                    a.getInt(kvp.key, attr, c.motion.mAnimateCircleAngleTo)
                 TRANSITION_EASING -> {
                     val type = a.getResourceType(attr)
                     if (type == TypedValue.TYPE_STRING) {
                         c.motion.mTransitionEasing = a.getString(kvp.key, attr)
                     } else {
-                        c.motion.mTransitionEasing = Easing.NAMED_EASING.get(a.getInt(attr, 0))
+                        c.motion.mTransitionEasing = Easing.NAMED_EASING.get(a.getInt(
+                            kvp.key,
+                            attr,
+                            0
+                        ))
                     }
                 }
-                PATH_MOTION_ARC -> c.motion.mPathMotionArc = a.getInt(attr, c.motion.mPathMotionArc)
+                PATH_MOTION_ARC -> c.motion.mPathMotionArc = a.getInt(
+                    kvp.key,
+                    attr,
+                    c.motion.mPathMotionArc
+                )
                 TRANSITION_PATH_ROTATE -> c.motion.mPathRotate =
-                    a.getFloat(attr, c.motion.mPathRotate)
+                    a.getFloat(kvp.key, attr, c.motion.mPathRotate)
                 MOTION_STAGGER -> c.motion.mMotionStagger =
-                    a.getFloat(attr, c.motion.mMotionStagger)
+                    a.getFloat(kvp.key, attr, c.motion.mMotionStagger)
                 QUANTIZE_MOTION_STEPS -> c.motion.mQuantizeMotionSteps = a.getInt(
+                    kvp.key,
                     attr,
                     c.motion.mQuantizeMotionSteps
                 )
                 QUANTIZE_MOTION_PHASE -> c.motion.mQuantizeMotionPhase =
-                    a.getFloat(attr, c.motion.mQuantizeMotionPhase)
+                    a.getFloat(kvp.key, attr, c.motion.mQuantizeMotionPhase)
                 QUANTIZE_MOTION_INTERPOLATOR -> {
                     val type = a.getResourceType(attr)
                     if (type == TypedValue.TYPE_REFERENCE) {
@@ -3870,15 +3927,16 @@ class ConstraintSet {
                         }
                     } else {
                         c.motion.mQuantizeInterpolatorType = a.getInt(
+                            kvp.key,
                             attr,
                             -1
                         )
                     }
                 }
-                DRAW_PATH -> c.motion.mDrawPath = a.getInt(attr, 0)
+                DRAW_PATH -> c.motion.mDrawPath = a.getInt(kvp.key, attr, 0)
                 CHAIN_USE_RTL -> Log.e(TAG, "CURRENTLY UNSUPPORTED") // TODO add support or remove
                 BARRIER_DIRECTION -> c.layout.mBarrierDirection =
-                    a.getInt(attr, c.layout.mBarrierDirection)
+                    a.getInt(kvp.key, attr, c.layout.mBarrierDirection)
                 BARRIER_MARGIN -> c.layout.mBarrierMargin = a.getDimensionPixelSize(
                     attr,
                     c.layout.mBarrierMargin
@@ -5465,7 +5523,7 @@ class ConstraintSet {
                     return
                 }
                 else -> {
-                    val value: Int = a.getInt(attr, 0)
+                    val value: Int = a.getInt(null, attr, 0)
                     when (value) {
                         INTERNAL_WRAP_CONTENT, INTERNAL_MATCH_PARENT -> {
                             finalValue = value
@@ -5765,18 +5823,26 @@ class ConstraintSet {
                     )
                     GUIDE_PERCENT -> delta.add(
                         GUIDE_PERCENT,
-                        a.getFloat(attr, c.layout.guidePercent)
+                        a.getFloat(kvp.key, attr, c.layout.guidePercent)
                     )
                     GUIDELINE_USE_RTL -> delta.add(
                         GUIDELINE_USE_RTL,
                         a.getBoolean(attr, c.layout.guidelineUseRtl)
                     )
-                    ORIENTATION -> delta.add(ORIENTATION, a.getInt(attr, c.layout.orientation))
+                    ORIENTATION -> delta.add(ORIENTATION, a.getInt(
+                        kvp.key,
+                        attr,
+                        c.layout.orientation
+                    ))
                     CIRCLE_RADIUS -> delta.add(
                         CIRCLE_RADIUS,
                         a.getDimensionPixelSize(attr, c.layout.circleRadius)
                     )
-                    CIRCLE_ANGLE -> delta.add(CIRCLE_ANGLE, a.getFloat(attr, c.layout.circleAngle))
+                    CIRCLE_ANGLE -> delta.add(CIRCLE_ANGLE, a.getFloat(
+                        kvp.key,
+                        attr,
+                        c.layout.circleAngle
+                    ))
                     GONE_LEFT_MARGIN -> delta.add(
                         GONE_LEFT_MARGIN,
                         a.getDimensionPixelSize(attr, c.layout.goneLeftMargin)
@@ -5807,11 +5873,11 @@ class ConstraintSet {
                     )
                     HORIZONTAL_BIAS -> delta.add(
                         HORIZONTAL_BIAS,
-                        a.getFloat(attr, c.layout.horizontalBias)
+                        a.getFloat(kvp.key, attr, c.layout.horizontalBias)
                     )
                     VERTICAL_BIAS -> delta.add(
                         VERTICAL_BIAS,
-                        a.getFloat(attr, c.layout.verticalBias)
+                        a.getFloat(kvp.key, attr, c.layout.verticalBias)
                     )
                     LEFT_MARGIN -> delta.add(
                         LEFT_MARGIN,
@@ -5866,12 +5932,16 @@ class ConstraintSet {
                     )
                     LAYOUT_WRAP_BEHAVIOR -> delta.add(
                         LAYOUT_WRAP_BEHAVIOR,
-                        a.getInt(attr, c.layout.mWrapBehavior)
+                        a.getInt(kvp.key, attr, c.layout.mWrapBehavior)
                     )
-                    WIDTH_DEFAULT -> delta.add(WIDTH_DEFAULT, a.getInt(attr, c.layout.widthDefault))
+                    WIDTH_DEFAULT -> delta.add(WIDTH_DEFAULT, a.getInt(
+                        kvp.key,
+                        attr,
+                        c.layout.widthDefault
+                    ))
                     HEIGHT_DEFAULT -> delta.add(
                         HEIGHT_DEFAULT,
-                        a.getInt(attr, c.layout.heightDefault)
+                        a.getInt(kvp.key, attr, c.layout.heightDefault)
                     )
                     HEIGHT_MAX -> delta.add(
                         HEIGHT_MAX,
@@ -5899,22 +5969,30 @@ class ConstraintSet {
                     )
                     LAYOUT_VISIBILITY -> delta.add(
                         LAYOUT_VISIBILITY,
-                        VISIBILITY_FLAGS[a.getInt(attr, c.propertySet.visibility)]
+                        VISIBILITY_FLAGS[a.getInt(kvp.key, attr, c.propertySet.visibility)]
                     )
                     VISIBILITY_MODE -> delta.add(
                         VISIBILITY_MODE,
-                        a.getInt(attr, c.propertySet.mVisibilityMode)
+                        a.getInt(kvp.key, attr, c.propertySet.mVisibilityMode)
                     )
-                    ALPHA -> delta.add(ALPHA, a.getFloat(attr, c.propertySet.alpha))
+                    ALPHA -> delta.add(ALPHA, a.getFloat(kvp.key, attr, c.propertySet.alpha))
                     ELEVATION ->  {
                         delta.add(ELEVATION, true)
                         delta.add(ELEVATION, a.getDimension(attr, c.transform.elevation))
                     }
-                    ROTATION -> delta.add(ROTATION, a.getFloat(attr, c.transform.rotation))
-                    ROTATION_X -> delta.add(ROTATION_X, a.getFloat(attr, c.transform.rotationX))
-                    ROTATION_Y -> delta.add(ROTATION_Y, a.getFloat(attr, c.transform.rotationY))
-                    SCALE_X -> delta.add(SCALE_X, a.getFloat(attr, c.transform.scaleX))
-                    SCALE_Y -> delta.add(SCALE_Y, a.getFloat(attr, c.transform.scaleY))
+                    ROTATION -> delta.add(ROTATION, a.getFloat(kvp.key, attr, c.transform.rotation))
+                    ROTATION_X -> delta.add(ROTATION_X, a.getFloat(
+                        kvp.key,
+                        attr,
+                        c.transform.rotationX
+                    ))
+                    ROTATION_Y -> delta.add(ROTATION_Y, a.getFloat(
+                        kvp.key,
+                        attr,
+                        c.transform.rotationY
+                    ))
+                    SCALE_X -> delta.add(SCALE_X, a.getFloat(kvp.key, attr, c.transform.scaleX))
+                    SCALE_Y -> delta.add(SCALE_Y, a.getFloat(kvp.key, attr, c.transform.scaleY))
                     TRANSFORM_PIVOT_X -> delta.add(
                         TRANSFORM_PIVOT_X,
                         a.getDimension(attr, c.transform.transformPivotX)
@@ -5940,19 +6018,19 @@ class ConstraintSet {
                     )
                     VERTICAL_WEIGHT -> delta.add(
                         VERTICAL_WEIGHT,
-                        a.getFloat(attr, c.layout.verticalWeight)
+                        a.getFloat(kvp.key, attr, c.layout.verticalWeight)
                     )
                     HORIZONTAL_WEIGHT -> delta.add(
                         HORIZONTAL_WEIGHT,
-                        a.getFloat(attr, c.layout.horizontalWeight)
+                        a.getFloat(kvp.key, attr, c.layout.horizontalWeight)
                     )
                     VERTICAL_STYLE -> delta.add(
                         VERTICAL_STYLE,
-                        a.getInt(attr, c.layout.verticalChainStyle)
+                        a.getInt(kvp.key, attr, c.layout.verticalChainStyle)
                     )
                     HORIZONTAL_STYLE -> delta.add(
                         HORIZONTAL_STYLE,
-                        a.getInt(attr, c.layout.horizontalChainStyle)
+                        a.getInt(kvp.key, attr, c.layout.horizontalChainStyle)
                     )
                     VIEW_ID -> {
                         c.mViewId = a.getResourceId(attr, c.mViewId)
@@ -5971,16 +6049,20 @@ class ConstraintSet {
                         }
                     }
                     DIMENSION_RATIO -> delta.add(DIMENSION_RATIO, a.getString(kvp.key, attr))
-                    WIDTH_PERCENT -> delta.add(WIDTH_PERCENT, a.getFloat(attr, 1f))
-                    HEIGHT_PERCENT -> delta.add(HEIGHT_PERCENT, a.getFloat(attr, 1f))
-                    PROGRESS -> delta.add(PROGRESS, a.getFloat(attr, c.propertySet.mProgress))
+                    WIDTH_PERCENT -> delta.add(WIDTH_PERCENT, a.getFloat(kvp.key, attr, 1f))
+                    HEIGHT_PERCENT -> delta.add(HEIGHT_PERCENT, a.getFloat(kvp.key, attr, 1f))
+                    PROGRESS -> delta.add(PROGRESS, a.getFloat(
+                        kvp.key,
+                        attr,
+                        c.propertySet.mProgress
+                    ))
                     ANIMATE_RELATIVE_TO -> delta.add(
                         ANIMATE_RELATIVE_TO,
                         lookupID(a, kvp.key, attr, c.motion.mAnimateRelativeTo)
                     )
                     ANIMATE_CIRCLE_ANGLE_TO -> delta.add(
                         ANIMATE_CIRCLE_ANGLE_TO,
-                        a.getInt(attr, c.motion.mAnimateCircleAngleTo)
+                        a.getInt(kvp.key, attr, c.motion.mAnimateCircleAngleTo)
                     )
                     TRANSITION_EASING -> {
                         type = a.getResourceType(attr)
@@ -5989,30 +6071,32 @@ class ConstraintSet {
                         } else {
                             delta.add(
                                 TRANSITION_EASING,
-                                Easing.NAMED_EASING.get(a.getInt(attr, 0))
+                                Easing.NAMED_EASING.get(a.getInt(kvp.key, attr, 0))
                             )
                         }
                     }
                     PATH_MOTION_ARC -> delta.add(
                         PATH_MOTION_ARC,
-                        a.getInt(attr, c.motion.mPathMotionArc)
+                        a.getInt(kvp.key, attr, c.motion.mPathMotionArc)
                     )
                     TRANSITION_PATH_ROTATE -> delta.add(
                         TRANSITION_PATH_ROTATE,
-                        a.getFloat(attr, c.motion.mPathRotate)
+                        a.getFloat(kvp.key, attr, c.motion.mPathRotate)
                     )
                     MOTION_STAGGER -> delta.add(
                         MOTION_STAGGER,
-                        a.getFloat(attr, c.motion.mMotionStagger)
+                        a.getFloat(kvp.key, attr, c.motion.mMotionStagger)
                     )
                     QUANTIZE_MOTION_STEPS -> delta.add(
                         QUANTIZE_MOTION_STEPS, a.getInt(
+                            kvp.key,
                             attr,
                             c.motion.mQuantizeMotionSteps
                         )
                     )
                     QUANTIZE_MOTION_PHASE -> delta.add(
                         QUANTIZE_MOTION_PHASE, a.getFloat(
+                            kvp.key,
                             attr,
                             c.motion.mQuantizeMotionPhase
                         )
@@ -6060,21 +6144,21 @@ class ConstraintSet {
                             }
                         } else {
                             c.motion.mQuantizeInterpolatorType =
-                                a.getInt(attr, c.motion.mQuantizeInterpolatorType)
+                                a.getInt(kvp.key, attr, c.motion.mQuantizeInterpolatorType)
                             delta.add(
                                 QUANTIZE_MOTION_INTERPOLATOR_TYPE,
                                 c.motion.mQuantizeInterpolatorType
                             )
                         }
                     }
-                    DRAW_PATH -> delta.add(DRAW_PATH, a.getInt(attr, 0))
+                    DRAW_PATH -> delta.add(DRAW_PATH, a.getInt(kvp.key, attr, 0))
                     CHAIN_USE_RTL -> Log.e(
                         TAG,
                         "CURRENTLY UNSUPPORTED"
                     ) // TODO add support or remove
                     BARRIER_DIRECTION -> delta.add(
                         BARRIER_DIRECTION,
-                        a.getInt(attr, c.layout.mBarrierDirection)
+                        a.getInt(kvp.key, attr, c.layout.mBarrierDirection)
                     )
                     BARRIER_MARGIN -> delta.add(
                         BARRIER_MARGIN, a.getDimensionPixelSize(

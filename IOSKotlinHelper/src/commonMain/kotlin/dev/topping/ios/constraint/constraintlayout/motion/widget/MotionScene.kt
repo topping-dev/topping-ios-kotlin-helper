@@ -763,7 +763,7 @@ class MotionScene {
                     if (kvp.key == "targetId") {
                         mTargetId = context.getResources().getString(kvp.key, kvp.value)
                     } else if (kvp.key == "clickAction") {
-                        mMode = context.getResources().getInt(kvp.value, mMode)
+                        mMode = context.getResources().getInt(kvp.key, kvp.value, mMode)
                     }
                 }
             }
@@ -1035,27 +1035,39 @@ class MotionScene {
                             }
                         }
                     } else {
-                        mDefaultInterpolator = context.getResources().getInt(kvp.value, mDefaultInterpolator)
+                        mDefaultInterpolator = context.getResources().getInt(
+                            kvp.key,
+                            kvp.value,
+                            mDefaultInterpolator
+                        )
                     }
                 } else if (kvp.key == "duration") {
-                    mDuration = context.getResources().getInt(kvp.key, mDuration)
+                    mDuration = context.getResources().getInt(kvp.key, kvp.key, mDuration)
                     if (mDuration < MIN_DURATION) {
                         mDuration = MIN_DURATION
                     }
                 } else if (kvp.key == "staggered") {
-                    stagger = context.getResources().getFloat(kvp.key, stagger)
+                    stagger = context.getResources().getFloat(kvp.key, kvp.key, stagger)
                 } else if (kvp.key == "autoTransition") {
-                    autoTransition = context.getResources().getInt(kvp.key, autoTransition)
+                    autoTransition = context.getResources().getInt(kvp.key, kvp.key, autoTransition)
                 } else if (kvp.key == "android_id") {
                     id = context.getResources().getResourceId(kvp.key, id)
                 } else if (kvp.key == "transitionDisable") {
                     mDisable = context.getResources().getBoolean(kvp.key, mDisable)
                 } else if (kvp.key == "pathMotionArc") {
-                    pathMotionArc = context.getResources().getInt(kvp.key, pathMotionArc)
+                    pathMotionArc = context.getResources().getInt(kvp.key, kvp.key, pathMotionArc)
                 } else if (kvp.key == "layoutDuringTransition") {
-                    layoutDuringTransition = context.getResources().getInt(kvp.key, layoutDuringTransition)
+                    layoutDuringTransition = context.getResources().getInt(
+                        kvp.key,
+                        kvp.key,
+                        layoutDuringTransition
+                    )
                 } else if (kvp.key == "transitionFlags") {
-                    mTransitionFlags = context.getResources().getInt(kvp.key, mTransitionFlags)
+                    mTransitionFlags = context.getResources().getInt(
+                        kvp.key,
+                        kvp.key,
+                        mTransitionFlags
+                    )
                 }
             }
             if (startConstraintSetId == UNSET_ID) {
@@ -1209,12 +1221,20 @@ class MotionScene {
         val attrs: AttributeSet = Xml.asAttributeSet(parser)
         attrs.forEach { kvp ->
             if(kvp.key == "defaultDuration") {
-                mDefaultDuration = context.getResources().getInt(kvp.value, mDefaultDuration)
+                mDefaultDuration = context.getResources().getInt(
+                    kvp.key,
+                    kvp.value,
+                    mDefaultDuration
+                )
                 if (mDefaultDuration < MIN_DURATION) {
                     mDefaultDuration = MIN_DURATION
                 }
             } else if(kvp.key == "layoutDuringTransition") {
-                mLayoutDuringTransition = context.getResources().getInt(kvp.value, mLayoutDuringTransition)
+                mLayoutDuringTransition = context.getResources().getInt(
+                    kvp.key,
+                    kvp.value,
+                    mLayoutDuringTransition
+                )
             }
         }
     }

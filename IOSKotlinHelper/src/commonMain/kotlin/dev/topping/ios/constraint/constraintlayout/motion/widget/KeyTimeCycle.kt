@@ -386,39 +386,87 @@ class KeyTimeCycle : Key() {
                             }
                         }
                     }
-                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(kvp.value, c.mFramePosition)
-                    ANDROID_ALPHA -> c.mAlpha = context.getResources().getFloat(kvp.value, c.mAlpha)
+                    FRAME_POSITION -> c.mFramePosition = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mFramePosition
+                    )
+                    ANDROID_ALPHA -> c.mAlpha = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mAlpha
+                    )
                     ANDROID_ELEVATION -> c.mElevation = context.getResources().getDimension(kvp.value, c.mElevation)
-                    ANDROID_ROTATION -> c.mRotation = context.getResources().getFloat(kvp.value, c.mRotation)
-                    CURVE_FIT -> c.mCurveFit = context.getResources().getInt(kvp.value, c.mCurveFit)
+                    ANDROID_ROTATION -> c.mRotation = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotation
+                    )
+                    CURVE_FIT -> c.mCurveFit = context.getResources().getInt(
+                        kvp.key,
+                        kvp.value,
+                        c.mCurveFit
+                    )
                     WAVE_SHAPE -> if (context.getResources().getType(kvp.value) == "string") {
                         c.mCustomWaveShape = context.getResources().getString(kvp.key, kvp.value)
                         c.mWaveShape = Oscillator.CUSTOM
                     } else {
-                        c.mWaveShape = context.getResources().getInt(kvp.value, c.mWaveShape)
+                        c.mWaveShape = context.getResources().getInt(
+                            kvp.key,
+                            kvp.value,
+                            c.mWaveShape
+                        )
                     }
-                    WAVE_PERIOD -> c.mWavePeriod = context.getResources().getFloat(kvp.value, c.mWavePeriod)
+                    WAVE_PERIOD -> c.mWavePeriod = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mWavePeriod
+                    )
                     WAVE_OFFSET -> {
                         if (context.getResources().getType(kvp.value) == "dimension") {
                             c.mWaveOffset =context.getResources().getDimension(kvp.value, c.mWaveOffset)
                         } else {
-                            c.mWaveOffset = context.getResources().getFloat(kvp.value, c.mWaveOffset)
+                            c.mWaveOffset = context.getResources().getFloat(
+                                kvp.key,
+                                kvp.value,
+                                c.mWaveOffset
+                            )
                         }
                     }
-                    ANDROID_SCALE_X -> c.mScaleX = context.getResources().getFloat(kvp.value, c.mScaleX)
-                    ANDROID_ROTATION_X -> c.mRotationX = context.getResources().getFloat(kvp.value, c.mRotationX)
-                    ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(kvp.value, c.mRotationY)
+                    ANDROID_SCALE_X -> c.mScaleX = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mScaleX
+                    )
+                    ANDROID_ROTATION_X -> c.mRotationX = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotationX
+                    )
+                    ANDROID_ROTATION_Y -> c.mRotationY = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mRotationY
+                    )
                     TRANSITION_EASING -> c.mTransitionEasing = context.getResources().getString(
                         kvp.key,
                         kvp.value
                     )
-                    ANDROID_SCALE_Y -> c.mScaleY = context.getResources().getFloat(kvp.value, c.mScaleY)
+                    ANDROID_SCALE_Y -> c.mScaleY = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mScaleY
+                    )
                     TRANSITION_PATH_ROTATE -> c.mTransitionPathRotate =
-                        context.getResources().getFloat(kvp.value, c.mTransitionPathRotate)
+                        context.getResources().getFloat(kvp.key, kvp.value, c.mTransitionPathRotate)
                     ANDROID_TRANSLATION_X -> c.mTranslationX = context.getResources().getDimension(kvp.value, c.mTranslationX)
                     ANDROID_TRANSLATION_Y -> c.mTranslationY = context.getResources().getDimension(kvp.value, c.mTranslationY)
                     ANDROID_TRANSLATION_Z -> c.mTranslationZ = context.getResources().getDimension(kvp.value, c.mTranslationZ)
-                    PROGRESS -> c.mProgress = context.getResources().getFloat(kvp.value, c.mProgress)
+                    PROGRESS -> c.mProgress = context.getResources().getFloat(
+                        kvp.key,
+                        kvp.value,
+                        c.mProgress
+                    )
                     else -> Log.e(
                         NAME, "unused attribute " + sAttrMap[kvp.value]
                     )
