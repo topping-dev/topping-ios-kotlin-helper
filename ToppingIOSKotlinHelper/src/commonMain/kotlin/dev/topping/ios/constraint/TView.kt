@@ -107,10 +107,13 @@ interface TLayoutInflater {
 
 open class ViewGroup
 {
-    open class LayoutParams {
+    companion object {
         val FILL_PARENT = -1
         val MATCH_PARENT = -1
         val WRAP_CONTENT = -2
+    }
+
+    open class LayoutParams {
 
         var width = 0
         var height = 0

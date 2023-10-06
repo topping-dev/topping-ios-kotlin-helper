@@ -140,8 +140,16 @@ inline fun <reified K, V> Map<K, V>.keyAt(i: Int): K {
     return this.keys.toTypedArray()[i]
 }
 
+inline fun <reified K, V> Map<K, V>.indexOfKey(i: K): Int {
+    return this.keys.indexOf(i)
+}
+
 inline fun <reified K, V> Map<K, V>.valueAt(i: Int): V? {
     return this[keyAt(i)]
+}
+
+inline fun <reified K, V> MutableMap<K, V>.removeAt(i: Int): V? {
+    return this.remove(this[keyAt(i)] as K)
 }
 
 class Arrays {

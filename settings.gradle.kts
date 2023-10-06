@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "IOSKotlinHelper"
-include(":IOSKotlinHelper")
+rootProject.name = "ToppingIOSKotlinHelper"
+include(":ToppingIOSKotlinHelper")

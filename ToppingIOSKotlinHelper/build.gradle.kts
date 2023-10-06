@@ -30,7 +30,7 @@ kotlin {
             }
         }*/
         it.binaries.framework {
-            baseName = "IOSKotlinHelper"
+            baseName = "ToppingIOSKotlinHelper"
             embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE)
             linkerOpts("-framework", "CoreText", "-framework", "Metal")
             xcf.add(this)
