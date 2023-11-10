@@ -1,7 +1,5 @@
 package dev.topping.ios.constraint
 
-import kotlinx.coroutines.internal.synchronized
-
 class KeyEvent {
     private var mNext: KeyEvent? = null
 
@@ -939,7 +937,7 @@ class KeyEvent {
         when (action) {
             ACTION_DOWN -> {
                 flags = flags and FLAG_START_TRACKING.inv()
-                if (DEBUG) Log.v(
+                if (DBG) Log.v(
                     TAG,
                     "Key down to " + target + " in " + state
                             + ": " + this
@@ -947,12 +945,12 @@ class KeyEvent {
                 var res = receiver.onKeyDown(keyCode, this)
                 if (state != null) {
                     if (res && (repeatCount == 0) && ((flags and FLAG_START_TRACKING) != 0)) {
-                        if (DEBUG) Log.v(TAG, "  Start tracking!")
+                        if (DBG) Log.v(TAG, "  Start tracking!")
                         state.startTracking(this, target)
                     } else if (isLongPress && state.isTracking(this)) {
                         try {
                             if (receiver.onKeyLongPress(keyCode, this)) {
-                                if (DEBUG) Log.v(TAG, "  Clear from long press!")
+                                if (DBG) Log.v(TAG, "  Clear from long press!")
                                 state.performedLongPress(this)
                                 res = true
                             }
@@ -963,7 +961,7 @@ class KeyEvent {
                 return res
             }
             ACTION_UP -> {
-                if (DEBUG) Log.v(
+                if (DBG) Log.v(
                     TAG, ("Key up to " + target + " in " + state
                             + ": " + this)
                 )
@@ -1007,7 +1005,7 @@ class KeyEvent {
          * Reset back to initial state.
          */
         fun reset() {
-            if (DEBUG) Log.v(
+            if (DBG) Log.v(
                 TAG,
                 "Reset: $this"
             )
@@ -1021,7 +1019,7 @@ class KeyEvent {
          */
         fun reset(target: Any) {
             if (mDownTarget === target) {
-                if (DEBUG) Log.v(
+                if (DBG) Log.v(
                     TAG,
                     "Reset in $target: $this"
                 )
@@ -1047,7 +1045,7 @@ class KeyEvent {
                     "Can only start tracking on a down event"
                 )
             }
-            if (DEBUG) Log.v(
+            if (DBG) Log.v(
                 TAG,
                 "Start trackingt in $target: $this"
             )
@@ -1083,13 +1081,13 @@ class KeyEvent {
          */
         fun handleUpEvent(event: KeyEvent) {
             val keyCode = event.keyCode
-            if (DEBUG) Log.v(
+            if (DBG) Log.v(
                 TAG,
                 "Handle key up $event: $this"
             )
             val index: Int = mActiveLongPresses.indexOfKey(keyCode)
             if (index >= 0) {
-                if (DEBUG) Log.v(
+                if (DBG) Log.v(
                     TAG,
                     "  Index: $index"
                 )
@@ -1097,7 +1095,7 @@ class KeyEvent {
                 mActiveLongPresses.removeAt(index)
             }
             if (mDownKeyCode == keyCode) {
-                if (DEBUG) Log.v(TAG, "  Tracking!")
+                if (DBG) Log.v(TAG, "  Tracking!")
                 event.flags = event.flags or FLAG_TRACKING
                 mDownKeyCode = 0
                 mDownTarget = null
@@ -2612,7 +2610,7 @@ class KeyEvent {
          */
         val FLAG_TAINTED = -0x80000000
 
-        val DEBUG = false
+        val DBG = false
         val TAG = "KeyEvent"
         private val MAX_RECYCLED = 10
         private val gRecyclerLock = Any()

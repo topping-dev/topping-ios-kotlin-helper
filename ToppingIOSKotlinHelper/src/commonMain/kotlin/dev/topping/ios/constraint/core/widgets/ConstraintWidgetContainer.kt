@@ -306,7 +306,7 @@ class ConstraintWidgetContainer : WidgetContainer {
      * @param system the solver we want to add the widget to
      */
     fun addChildrenToSolver(system: LinearSystem): Boolean {
-        if (DEBUG) {
+        if (DBG) {
             println("\n#######################################")
             println("##    ADD CHILDREN TO SOLVER  ($mDebugSolverPassCount) ##")
             println("#######################################\n")
@@ -478,7 +478,7 @@ class ConstraintWidgetContainer : WidgetContainer {
      */
     
     override fun layout() {
-        if (DEBUG) {
+        if (DBG) {
             println("\n#####################################")
             println("##          CL LAYOUT PASS           ##")
             println("#####################################\n")
@@ -647,7 +647,7 @@ class ConstraintWidgetContainer : WidgetContainer {
             try {
                 mSystem.reset()
                 resetChains()
-                if (DEBUG) {
+                if (DBG) {
                     var debugName: String? = debugName
                     if (debugName == null) {
                         debugName = "root"
@@ -959,7 +959,7 @@ class ConstraintWidgetContainer : WidgetContainer {
 
     companion object {
         private const val MAX_ITERATIONS = 8
-        private val DEBUG: Boolean = LinearSystem.Companion.FULL_DEBUG
+        private val DBG: Boolean = LinearSystem.Companion.FULL_DEBUG
         private const val DEBUG_LAYOUT = false
         const val DEBUG_GRAPH = false
 
@@ -971,7 +971,7 @@ class ConstraintWidgetContainer : WidgetContainer {
             measure: BasicMeasure.Measure,
             measureStrategy: Int
         ): Boolean {
-            if (DEBUG) {
+            if (DBG) {
                 println(Direct.ls(level) + "(M) call to measure " + widget.debugName)
             }
             if (measurer == null) {
@@ -980,7 +980,7 @@ class ConstraintWidgetContainer : WidgetContainer {
             if (widget.visibility == GONE || widget is Guideline
                 || widget is Barrier
             ) {
-                if (DEBUG) {
+                if (DBG) {
                     println(
                         Direct.ls(level)
                                 + "(M) no measure needed for " + widget.debugName
@@ -1053,7 +1053,7 @@ class ConstraintWidgetContainer : WidgetContainer {
                     // regardless of which side we are using for the ratio, getDimensionRatio() already
                     // made sure that it's expressed in WxH format, so we can simply go and multiply
                     measure.horizontalDimension = (widget.dimensionRatio * measuredHeight).toInt()
-                    if (DEBUG) {
+                    if (DBG) {
                         println("(M) Measured once for ratio on horizontal side...")
                     }
                 }
@@ -1085,7 +1085,7 @@ class ConstraintWidgetContainer : WidgetContainer {
                         // getDimensionRatio() already got reverted, so we can simply multiply
                         measure.verticalDimension = (widget.dimensionRatio * measuredWidth).toInt()
                     }
-                    if (DEBUG) {
+                    if (DBG) {
                         println("(M) Measured once for ratio on vertical side...")
                     }
                 }
@@ -1096,7 +1096,7 @@ class ConstraintWidgetContainer : WidgetContainer {
             widget.setHasBaseline(measure.measuredHasBaseline)
             widget.setBaselineDistance(measure.measuredBaseline)
             measure.measureStrategy = BasicMeasure.Measure.SELF_DIMENSIONS
-            if (DEBUG) {
+            if (DBG) {
                 println(
                     "(M) Measured " + widget.debugName.toString() + " with : "
                             + widget.horizontalDimensionBehaviour.toString() + " x "

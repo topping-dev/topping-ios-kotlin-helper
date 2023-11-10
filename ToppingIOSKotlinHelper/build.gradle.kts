@@ -42,7 +42,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation("io.github.pdvrieze.xmlutil:core:0.86.1")
-                implementation("org.jetbrains.skiko:skiko:0.7.44")
+                implementation("org.jetbrains.skiko:skiko:0.7.81")
             }
         }
         val iosX64Main by getting

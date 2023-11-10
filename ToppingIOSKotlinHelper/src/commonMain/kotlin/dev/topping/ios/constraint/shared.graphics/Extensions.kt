@@ -38,12 +38,6 @@ fun Matrix33.copy(): Matrix33 {
     return Matrix33(*mat.copyOf())
 }
 
-class AndroidMatrix33(val data: FloatArray = FloatArray(9) { 0f })
-
-fun AndroidMatrix33.toMatrix() : Matrix33 {
-    return Matrix33(*data)
-}
-
 fun Matrix33.isIdentity() : Boolean {
     val idM = Matrix33.IDENTITY
     return this.mat contentEquals idM.mat

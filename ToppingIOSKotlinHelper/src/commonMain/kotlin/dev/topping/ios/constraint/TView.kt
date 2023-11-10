@@ -3,11 +3,11 @@ package dev.topping.ios.constraint
 import dev.topping.ios.constraint.TView.Companion.LAYOUT_DIRECTION_LTR
 import dev.topping.ios.constraint.core.motion.utils.Rect
 import dev.topping.ios.constraint.core.state.Interpolator
-import dev.topping.ios.constraint.shared.graphics.AndroidMatrix33
 import kotlinx.cinterop.*
 import nl.adaptivity.xmlutil.XmlBufferedReader
 import nl.adaptivity.xmlutil.XmlStreaming
 import nl.adaptivity.xmlutil.attributes
+import org.jetbrains.skia.*
 
 class NotFoundException : Exception()
 
@@ -35,12 +35,72 @@ interface TCanvas {
     fun drawText(text: String, x: Float, y: Float, paint: TPaint)
     fun save()
     fun restore()
+    fun translate(dx: Float, dy: Float)
+    fun scale(sx: Float, sy: Float)
+    fun rotate(degrees: Float)
+    fun skew(sx: Float, sy: Float)
+    fun saveLayer(bounds: org.jetbrains.skia.Rect, paint: TPaint)
+    fun concat(matrix: Matrix)
+    fun clipRect(left: Float, top: Float, right: Float, bottom: Float, clipOp: ClipMode)
+    fun clipPath(path: Path, clipMode: ClipMode)
+    fun drawLine(p1: Point, p2: Point, paint: TPaint)
+    fun drawRect(left: Float, top: Float, right: Float, bottom: Float, paint: TPaint)
+    fun drawRoundRect(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        radiusX: Float,
+        radiusY: Float,
+        paint: TPaint
+    )
+
+    fun drawOval(left: Float, top: Float, right: Float, bottom: Float, paint: TPaint)
+    fun drawCircle(center: Point, radius: Float, paint: TPaint)
+    fun drawArc(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        startAngle: Float,
+        sweepAngle: Float,
+        useCenter: Boolean,
+        paint: TPaint
+    )
+
+    fun drawPath(path: Path, paint: TPaint)
+    fun drawImage(image: Bitmap, topLeftOffset: Point, paint: TPaint)
+    fun drawImageRect(
+        image: Bitmap,
+        srcOffset: Point,
+        srcSize: Size,
+        dstOffset: Point,
+        dstSize: Size,
+        paint: TPaint
+    )
+
+    fun enableZ()
+    fun disableZ()
 }
+
 interface TPaint {
     fun getTextBounds(text: String, start: Int, end: Int, bounds: Rect)
     fun setColor(color: TColor)
     fun setAntiAlias(value: Boolean)
     fun setStrokeWidth(value: Int)
+    var alpha: Float
+    var isAntiAlias: Boolean
+    var color: Int
+    var blendMode: BlendMode
+    var style: PaintMode
+    var strokeWidth: Float
+    var strokeCap: PaintStrokeCap
+    var strokeJoin: PaintStrokeJoin
+    var strokeMiterLimit: Float
+    var shader: Shader?
+    var colorFilter: ColorFilter?
+    var pathEffect: PathEffect?
+    var font: Font?
 }
 
 expect class TColor {
@@ -630,7 +690,7 @@ interface TView {
     fun getPaddingLeft(): Int
     fun getScrollX(): Float
     fun getScrollY(): Float
-    fun getMatrix(): AndroidMatrix33
+    fun getMatrix(): Matrix33
     fun onTouchEvent(event: MotionEvent): Boolean
     fun getLayoutDirection(): Int
     fun onViewAdded(view: TView)

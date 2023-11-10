@@ -159,7 +159,7 @@ class Carousel(context: TContext, attrs: AttributeSet, self: TView) : MotionHelp
         endId: String,
         progress: Float
     ) {
-        if (DEBUG) {
+        if (DBG) {
             println(
                 "onTransitionChange from " + startId
                         + " to " + endId + " progress " + progress
@@ -341,7 +341,7 @@ class Carousel(context: TContext, attrs: AttributeSet, self: TView) : MotionHelp
         if (mAdapter!!.count() == 0) {
             return
         }
-        if (DEBUG) {
+        if (DBG) {
             println("Update items, index: " + currentIndex)
         }
         val viewCount: Int = mList.size
@@ -425,7 +425,7 @@ class Carousel(context: TContext, attrs: AttributeSet, self: TView) : MotionHelp
     }
 
     companion object {
-        private val DEBUG = false
+        private val DBG = false
         private val TAG = "Carousel"
         val TOUCH_UP_IMMEDIATE_STOP = 1
         val TOUCH_UP_CARRY_ON = 2

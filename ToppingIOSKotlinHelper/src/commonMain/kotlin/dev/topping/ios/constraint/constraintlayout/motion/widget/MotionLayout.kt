@@ -35,7 +35,6 @@ import dev.topping.ios.constraint.core.state.Interpolator
 import dev.topping.ios.constraint.core.widgets.*
 import dev.topping.ios.constraint.shared.graphics.inverse
 import dev.topping.ios.constraint.shared.graphics.isIdentity
-import dev.topping.ios.constraint.shared.graphics.toMatrix
 import org.jetbrains.skia.Matrix33
 import kotlin.math.*
 
@@ -4036,7 +4035,7 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
         offsetX: Float,
         offsetY: Float
     ): Boolean {
-        val viewMatrix: Matrix33 = view.getMatrix().toMatrix()
+        val viewMatrix: Matrix33 = view.getMatrix()
         if (viewMatrix.isIdentity()) {
             event.offsetLocation(offsetX, offsetY)
             val handled: Boolean = view.onTouchEvent(event)
