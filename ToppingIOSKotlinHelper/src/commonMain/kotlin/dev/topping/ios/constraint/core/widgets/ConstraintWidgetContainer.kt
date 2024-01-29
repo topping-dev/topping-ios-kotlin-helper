@@ -24,6 +24,7 @@ import dev.topping.ios.constraint.core.widgets.analyzer.BasicMeasure
 import dev.topping.ios.constraint.core.widgets.analyzer.DependencyGraph
 import dev.topping.ios.constraint.core.widgets.analyzer.Direct
 import dev.topping.ios.constraint.core.widgets.analyzer.Grouping
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.ref.WeakReference
 
 import kotlin.math.*
@@ -31,6 +32,7 @@ import kotlin.math.*
 /**
  * A container of ConstraintWidget that can layout its children
  */
+@OptIn(ExperimentalNativeApi::class)
 class ConstraintWidgetContainer : WidgetContainer {
     var mBasicMeasureSolver: BasicMeasure = BasicMeasure(this)
 

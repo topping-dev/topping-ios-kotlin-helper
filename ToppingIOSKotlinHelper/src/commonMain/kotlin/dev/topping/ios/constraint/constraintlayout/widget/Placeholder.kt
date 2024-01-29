@@ -22,12 +22,14 @@ import dev.topping.ios.constraint.core.widgets.ConstraintWidget
 import dev.topping.ios.constraint.core.widgets.height
 import dev.topping.ios.constraint.core.widgets.visibility
 import dev.topping.ios.constraint.core.widgets.width
+import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathMeasure
 
 /**
  * **Added in 1.1**
  *
  *
- * A `Placeholder` provides a virtual object which can position an existing object.
+ * A `Placeholder2` provides a virtual object which can position an existing object.
  *
  *
  * When the id of another view is set on a placeholder (using `setContent()`),
@@ -36,7 +38,7 @@ import dev.topping.ios.constraint.core.widgets.width
  *
  *
  * The content view is positioned using the layout of the parameters of the
- * `Placeholder`  (the `Placeholder`
+ * `Placeholder2`  (the `Placeholder2`
  * is simply constrained in the layout like any other view).
  *
  */
@@ -96,7 +98,7 @@ class Placeholder(val context: TContext, val attrs: AttributeSet, val self: TVie
     /**
      * Sets the content view id
      *
-     * @param id the id of the content view we want to place in the Placeholder
+     * @param id the id of the content view we want to place in the Placeholder2
      */
     fun setContentId(id: String) {
         if (mContentId == id) {

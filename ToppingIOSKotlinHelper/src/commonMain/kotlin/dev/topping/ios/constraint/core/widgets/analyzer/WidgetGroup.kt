@@ -18,11 +18,13 @@ package dev.topping.ios.constraint.core.widgets.analyzer
 import dev.topping.ios.constraint.Arrays
 import dev.topping.ios.constraint.core.LinearSystem
 import dev.topping.ios.constraint.core.widgets.*
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.ref.WeakReference
 
 /**
  * Represents a group of widget for the grouping mechanism.
  */
+@OptIn(ExperimentalNativeApi::class)
 class WidgetGroup(orientation: Int) {
     var mWidgets: ArrayList<ConstraintWidget?> = ArrayList()
     var id = -1

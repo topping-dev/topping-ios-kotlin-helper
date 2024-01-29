@@ -4,9 +4,11 @@ import dev.topping.ios.constraint.Arrays
 import dev.topping.ios.constraint.core.motion.utils.TypedBundle
 import dev.topping.ios.constraint.core.motion.utils.TypedValues
 import dev.topping.ios.constraint.core.parser.*
+import kotlin.experimental.ExperimentalNativeApi
 
 class KeyParser {
     companion object {
+        @OptIn(ExperimentalNativeApi::class)
         private fun parse(str: String, table: Ids, dtype: DataType): TypedBundle? {
             val bundle = TypedBundle()
             try {

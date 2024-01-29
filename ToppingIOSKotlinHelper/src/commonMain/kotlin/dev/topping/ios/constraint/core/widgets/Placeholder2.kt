@@ -24,7 +24,7 @@ import kotlin.math.*
 /**
  * Simple VirtualLayout that center the first referenced widget onto itself.
  */
-class Placeholder : VirtualLayout() {
+class Placeholder2 : VirtualLayout() {
     // @TODO: add description
     
     override fun measure(widthMode: Int, widthSize: Int, heightMode: Int, heightSize: Int) {

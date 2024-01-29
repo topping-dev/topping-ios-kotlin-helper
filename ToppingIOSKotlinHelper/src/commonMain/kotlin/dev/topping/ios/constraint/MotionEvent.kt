@@ -1,5 +1,7 @@
 package dev.topping.ios.constraint
 
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import org.jetbrains.skia.Matrix33
 import kotlin.math.*
 
@@ -8,7 +10,7 @@ fun Int.toHexString() : String {
 }
 
 class MotionEvent private constructor() {
-    private lateinit var mNativePtr: MotionEventN
+    private var mNativePtr: MotionEventN = MotionEventN()
     private var mNext: MotionEvent? = null
 
     private fun initialize(
@@ -1435,22 +1437,22 @@ class MotionEvent private constructor() {
         eventTime: Long, x: Float, y: Float,
         pressure: Float, size: Float, metaState: Int
     ) {
-        //synchronized(gSharedTempLock) {
+        synchronized(gSharedTempLock) {
             ensureSharedTempPointerCapacity(1)
             val pc: Array<PointerCoords> =
                 gSharedTempPointerCoords
-            pc.get(0).clear()
-            pc.get(0).x = x
-            pc.get(0).y = y
-            pc.get(0).pressure = pressure
-            pc.get(0).size = size
+            pc[0].clear()
+            pc[0].x = x
+            pc[0].y = y
+            pc[0].pressure = pressure
+            pc[0].size = size
             nativeAddBatch(
                 mNativePtr,
                 eventTime * NS_PER_MS,
                 pc,
                 metaState
             )
-        //}
+        }
     }
 
     /**
@@ -1499,7 +1501,7 @@ class MotionEvent private constructor() {
         if (pointerCount != nativeGetPointerCount(event.mNativePtr)) {
             return false
         }
-        //synchronized(gSharedTempLock) {
+        synchronized(gSharedTempLock) {
             ensureSharedTempPointerCapacity(
                 max(
                     pointerCount,
@@ -1511,9 +1513,9 @@ class MotionEvent private constructor() {
             val pc: Array<PointerCoords> =
                 gSharedTempPointerCoords
             for (i in 0 until pointerCount) {
-                nativeGetPointerProperties(mNativePtr, i, pp.get(0))
-                nativeGetPointerProperties(event.mNativePtr, i, pp.get(1))
-                if (!pp.get(0).equals(pp.get(1))) {
+                nativeGetPointerProperties(mNativePtr, i, pp[0])
+                nativeGetPointerProperties(event.mNativePtr, i, pp[1])
+                if (!pp[0].equals(pp[1])) {
                     return false
                 }
             }
@@ -1528,14 +1530,14 @@ class MotionEvent private constructor() {
                         event.mNativePtr,
                         i,
                         historyPos,
-                        pc.get(i)
+                        pc[i]
                     )
                 }
                 val eventTimeNanos: Long =
                     nativeGetEventTimeNanos(event.mNativePtr, historyPos)
                 nativeAddBatch(mNativePtr, eventTimeNanos, pc, metaState)
             }
-        //}
+        }
         return true
     }
 
@@ -1564,7 +1566,7 @@ class MotionEvent private constructor() {
      */
     fun clampNoHistory(left: Float, top: Float, right: Float, bottom: Float): MotionEvent {
         val ev: MotionEvent = obtain()
-        //synchronized(gSharedTempLock) {
+        synchronized(gSharedTempLock) {
             val pointerCount: Int = nativeGetPointerCount(mNativePtr)
             ensureSharedTempPointerCapacity(pointerCount)
             val pp: Array<PointerProperties> =
@@ -1572,15 +1574,15 @@ class MotionEvent private constructor() {
             val pc: Array<PointerCoords> =
                 gSharedTempPointerCoords
             for (i in 0 until pointerCount) {
-                nativeGetPointerProperties(mNativePtr, i, pp.get(i))
+                nativeGetPointerProperties(mNativePtr, i, pp[i])
                 nativeGetPointerCoords(
                     mNativePtr,
                     i,
                     HISTORY_CURRENT,
-                    pc.get(i)
+                    pc[i]
                 )
-                pc.get(i).x = clamp(pc.get(i).x, left, right)
-                pc.get(i).y = clamp(pc.get(i).y, top, bottom)
+                pc[i].x = clamp(pc[i].x, left, right)
+                pc[i].y = clamp(pc[i].y, top, bottom)
             }
             ev.initialize(
                 nativeGetSource(mNativePtr),
@@ -1604,7 +1606,7 @@ class MotionEvent private constructor() {
                 pc
             )
             return ev
-        //}
+        }
     }
 
     /**
@@ -1627,7 +1629,7 @@ class MotionEvent private constructor() {
      */
     fun split(idBits: Int): MotionEvent {
         val ev: MotionEvent = obtain()
-        //synchronized(gSharedTempLock) {
+        synchronized(gSharedTempLock) {
             val oldPointerCount: Int =
                 nativeGetPointerCount(mNativePtr)
             ensureSharedTempPointerCapacity(oldPointerCount)
@@ -1647,9 +1649,9 @@ class MotionEvent private constructor() {
                 nativeGetPointerProperties(
                     mNativePtr,
                     i,
-                    pp.get(newPointerCount)
+                    pp[newPointerCount]
                 )
-                val idBit: Int = 1 shl pp.get(newPointerCount).id
+                val idBit: Int = 1 shl pp[newPointerCount].id
                 if ((idBit and idBits) != 0) {
                     if (i == oldActionPointerIndex) {
                         newActionPointerIndex = newPointerCount
@@ -1686,9 +1688,9 @@ class MotionEvent private constructor() {
                 for (i in 0 until newPointerCount) {
                     nativeGetPointerCoords(
                         mNativePtr,
-                        map.get(i),
+                        map[i],
                         historyPos,
-                        pc.get(i)
+                        pc[i]
                     )
                 }
                 val eventTimeNanos: Long =
@@ -1717,7 +1719,7 @@ class MotionEvent private constructor() {
                 }
             }
             return ev
-        //}
+        }
     }
 
     /**
@@ -2081,7 +2083,7 @@ class MotionEvent private constructor() {
                         return 0f
                     }
                     val index: Int = (bits and (-0x1 ushr axis).inv()).countOneBits()
-                    return mPackedAxisValues!!.get(index)
+                    return mPackedAxisValues!![index]
                 }
             }
         }
@@ -2248,7 +2250,7 @@ class MotionEvent private constructor() {
 
         fun pointerCoordsToNative(pointerCoordsObj: PointerCoords,
                                   xOffset: Float, yOffset: Float): MotionEventN.PointerCoords {
-            var outRawPointerCoords = MotionEventN.PointerCoords()
+            val outRawPointerCoords = MotionEventN.PointerCoords()
             outRawPointerCoords.clear()
             outRawPointerCoords.setAxisValue(AXIS_X.toUInt(), pointerCoordsObj.x - xOffset)
             outRawPointerCoords.setAxisValue(AXIS_Y.toUInt(), pointerCoordsObj.y - yOffset)
@@ -2267,12 +2269,12 @@ class MotionEvent private constructor() {
             outRawPointerCoords.setAxisValue(AXIS_ORIENTATION.toUInt(), pointerCoordsObj.orientation)
             outRawPointerCoords.setAxisValue(AXIS_RELATIVE_X.toUInt(), pointerCoordsObj.relativeX)
             outRawPointerCoords.setAxisValue(AXIS_RELATIVE_Y.toUInt(), pointerCoordsObj.relativeY)
-            var bits = BitSet32(pointerCoordsObj.mPackedAxisBits)
+            val bits = BitSet32(pointerCoordsObj.mPackedAxisBits)
             if (!bits.isEmpty()) {
                 if (pointerCoordsObj.mPackedAxisValues != null) {
                     var index = 0;
                     do {
-                        var axis = bits.clearFirstMarkedBit()
+                        val axis = bits.clearFirstMarkedBit()
                         outRawPointerCoords.setAxisValue(axis, pointerCoordsObj.mPackedAxisValues!![index++])
                     } while (!bits.isEmpty())
                 }
@@ -2295,7 +2297,7 @@ class MotionEvent private constructor() {
                 }
                 var index = 0
                 do {
-                    var axis = bits.clearFirstMarkedBit()
+                    val axis = bits.clearFirstMarkedBit()
                     outBits = outBits or BitSet32.valueForBit(axis).toInt()
                     outValues[index++] = rawPointerCoords.getAxisValue(axis)
                 } while (!bits.isEmpty())
@@ -3611,13 +3613,13 @@ class MotionEvent private constructor() {
         // NaN and we use isnan() everywhere to check validity.
         private val INVALID_CURSOR_POSITION: Float = Float.NaN
         private val MAX_RECYCLED: Int = 10
-        private val gRecyclerLock: Any = Any()
+        private val gRecyclerLock: SynchronizedObject = SynchronizedObject()
         private var gRecyclerUsed: Int = 0
         private var gRecyclerTop: MotionEvent? = null
 
         // Shared temporary objects used when translating coordinates supplied by
         // the caller into single element PointerCoords and pointer id arrays.
-        private val gSharedTempLock: Any = Any()
+        private val gSharedTempLock: SynchronizedObject = SynchronizedObject()
         private var gSharedTempPointerCoords: Array<PointerCoords> = arrayOf()
         private var gSharedTempPointerProperties: Array<PointerProperties> = arrayOf()
         private var gSharedTempPointerIndexMap: IntArray = intArrayOf()
@@ -3652,21 +3654,12 @@ class MotionEvent private constructor() {
             pointerIds: Array<PointerProperties>,
             pointerCoords: Array<PointerCoords>
         ) {
+            val pointerProperties = MutableList(pointerCount) { pointerPropertiesToNative(pointerIds[it], MotionEventN.PointerProperties(0, 0)) }
+            val rawPointerCoords = MutableList(pointerCount) { pointerCoordsToNative(pointerCoords[it], nativePtr.getXOffset(), nativePtr.getYOffset()) }
 
-            var nPointerIds = mutableListOf<MotionEventN.PointerProperties>()
-            var nPointerCoords = mutableListOf<MotionEventN.PointerCoords>()
-
-            var pointerProperties = MutableList<MotionEventN.PointerProperties>(pointerCount) { MotionEventN.PointerProperties() }
-            var rawPointerCoords = MutableList<MotionEventN.PointerCoords>(pointerCount) { MotionEventN.PointerCoords() }
-
-            for(i in 0 until pointerCount) {
-                pointerProperties.add(pointerPropertiesToNative(pointerIds[i], MotionEventN.PointerProperties(0, 0)))
-                rawPointerCoords.add(pointerCoordsToNative(pointerCoords[i], nativePtr.getXOffset(), nativePtr.getYOffset()))
-            }
-
-            var transform = Transform()
+            val transform = Transform()
             transform.set(xOffset, yOffset)
-            var identityTransform = Transform()
+            val identityTransform = Transform()
             nativePtr.initialize(0, source, action, 0, flags, edgeFlags, metaState, buttonState, classification, transform, xPrecision
             , yPrecision, AMOTION_EVENT_INVALID_CURSOR_POSITION, AMOTION_EVENT_INVALID_CURSOR_POSITION, identityTransform,
             downTimeNanos, eventTimeNanos, pointerCount, pointerProperties, rawPointerCoords)
@@ -3677,12 +3670,10 @@ class MotionEvent private constructor() {
             pointerCoords: Array<PointerCoords>, metaState: Int
         ) {
             val pointerCount = nativePtr.getPointerCount()
-            var rawPointerCoords = MutableList<MotionEventN.PointerCoords>(pointerCount) { MotionEventN.PointerCoords() }
-            for(i in 0 until pointerCount) {
-                rawPointerCoords.add(pointerCoordsToNative(pointerCoords[i], nativePtr.getXOffset(), nativePtr.getYOffset()))
-            }
+            val rawPointerCoords = MutableList(pointerCount) { pointerCoordsToNative(pointerCoords[it], nativePtr.getXOffset(), nativePtr.getYOffset()) }
 
             nativePtr.addSample(eventTimeNanos, rawPointerCoords)
+            nativePtr.metaState = nativePtr.metaState or metaState
         }
 
         private fun nativeGetPointerCoords(
@@ -3922,17 +3913,17 @@ class MotionEvent private constructor() {
         }
 
         private fun obtain(): MotionEvent {
-            var ev: MotionEvent?
-            //synchronized(gRecyclerLock) {
+            var ev: MotionEvent? = MotionEvent()
+            synchronized(gRecyclerLock) {
                 ev = (gRecyclerTop)
                 if (ev == null) {
                     return MotionEvent()
                 }
-                gRecyclerTop = ev.mNext
+                gRecyclerTop = ev?.mNext
                 gRecyclerUsed -= 1
-            //}
-            ev.mNext = null
-            return ev
+            }
+            ev?.mNext = null
+            return ev ?: MotionEvent()
         }
 
         /**
@@ -4058,19 +4049,19 @@ class MotionEvent private constructor() {
             source: Int = AINPUT_SOURCE.AINPUT_SOURCE_MOUSE.value.toInt()
         ): MotionEvent {
             val ev: MotionEvent = obtain()
-            //synchronized(gSharedTempLock) {
+            synchronized(gSharedTempLock) {
                 ensureSharedTempPointerCapacity(1)
                 val pp: Array<PointerProperties> =
                     gSharedTempPointerProperties
-                pp.get(0).clear()
-                pp.get(0).id = 0
+                pp[0].clear()
+                pp[0].id = 0
                 val pc: Array<PointerCoords> =
                     gSharedTempPointerCoords
-                pc.get(0).clear()
-                pc.get(0).x = x
-                pc.get(0).y = y
-                pc.get(0).pressure = pressure
-                pc.get(0).size = size
+                pc[0].clear()
+                pc[0].x = x
+                pc[0].y = y
+                pc[0].pressure = pressure
+                pc[0].size = size
                 ev.initialize(
                     source,
                     action,
@@ -4090,7 +4081,7 @@ class MotionEvent private constructor() {
                     pc
                 )
                 return ev
-            //}
+            }
         }
 
         /**
@@ -4267,7 +4258,7 @@ class MotionEvent private constructor() {
                 val isSet: Boolean = (buttonState and 1) != 0
                 buttonState = buttonState ushr 1 // unsigned shift!
                 if (isSet) {
-                    val name: String = BUTTON_SYMBOLIC_NAMES.get(i)
+                    val name: String = BUTTON_SYMBOLIC_NAMES[i]
                     if (result == null) {
                         if (buttonState == 0) {
                             return name

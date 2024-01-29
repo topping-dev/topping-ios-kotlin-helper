@@ -23,20 +23,20 @@ import dev.topping.ios.constraint.constraintlayout.widget.VirtualLayout
 import dev.topping.ios.constraint.core.widgets.ConstraintWidget
 import dev.topping.ios.constraint.core.widgets.ConstraintWidgetContainer
 import dev.topping.ios.constraint.core.widgets.Helper
-import dev.topping.ios.constraint.core.widgets.Placeholder
+import dev.topping.ios.constraint.core.widgets.Placeholder2
 
 class MotionPlaceholder(context: TContext, attrs: AttributeSet, self: TView) : VirtualLayout(context, attrs, self) {
-    var mPlaceholder: Placeholder? = null
+    var mPlaceholder2: Placeholder2? = null
 
     init {
         self.setParentType(this)
-        mHelperWidget = Placeholder()
+        mHelperWidget = Placeholder2()
         validateParams()
     }
 
 
     override fun onMeasure(sup: TView?, widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        onMeasure(mPlaceholder, widthMeasureSpec, heightMeasureSpec)
+        onMeasure(mPlaceholder2, widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onMeasure(

@@ -1,11 +1,30 @@
 package dev.topping.ios.constraint
 
 import dev.topping.ios.constraint.shared.graphics.isIdentity
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
 import org.jetbrains.skia.*
 import org.jetbrains.skia.impl.use
+import org.jetbrains.skia.paragraph.Alignment
+import org.jetbrains.skia.paragraph.BaselineMode
+import org.jetbrains.skia.paragraph.DecorationStyle
+import org.jetbrains.skia.paragraph.Direction
+import org.jetbrains.skia.paragraph.FontCollection
+import org.jetbrains.skia.paragraph.Paragraph
+import org.jetbrains.skia.paragraph.ParagraphBuilder
+import org.jetbrains.skia.paragraph.ParagraphStyle
+import org.jetbrains.skia.paragraph.PlaceholderAlignment
+import org.jetbrains.skia.paragraph.PlaceholderStyle
+import org.jetbrains.skia.paragraph.Shadow
+import org.jetbrains.skia.paragraph.StrutStyle
+import org.jetbrains.skia.paragraph.TextBox
+import org.jetbrains.skia.paragraph.TextStyle
+import org.jetbrains.skia.paragraph.TypefaceFontProvider
+import org.jetbrains.skiko.SkiaLayer
+import org.jetbrains.skiko.SkikoUIView
+import org.jetbrains.skiko.SkikoView
 import platform.CoreFoundation.CFDataGetBytePtr
 import platform.CoreFoundation.CFDataGetLength
 import platform.CoreFoundation.CFRelease
@@ -21,22 +40,77 @@ fun TPaint.toSkiaPaint(): SkiaPaint {
     return this as SkiaPaint
 }
 
+class ObjcUtils {
+    companion object {
+        fun makePathMeasure() : PathMeasure {
+            return PathMeasure()
+        }
+    }
+}
+
+fun Image.getAlignment() : Alignment? = null
+fun Image.getBaselineMode() : BaselineMode? = null
+fun Image.getDecorationStyle() : DecorationStyle? = null
+fun Image.getDirection() : Direction? = null
+fun Image.getParagraph() : Paragraph? = null
+fun Image.getParagraphBuilder() : ParagraphBuilder? = null
+fun Image.getParagraphStyle() : ParagraphStyle? = null
+fun Image.getPlaceholderAlignment() : PlaceholderAlignment? = null
+fun Image.getPlaceholderStyle() : PlaceholderStyle? = null
+fun Image.getShadow() : Shadow? = null
+fun Image.getStrutStyle() : StrutStyle? = null
+fun Image.getTextBox() : TextBox? = null
+fun Image.getTextStyle() : TextStyle? = null
+fun Image.getFontMgr() : FontMgr? = null
+fun Image.getFontCollection() : FontCollection? = null
+fun Image.getTypeface() : Typeface? = null
+fun Image.getTypefaceFontProvider() : TypefaceFontProvider? = null
+fun Image.getFontFamilyName() : FontFamilyName? = null
+fun Image.getBreakIterator() : BreakIterator? = null
+fun Image.getSurface() : Surface? = null
+fun Image.getSurfaceOrigin() : SurfaceOrigin? = null
+fun Image.getSurfaceColorFormat() : SurfaceColorFormat? = null
+fun Image.getMetalRedrawer() : MetalRedrawer? = null
+fun Image.getPictureRecorder() : PictureRecorder? = null
+
+open class ToppingSkiaLayer : SkiaLayer() {
+    fun createSkikoView(): SkikoUIView {
+        val view = SkikoUIView(this)
+        attachTo(view)
+        return view
+    }
+}
+
+interface ISkikoView {
+    fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long)
+}
+
+open class ToppingSkikoView(private val skikoView: ISkikoView) : SkikoView {
+    override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
+        skikoView.onRender(canvas, width, height, nanoTime)
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
 fun SkiaCanvas.toUIImage(scale: Double = 1.0): UIImage {
-    var info = bitmap.imageInfo
-
-    val pixels = bitmap.readPixels()
-    if(pixels == null)
+    if(bitmap == null)
         return UIImage()
-
     memScoped {
+        var info = bitmap.imageInfo
+
+        val pixels = bitmap.readPixels()
+        if(pixels == null)
+            return UIImage()
+
         val provider = CGDataProviderCreateDirect(pixels.refTo(0), pixels.size.toLong(), null)
         val colorSpace = CGColorSpaceCreateDeviceRGB()
         val cgImage = CGImageCreate(info.width.toULong(), info.height.toULong(),
-            8, (info.bytesPerPixel * 8).toULong(),
+            8u, (info.bytesPerPixel * 8).toULong(),
             info.minRowBytes.toULong(), colorSpace,
             CGImageAlphaInfo.kCGImageAlphaPremultipliedFirst.value or (2U shl 12),
             provider, null, false, CGColorRenderingIntent.kCGRenderingIntentDefault
         )
+        CGDataProviderRelease(provider)
         if(cgImage == null)
             return UIImage()
 
@@ -44,6 +118,7 @@ fun SkiaCanvas.toUIImage(scale: Double = 1.0): UIImage {
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
 fun UIImage.toSkiaImage(): Image? {
     val imageRef = CGImageCreateCopyWithColorSpace(this.CGImage, CGColorSpaceCreateDeviceRGB()) ?: return null
 
@@ -100,7 +175,7 @@ fun Image.toCanvas(): Canvas {
 class SkiaCanvas : TCanvas {
 
     val skia: Canvas
-    val bitmap: Bitmap
+    val bitmap: Bitmap?
 
     constructor() {
         this.bitmap = Bitmap()
@@ -115,6 +190,11 @@ class SkiaCanvas : TCanvas {
     constructor(bitmap: Bitmap, surfaceProps: SurfaceProps) {
         skia = Canvas(bitmap, surfaceProps)
         this.bitmap = bitmap
+    }
+
+    constructor(canvas: Canvas) {
+        skia = canvas
+        bitmap = null
     }
 
     var alphaMultiplier: Float = 1.0f

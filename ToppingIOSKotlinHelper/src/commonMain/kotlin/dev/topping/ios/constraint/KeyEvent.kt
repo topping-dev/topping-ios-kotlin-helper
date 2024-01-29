@@ -265,8 +265,8 @@ class KeyEvent {
         code: Int, repeat: Int
     ) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = downTime
+        eventTimeNano = eventTime
         this.action = action
         keyCode = code
         repeatCount = repeat
@@ -292,8 +292,8 @@ class KeyEvent {
         code: Int, repeat: Int, metaState: Int
     ) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = downTime
+        eventTimeNano = eventTime
         this.action = action
         keyCode = code
         repeatCount = repeat
@@ -323,8 +323,8 @@ class KeyEvent {
         deviceId: Int, scancode: Int
     ) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = downTime
+        eventTimeNano = eventTime
         this.action = action
         keyCode = code
         repeatCount = repeat
@@ -356,8 +356,8 @@ class KeyEvent {
         deviceId: Int, scancode: Int, flags: Int
     ) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = downTime
+        eventTimeNano = eventTime
         this.action = action
         keyCode = code
         repeatCount = repeat
@@ -391,8 +391,8 @@ class KeyEvent {
         deviceId: Int, scancode: Int, flags: Int, source: Int
     ) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = downTime
+        eventTimeNano = eventTime
         this.action = action
         keyCode = code
         repeatCount = repeat
@@ -418,8 +418,8 @@ class KeyEvent {
      */
     constructor(time: Long, characters: String?, deviceId: Int, flags: Int) {
         id = nativeNextId()
-        mDownTime = nanoTimeToMilliseconds()
-        eventTimeNano = nanoTimeToMilliseconds()
+        mDownTime = time
+        eventTimeNano = time
         this.characters = characters
         action = ACTION_MULTIPLE
         keyCode = KEYCODE_UNKNOWN

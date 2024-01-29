@@ -1,5 +1,6 @@
 package dev.topping.ios.constraint.constraintlayout.widget
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.ref.WeakReference
 
 /**
@@ -7,6 +8,7 @@ import kotlin.native.ref.WeakReference
  */
 class SharedValues {
     private val mValues: MutableMap<String, Int> = mutableMapOf()
+    @OptIn(ExperimentalNativeApi::class)
     private val mValuesListeners: MutableMap<String, MutableSet<WeakReference<SharedValuesListener>>> =
         mutableMapOf()
 
@@ -29,6 +31,7 @@ class SharedValues {
      * @param key
      * @param listener
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun addListener(key: String, listener: SharedValuesListener?) {
         var listeners: MutableSet<WeakReference<SharedValuesListener>>? =
             mValuesListeners[key]
@@ -44,6 +47,7 @@ class SharedValues {
      * @param key
      * @param listener
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun removeListener(key: String, listener: SharedValuesListener) {
         val listeners: MutableSet<WeakReference<SharedValuesListener>> =
             mValuesListeners[key]
@@ -63,6 +67,7 @@ class SharedValues {
      * Remove a listener
      * @param listener
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun removeListener(listener: SharedValuesListener) {
         for (key in mValuesListeners.keys) {
             removeListener(key, listener)
@@ -72,6 +77,7 @@ class SharedValues {
     /**
      * remove all listeners
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun clearListeners() {
         mValuesListeners.clear()
     }
@@ -90,6 +96,7 @@ class SharedValues {
      * @param key
      * @param value
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun fireNewValue(key: String, value: Int) {
         var needsCleanup = false
         val previousValue = mValues[key] ?: UNSET

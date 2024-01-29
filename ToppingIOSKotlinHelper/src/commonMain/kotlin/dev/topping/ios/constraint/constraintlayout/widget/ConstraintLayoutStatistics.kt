@@ -18,6 +18,7 @@ package dev.topping.ios.constraint.constraintlayout.widget
 import dev.topping.ios.constraint.DecimalFormat
 import dev.topping.ios.constraint.Log
 import dev.topping.ios.constraint.core.Metrics
+import kotlin.experimental.ExperimentalNativeApi
 
 /**
  * This provide metrics of the complexity of the layout that is being solved.
@@ -116,6 +117,7 @@ class ConstraintLayoutStatistics {
         return "CL Perf: $title$value"
     }
 
+    @OptIn(ExperimentalNativeApi::class)
     private fun log(tag: String) {
         val s = Throwable().getStackTrace().contentToString()
         Log.v(

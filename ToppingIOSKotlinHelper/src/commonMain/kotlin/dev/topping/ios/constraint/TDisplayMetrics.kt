@@ -11,11 +11,45 @@ import nl.adaptivity.xmlutil.XmlStreaming
  * To access the TDisplayMetrics members, retrieve display metrics like this:
  * <pre>context.getResources().getDisplayMetrics();</pre>
  */
-class TDisplayMetrics(deviceDensity: Int) {
+class TDisplayMetrics(deviceDensityParam: Int) {
+    var deviceDensity = deviceDensityParam
 
-    init {
-        TDisplayMetrics.deviceDensity = deviceDensity
-    }
+    /**
+     * The reference density used throughout the system.
+     */
+    val DENSITY_DEFAULT: Int = DENSITY_MEDIUM
+
+    /**
+     * Scaling factor to convert a density in DPI units to the density scale.
+     * @hide
+     */
+    val DENSITY_DEFAULT_SCALE: Float = 1.0f / DENSITY_DEFAULT
+
+    /**
+     * The device's current density.
+     *
+     *
+     * This value reflects any changes made to the device density. To obtain
+     * the device's stable density, use [.DENSITY_DEVICE_STABLE].
+     *
+     * @hide This value should not be used.
+     */
+    var DENSITY_DEVICE: Int = deviceDensity
+
+    /**
+     * The device's stable density.
+     *
+     *
+     * This value is constant at run time and may not reflect the current
+     * display density. To obtain the current density for a specific display,
+     * use [.densityDpi].
+     */
+    val DENSITY_DEVICE_STABLE: Int = deviceDensity
+
+    // qemu.sf.lcd_density can be used to override ro.sf.lcd_density
+    // when running in the emulator, allowing for dynamic configurations.
+    // The reason for this is that ro.sf.lcd_density is write-once and is
+    // set by the init process when it parses build.prop before anything else.
 
     /**
      * The absolute width of the available display size in pixels.
@@ -118,6 +152,11 @@ class TDisplayMetrics(deviceDensity: Int) {
      * @hide
      */
     var noncompatYdpi = 0f
+
+    init {
+        setToDefaults()
+    }
+
     fun setTo(o: TDisplayMetrics) {
         if (this === o) {
             return
@@ -142,11 +181,11 @@ class TDisplayMetrics(deviceDensity: Int) {
         widthPixels = 0
         heightPixels = 0
         density =
-            TDisplayMetrics.Companion.DENSITY_DEVICE / TDisplayMetrics.Companion.DENSITY_DEFAULT.toFloat()
-        densityDpi = TDisplayMetrics.Companion.DENSITY_DEVICE
+            DENSITY_DEVICE / DENSITY_DEFAULT.toFloat()
+        densityDpi = DENSITY_DEVICE
         scaledDensity = density
-        xdpi = TDisplayMetrics.Companion.DENSITY_DEVICE.toFloat()
-        ydpi = TDisplayMetrics.Companion.DENSITY_DEVICE.toFloat()
+        xdpi = DENSITY_DEVICE.toFloat()
+        ydpi = DENSITY_DEVICE.toFloat()
         noncompatWidthPixels = widthPixels
         noncompatHeightPixels = heightPixels
         noncompatDensity = density
@@ -195,7 +234,6 @@ class TDisplayMetrics(deviceDensity: Int) {
     }
 
     companion object {
-        var deviceDensity = 1
         /**
          * Standard quantized DPI for low-density screens.
          */
@@ -362,43 +400,5 @@ class TDisplayMetrics(deviceDensity: Int) {
          * is 2x a traditional HD 1920x1080 screen which runs at DENSITY_XHIGH.
          */
         const val DENSITY_XXXHIGH = 640
-
-        /**
-         * The reference density used throughout the system.
-         */
-        val DENSITY_DEFAULT: Int = TDisplayMetrics.Companion.DENSITY_MEDIUM
-
-        /**
-         * Scaling factor to convert a density in DPI units to the density scale.
-         * @hide
-         */
-        val DENSITY_DEFAULT_SCALE: Float = 1.0f / TDisplayMetrics.Companion.DENSITY_DEFAULT
-
-        /**
-         * The device's current density.
-         *
-         *
-         * This value reflects any changes made to the device density. To obtain
-         * the device's stable density, use [.DENSITY_DEVICE_STABLE].
-         *
-         * @hide This value should not be used.
-         */
-        var DENSITY_DEVICE: Int = TDisplayMetrics.Companion.deviceDensity
-
-        /**
-         * The device's stable density.
-         *
-         *
-         * This value is constant at run time and may not reflect the current
-         * display density. To obtain the current density for a specific display,
-         * use [.densityDpi].
-         */
-        val DENSITY_DEVICE_STABLE: Int = TDisplayMetrics.Companion.deviceDensity
-
-        // qemu.sf.lcd_density can be used to override ro.sf.lcd_density
-        // when running in the emulator, allowing for dynamic configurations.
-        // The reason for this is that ro.sf.lcd_density is write-once and is
-        // set by the init process when it parses build.prop before anything else.
-
     }
 }

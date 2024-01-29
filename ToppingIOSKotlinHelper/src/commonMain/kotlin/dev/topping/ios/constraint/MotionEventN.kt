@@ -334,11 +334,11 @@ class MotionEventN {
     }
 
     fun getRawPointerCoords(pointerIndex: Int): PointerCoords {
-        return samplePointerCoords[getHistorySize() + getPointerCount() + pointerIndex]
+        return samplePointerCoords[getHistorySize() * getPointerCount() + pointerIndex]
     }
 
     fun getHistoricalRawPointerCoords(pointerIndex: Int, historicalIndex: Int): PointerCoords {
-        return samplePointerCoords[historicalIndex + getPointerCount() + pointerIndex]
+        return samplePointerCoords[historicalIndex * getPointerCount() + pointerIndex]
     }
 
     fun getRawAxisValue(axis: UInt, pointerIndex: Int): Float {

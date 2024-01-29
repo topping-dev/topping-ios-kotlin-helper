@@ -2507,8 +2507,8 @@ open class MotionLayout(context: TContext, attrs: AttributeSet, self: TView) : C
                     child_d = dev.topping.ios.constraint.core.widgets.Guideline()
                 } else if (child_s is Flow) {
                     child_d = Flow()
-                } else if (child_s is Placeholder) {
-                    child_d = Placeholder()
+                } else if (child_s is Placeholder2) {
+                    child_d = Placeholder2()
                 } else if (child_s is dev.topping.ios.constraint.core.widgets.Helper) {
                     child_d = HelperWidget()
                 } else {

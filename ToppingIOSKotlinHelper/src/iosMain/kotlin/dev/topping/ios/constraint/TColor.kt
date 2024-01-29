@@ -93,6 +93,7 @@ actual class TColor {
             throw IllegalArgumentException("Unknown color")
         }
 
+        @OptIn(ExperimentalForeignApi::class)
         fun toIntInternal(color: UIColor) : Int {
             memScoped {
                 val a = alloc<DoubleVar>()
@@ -130,6 +131,7 @@ actual class TColor {
         return UIColor.colorWithHue(hsv[0].toDouble() / 255.0, hsv[1].toDouble() / 255.0, hsv[2].toDouble() / 255.0, alpha / 255.0)
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     actual fun getValues(r: Pointer<Int>, g: Pointer<Int>, b: Pointer<Int>, a: Pointer<Int>) {
         memScoped {
             val aP = alloc<DoubleVar>()
